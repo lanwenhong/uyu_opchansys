@@ -16,13 +16,46 @@ class Login(core.Handler):
         self.write(template.render('login.html'))
 
 
+
+class ChangePassHandler(core.Handler):
+
+    _post_handler_fields = [ 
+        Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
+        Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
+        Field('password', T_STR, False),
+    ]
+    
+    @with_database('uyu_core')
+    @with_validator_self
+    def _post_handler(self, *args):
+        params = self.validator.data
+        mobile = params['mobile']
+        vcode = params['vcode']
+        password = params["password"]
+        
+        now = int(time.time())
+        sql = "select * from verify_code where mobile='%s' and stime<%d and etime>%d" % (mobile,now,now)
+        dbret = self.db.get(sql)
+        log.debug("get from db: %s", dbret)
+        if not dbret:
+            return error(UAURET.VCODEERR)
+        elif vcode != dbret["code"]:
+            return error(UAURET.VCODEERR)
+
+        sql = "update auth_user set password='%s' where phone_num='%s'" % (password, mobile)
+        self.db.execute(sql)
+        return success({})
+
+    def POST(self, *args):
+        ret = self._post_handler(self, args)
+        self.write(ret)
+
+
 class LoginHandler(core.Handler):
     _post_handler_fields = [ 
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('password', T_STR, False),
     ]
-    def GET(self):
-        pass
 
     @with_database('uyu_core')
     @with_validator_self 
@@ -83,29 +116,9 @@ class SmsHandler(core.Handler):
             ret = {"vcode": vcode}
         return success(ret)
 
-    @with_database('uyu_core')
-    @with_validator_self
-    def _get_handler(self, *args):
-        params = self.validator.data
-        mobile = params['mobile']
-        vcode = params['vcode']
-        
-        now = int(time.time())
-        sql = "select * from verify_code where mobile='%s' and stime<%d and etime>%d" % (mobile,now,now)
-        dbret = self.db.get(sql)
-        log.debug("get from db: %s", dbret)
-        if not dbret:
-            return error(UAURET.VCODEERR)
-        elif vcode != dbret["code"]:
-            return error(UAURET.VCODEERR)
-        return success({})
-
     def POST(self, *args):
         ret = self._post_handler(args) 
         self.write(ret)
 
     def GET(self, *args):
-        ret = self._get_handler(args)
-        self.write(ret)
-
-
+        pass

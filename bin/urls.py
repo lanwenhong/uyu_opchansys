@@ -22,5 +22,6 @@ urls = (
     ('^/channel_op/v1/page/settle.html$', settle.SettleManage),
     #api
     ('^/channel_op/v1/api/login$', login.LoginHandler),
-    ('^/channel_op/v1/api/sms_send$', login.SmsHandler)
+    ('^/channel_op/v1/api/sms_send$', login.SmsHandler),
+    ('^/channel_op/v1/api/passwd_change$', login.ChangePassHandler)
 )
