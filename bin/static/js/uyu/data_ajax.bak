@@ -1,0 +1,131 @@
+$(document).ready(function(){
+
+    $('#example').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "paging": true,
+        "info": false,
+        "ordering": false,
+        "searching": false,
+        "lengthChange": false,
+        "deferRender": true,
+        "ajax": function(data, callback, settings){
+             var temp = ""
+             for(var key in data.order){
+                 // temp += key+":"+data.order[key]+"\n";
+                 for(var i=0; i<data.order.length; i++){
+                     console.log(i+':'+ data.order[i]+":"+typeof data.order[i]);
+                     print_object(data.order[i]);
+
+                 }
+             }
+            /*
+             * data:
+             * draw:1
+             * columns:[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+             * order:[object Object]
+             * start:0
+             * length:10
+             * search:[object Object]
+             */
+            $.ajax({
+	            url: '/api/mydata',
+	            type: 'GET',
+	            dataType: 'json',
+	            data: {
+	                'page': Math.ceil(data.start / data.length) + 1,
+	                'maxnum': data.length,
+	            },
+	            success: function(data) {
+	                detail_data = data.data;
+	                num = data.num;
+	                callback({
+	                    recordsTotal: num,
+	                    recordsFiltered: num,
+	                    data: detail_data
+	                });
+	            },
+	            error: function(data) {
+	            },
+
+            });
+        },
+		'columns': [
+				{ data: 'name' },
+				{ data: 'position' },
+				{ data: 'salary' },
+				{ data: 'start_date' },
+				{ data: 'office' },
+				{ data: 'extn' }
+		]
+    });
+    /*
+	var table = $('#example').DataTable({
+		'paging': true,
+		'ajax': {
+			'url': '/api/mydata',
+			'dataSrc': ''
+		},
+		'columns': [
+				{ data: 'name' },
+				{ data: 'position' },
+				{ data: 'salary' },
+				{ data: 'start_date' },
+				{ data: 'office' },
+				{ data: 'extn' }
+		]
+	});
+    */
+
+    /*
+	$('#example').dataTable({
+	    serverSide: true,
+        bAutoWidth: true,
+        bFilter: true,
+        binfo: true,
+        bPaginage: true,
+	    ajax: function(data, callback, setting){
+	        // alert(data.start + ':'+ data.length);
+	        $.ajax({
+	            url: '/api/mydata',
+	            type: 'GET',
+	            dataType: 'json',
+	            data: {
+	                'page': Math.ceil(data.start / data.length) + 1,
+	                'maxnum': data.length,
+	            },
+	            success: function(data) {
+	                detail_data = data.data;
+	                num = data.num;
+	                callback({
+	                    recordsTotal: num,
+	                    recordsFiltered: num,
+	                    data: detail_data
+	                });
+	            },
+	            error: function(data) {
+	            },
+	        });
+	    },
+	    aoColumns: [
+	        {'mDataProp': 'name', "sDefaultContent": ""},
+	        {'mDataProp': 'position', "sDefaultContent": ""},
+	        {'mDataProp': 'salary', "sDefaultContent": ""},
+	        {'mDataProp': 'start_date', "sDefaultContent": ""},
+	        {'mDataProp': 'office', "sDefaultContent": ""},
+	        {'mDataProp': 'extn', "sDefaultContent": ""},
+	    ],
+	    ordering: false
+	});
+	*/
+});
+
+
+function print_object(obj){
+    console.log('print object start');
+    var temp = ""
+    for(var key in obj){
+        temp += key + ":" + obj[key] + "\n";
+    }
+    console.log(temp)
+}

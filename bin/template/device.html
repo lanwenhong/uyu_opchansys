@@ -1,0 +1,309 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base.html" />
+<%block name="title">
+设备管理
+</%block>
+
+<%block name="page">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">设备管理</h2>
+        </div>
+	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    设备管理
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+					<div class="row">
+						<form class="form-inline">
+							<div class="form-group">
+							  <label for="devicelName">设备名称</label>
+							  <input type="text" class="form-control" id="deviceName" placeholder="">
+							</div>
+							<div class="form-group">
+							  <label for="deviceSerialNu">设备编号</label>
+							  <input type="text" class="form-control" id="deviceSerialNu" placeholder="">
+							</div>
+							<button type="button" class="btn btn-primary" id="deviceSearch">搜索</button>
+							<button type="button" class="btn btn-default" id="deviceCreate">新建</button>
+						</form>
+					</div>
+
+					<div class="row">
+						<table id="deviceList" class="display table table-striped table-bordered table-hover dataTable no-footer dtr-inline" cellspacing="0" width="100%">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>设备名</th>
+									<th>设备编号</th>
+									<th>硬件版本</th>
+									<th>蓝牙标示</th>
+									<th>单片机标示</th>
+									<th>状态</th>
+									<th>分配渠道</th>
+									<th>分配门店</th>
+									<th>训练次数</th>
+									<th>创建时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								
+								<tr>
+									<td>2</td>
+									<td>Device_2</td>
+									<td>SerialNu_2</td>
+									<td>2/2.1</td>
+									<td>bv1.0.1</td>
+									<td>sv1.0.1</td>
+									<td>正常</td>
+									<td>Channel_2</td>
+									<td>Store_2</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>Device_1</td>
+									<td>SerialNu_1</td>
+									<td>2/2.1</td>
+									<td>bv1.0.0</td>
+									<td>sv1.0.0</td>
+									<td>正常</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>100</td>
+									<td>2017-03-05</td>
+									<td>分配</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="deviceCreateModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">新建设备</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="deviceCreateForm" role="form">
+						<div class="form-group">
+							<label for="modalDeviceName" class="col-sm-2 control-label">设备名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="modalDeviceName" name="deviceName" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalDeviceSearialNu" class="col-sm-2 control-label">设备编号</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalDeviceSearialNu" name="deviceSerialNu" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalHdVersion" class="col-sm-2 control-label">硬件版本</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalHdVersion" name="hdVersion" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalBloothTag" class="col-sm-2 control-label">蓝牙标示</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalBloothTag" name="bloothTag"  placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalSCMTag" class="col-sm-2 control-label">单片机标示</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalSCMTag" name="scmTag" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalStatus" class="col-sm-2 control-label">状态</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStatus" name="status" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalChannel" class="col-sm-2 control-label">分配渠道</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalChannel" name="channelID" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalStore" class="col-sm-2 control-label">分配门店</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStore" name="storeID" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalTrainNum" class="col-sm-2 control-label">训练次数</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalTrainNum" name="trainNum" placeholder="">
+							</div>
+						</div> 
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="deviceCreateSubmit">提交</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+</%block>
+
+<%block name="body_media">
+    <script src="/static/js/jquery.form.js" type="text/javascript"></script>
+    <script src="/static/js/uyu/device.js" type="text/javascript"></script>
+</%block>

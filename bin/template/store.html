@@ -1,0 +1,328 @@
+## -*- coding: utf-8 -*-
+<%inherit file="/base.html" />
+<%block name="title">
+门店管理
+</%block>
+
+<%block name="page">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">门店管理</h2>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    门店管理
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+					<div class="row">
+						<form class="form-inline">
+							<div class="form-group">
+							  <label for="channelID">渠道ID</label>
+							  <input type="text" class="form-control" id="channelID" placeholder="">
+							</div>
+							<div class="form-group">
+							  <label for="storeID">门店ID</label>
+							  <input type="text" class="form-control" id="storeID" placeholder="">
+							</div>
+							<button type="button" class="btn btn-primary" id="storeSearch">搜索</button>
+							<button type="button" class="btn btn-default" id="storeCreate">新建门店</button>
+						</form>
+					</div>
+
+					<div class="row">
+						<table id="storeList" class="display table table-striped table-bordered table-hover dataTable no-footer dtr-inline" cellspacing="0" width="100%">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>渠道名称</th>
+									<th>门店名称</th>
+									<th>门店类型</th>
+									<th>门店联系人</th>
+									<th>门店手机号</th>
+									<th>地址</th>
+									<th>单次训练价格</th>
+									<th>分成比例</th>
+									<th>剩余次数</th>
+									<th>状态</th>
+									<th>创建时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Channel_1</td>
+									<td>Store_1</td>
+									<td>门店</td>
+									<td>StoreContact1</td>
+									<td>13400000001</td>
+									<td>Addr1</td>
+									<td>100</td>
+									<td>20%</td>
+									<td>1000</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td>Channel_2</td>
+									<td>Store_2</td>
+									<td>门店</td>
+									<td>StoreContact2</td>
+									<td>13400000002</td>
+									<td>Addr2</td>
+									<td>102</td>
+									<td>20%</td>
+									<td>1002</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>3</td>
+									<td>Channel_3</td>
+									<td>Store_2</td>
+									<td>门店</td>
+									<td>StoreContact2</td>
+									<td>13400000003</td>
+									<td>Addr2</td>
+									<td>103</td>
+									<td>20%</td>
+									<td>1003</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>4</td>
+									<td>Channel_4</td>
+									<td>Store_4</td>
+									<td>门店</td>
+									<td>StoreContact4</td>
+									<td>13400000004</td>
+									<td>Addr4</td>
+									<td>104</td>
+									<td>20%</td>
+									<td>1004</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>5</td>
+									<td>Channel_5</td>
+									<td>Store_5</td>
+									<td>门店</td>
+									<td>StoreContact5</td>
+									<td>13400000005</td>
+									<td>Addr5</td>
+									<td>105</td>
+									<td>20%</td>
+									<td>1005</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>6</td>
+									<td>Channel_6</td>
+									<td>Store_6</td>
+									<td>门店</td>
+									<td>StoreContact6</td>
+									<td>13400000006</td>
+									<td>Addr6</td>
+									<td>106</td>
+									<td>20%</td>
+									<td>1006</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>7</td>
+									<td>Channel_7</td>
+									<td>Store_7</td>
+									<td>门店</td>
+									<td>StoreContact7</td>
+									<td>13400000007</td>
+									<td>Addr6</td>
+									<td>107</td>
+									<td>20%</td>
+									<td>1007</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>8</td>
+									<td>Channel_8</td>
+									<td>Store_8</td>
+									<td>门店</td>
+									<td>StoreContact8</td>
+									<td>13400000008</td>
+									<td>Addr8</td>
+									<td>108</td>
+									<td>20%</td>
+									<td>1008</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>9</td>
+									<td>Channel_9</td>
+									<td>Store_9</td>
+									<td>门店</td>
+									<td>StoreContact9</td>
+									<td>13400000009</td>
+									<td>108</td>
+									<td>109</td>
+									<td>20%</td>
+									<td>1009</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>10</td>
+									<td>Channel_10</td>
+									<td>Store_10</td>
+									<td>门店</td>
+									<td>StoreContact10</td>
+									<td>13400000010</td>
+									<td>108</td>
+									<td>110</td>
+									<td>20%</td>
+									<td>1010</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+								<tr>
+									<td>11</td>
+									<td>Channel_12</td>
+									<td>Store_12</td>
+									<td>门店</td>
+									<td>StoreContact12</td>
+									<td>13400000012</td>
+									<td>108</td>
+									<td>111</td>
+									<td>20%</td>
+									<td>1011</td>
+									<td>正常</td>
+									<td>2017-03-05</td>
+									<td>启用/关闭/查看视光师</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="storeCreateModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">新建门店</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="storeCreateForm" role="form">
+
+						<div class="form-group">
+							<label for="modalChannelName" class="col-sm-2 control-label">渠道名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="modalChannelName" name="channelName" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreName" class="col-sm-2 control-label">门店名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="modalStoreName" name="storeName" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreType" class="col-sm-2 control-label">门店类型</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="modalStoreType" name="storeType" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreContacter" class="col-sm-2 control-label">门店联系人</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreContacter" name="storeContacter" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreContactMobile" class="col-sm-2 control-label">门店手机号</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreContactMobile" name="storeContactMobile" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreAddr" class="col-sm-2 control-label">门店地址</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreAddr" name="storeAddr" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreTrainPricePer" name="storeTrainPricePer"  placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalStoreDividePercent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreDividePercent" name="storeDividePercent" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalStoreRemainNum" class="col-sm-2 control-label">剩余次数</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreRemainNum" name="storeRemainNum" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalStoreStatus" class="col-sm-2 control-label">状态</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="modalStoreStatus" name="storeStatus" placeholder="">
+							</div>
+						</div> 
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="storeCreateSubmit">提交</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+</%block>
+
+<%block name="body_media">
+    <script src="/static/js/jquery.form.js" type="text/javascript"></script>
+    <script src="/static/js/uyu/store.js" type="text/javascript"></script>
+</%block>
