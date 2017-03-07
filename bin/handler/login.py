@@ -10,6 +10,7 @@ from zbase.base.dbpool import with_database
 from uyubase.base.usession import uyu_set_cookie, USession
 
 from runtime import g_rt
+from config import cookie_conf
 
 import logging, datetime, time
 
@@ -62,7 +63,7 @@ class LoginHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
-    @uyu_set_cookie(g_rt, UYU_USER_ROLE_SUPER)
+    @uyu_set_cookie(g_rt, cookie_conf, UYU_USER_ROLE_SUPER)
     @with_database('uyu_core')
     @with_validator_self 
     def _post_handler(self, *args):
@@ -83,7 +84,6 @@ class LoginHandler(core.Handler):
             return error(UAURET.ROLEERR)
         ret = {"userid": dbret["id"]}
         return ret
-        #return success(ret) 
 
     def POST(self, *args):
         ret = self._post_handler(args)

@@ -11,10 +11,10 @@ log = logging.getLogger()
 
 
 class USession:
-    def __init__(self, g_rt, sk=None):
+    def __init__(self, g_rt, c_conf, sk=None):
         self.sk = sk
         self.g_rt = g_rt
-        #self.vlue = None
+        self.c_conf = c_conf
     
     def gen_skey(self):
         self.sk = str(uuid.uuid4())
@@ -26,12 +26,16 @@ class USession:
 
         client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
         client.set(self.sk, json.dumps(svalue))
-        client.expire(self.sk, 60*60*24*3)
+        client.expire(self.sk, self.c_conf["expires"])
 
     def get_session(self):
         client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
         v = client.get(self.sk)
         return json.loads(v)
+
+    def expire_session(self):
+        client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
+        client.expire(self.sk, self.c_conf["expires"])
 
 class SUser:
     def __init__(self, userid, session, sys_role):
@@ -39,7 +43,7 @@ class SUser:
         self.sauth = False
         #标记系统是渠道系统或者渠道运营系统或者门店系统后台
         self.sys_role = sys_role 
-        self.userid = userid
+        self.userid = int(userid)
         self.udata = None
         self.pdata = None
         self.se = session
@@ -52,6 +56,9 @@ class SUser:
         if not v:
             return False
         log.debug("get session: %s", v)
+        log.debug("cuserid: %d", self.userid)
+        log.debug("suserid: %d", v["userid"])
+
         #session中的用户角色和系统是否一致
         user_type = v.get("user_type")
         if user_type != self.sys_role:
@@ -84,12 +91,12 @@ class SUser:
         self.pdata= self.db.get(sql)
         
 
-def uyu_check_session(g_rt, sys_role):
+def uyu_check_session(g_rt, cookie_conf, sys_role):
     def f(func):
         def _(self, *args, **kwargs):
             sk = self.get_cookie("sessionid")
             log.debug("sk: %s", sk)
-            self.session = USession(g_rt, sk)
+            self.session = USession(g_rt, cookie_conf, sk)
 
             params = self.req.input()
             userid = params.get("userid", -1)
@@ -98,20 +105,21 @@ def uyu_check_session(g_rt, sys_role):
                 
             x = func(self, *args, **kwargs)
             #set cookie
+            self.session.expire_session()
             return x
         return _
     return f
 
-def uyu_set_cookie(g_rt, sys_role):
+def uyu_set_cookie(g_rt, cookie_conf, sys_role):
     def f(func):
         def _(self, *args, **kwargs):
             x = func(self, *args, **kwargs) 
             #创建SESSION
-            self.session = USession(g_rt)
+            self.session = USession(g_rt, cookie_conf)
             self.session.gen_skey()
             self.session.set_session(x, sys_role)
 
-            self.set_cookie("sessionid", self.session.sk, domain='.uyu.com', expires=60*60*24*3, max_age=60*60*24*3, path='/')
+            self.set_cookie("sessionid", self.session.sk, **cookie_conf)
             return x
         return _
     return f
