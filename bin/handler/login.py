@@ -3,9 +3,14 @@ from zbase.web import core
 from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 
-from response.response import success, error, UAURET, UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
+from uyubase.base.response import success, error, UAURET, UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
 
 from zbase.base.dbpool import with_database
+
+from uyubase.base.usession import uyu_set_cookie, USession
+
+from runtime import g_rt
+
 import logging, datetime, time
 
 log = logging.getLogger()
@@ -57,6 +62,7 @@ class LoginHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
+    @uyu_set_cookie(g_rt, UYU_USER_ROLE_SUPER)
     @with_database('uyu_core')
     @with_validator_self 
     def _post_handler(self, *args):
@@ -76,12 +82,12 @@ class LoginHandler(core.Handler):
         if user_type != UYU_USER_ROLE_SUPER or state != UYU_USER_STATE_OK:
             return error(UAURET.ROLEERR)
         ret = {"userid": dbret["id"]}
-#创建SESSION
-        return success(ret) 
-        
+        return ret
+        #return success(ret) 
+
     def POST(self, *args):
         ret = self._post_handler(args)
-        self.write(ret)
+        self.write(success(ret))
 
 
 class SmsHandler(core.Handler):
