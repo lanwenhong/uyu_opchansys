@@ -28,4 +28,5 @@ urls = (
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),
     ('^/channel_op/v1/api/training_op_list$', train.TrainBuyInfoHandler),
+    ('^/channel_op/v1/api/channel$', channel.ChannelHandler),
 )
