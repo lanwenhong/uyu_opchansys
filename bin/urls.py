@@ -24,5 +24,6 @@ urls = (
     ('^/channel_op/v1/api/login$', login.LoginHandler),
     ('^/channel_op/v1/api/sms_send$', login.SmsHandler),
     ('^/channel_op/v1/api/passwd_change$', login.ChangePassHandler),
-    ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler)
+    ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
+    ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
 )

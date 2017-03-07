@@ -2,7 +2,7 @@ $(document).ready(function(){
     $('#storeList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
-        // "serverSide": true,
+        "serverSide": true,
         "paging": true,         //制指定它才能显示表格底部的分页按钮
         "info": true,
         "ordering": false,
@@ -23,10 +23,70 @@ $(document).ready(function(){
             $storeList_length.addClass('col-md-4');
             $storeList_length.prependTo($page_top);
         },
+        "ajax": function(data, callback, settings){
+            var get_data = {
+	           'page': Math.ceil(data.start / data.length) + 1,
+	           'maxnum': data.length,
+            }
+            var channel_name = $("#channelName").val();
+            var store_name = $("#storeName").val();
+            if(channel_name!=''&&channel_name!=undefined){
+                get_data.channel_name = channel_name;
+            }
+            if(store_name!=''&&store_name!=undefined){
+                get_data.store_name = store_name;
+            }
+            $.ajax({
+	            url: '/channel_op/v1/api/storeinfo_pagelist',
+	            type: 'GET',
+	            dataType: 'json',
+	            data: get_data,
+	            success: function(data) {
+                    var respcd = data.respcd;
+                    if(respcd != '0000'){
+                        $processing = $("#storeList_processing");
+                        $processing.css('display', 'none');
+                        var resperr = data.resperr;
+                        var respmsg = data.resmsg;
+                        var msg = resperr ? resperr : resmsg;
+                        toastr.warning(msg);
+                        return false;
+                    }
+	                detail_data = data.data;
+	                num = detail_data.num;
+                    console.log('num:'+num);
+                    console.log('info:'+detail_data.info);
+	                callback({
+	                    recordsTotal: num,
+	                    recordsFiltered: num,
+	                    data: detail_data.info
+	                });
+	            },
+	            error: function(data) {
+	            },
+
+            });
+        },
+		'columns': [
+				{ data: 'id' },
+				{ data: 'channel_name' },
+				{ data: 'nick_name' },
+				{ data: 'store_type' },
+				{ data: 'contact_name' },
+				{ data: 'store_mobile' },
+				{ data: 'store_addr' },
+				{ data: 'training_amt_per' },
+				{ data: 'divide_percent' },
+				{ data: 'remain_times' },
+				{ data: 'is_valid' },
+				{ data: 'create_time' },
+		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
             'sLengthMenu': '每页显示_MENU_条记录',
             "sInfo": '显示 _START_到_END_ 的 _TOTAL_条数据',
+            'sInfoEmpty': '没有匹配的数据',
+            'sZeroRecords': '没有找到匹配的数据',
             'oPaginate': {
                 'sFirst': '首页',
                 'sPrevious': '前一页',
@@ -40,6 +100,10 @@ $(document).ready(function(){
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
         $("#storeCreateModal").modal();
+    });
+
+    $("#storeSearch").click(function(){
+        $('#storeList').DataTable().draw();
     });
 
     $("#storeCreateSubmit").click(function(){

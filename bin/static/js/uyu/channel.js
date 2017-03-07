@@ -105,8 +105,3 @@ $(document).ready(function(){
         return false;
     });
 });
-
-
-function load_channel_info(nick_name=''){
-
-}
