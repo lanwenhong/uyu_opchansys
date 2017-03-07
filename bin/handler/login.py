@@ -69,21 +69,7 @@ class LoginHandler(core.Handler):
         if respcd != UAURET.OK:
             return error(respcd)
         return success({"userid": dbret["id"]}) 
-        #sql = "select * from auth_user where phone_num='%s' and password='%s'" % (mobile, password)
-        #dbret = self.db.get(sql)
-        #
-        #log.debug("db ret: %s", dbret)
-        #if not dbret:
-        #    return error(UAURET.USERERR)
-        #elif dbret["password"] != password:
-        #    return error(UAURET.PWDERR)
-        #state = dbret.get("state", -1)
-        #user_type = dbret.get("user_type", -1)
-        #if user_type != UYU_USER_ROLE_SUPER or state != UYU_USER_STATE_OK:
-        #    return error(UAURET.ROLEERR)
-        #ret = {"userid": dbret["id"]}
-        #return ret
-
+        
     def POST(self, *args):
         ret = self._post_handler(args)
         self.write(success(ret))
