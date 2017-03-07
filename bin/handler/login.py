@@ -19,12 +19,12 @@ class Login(core.Handler):
 
 class ChangePassHandler(core.Handler):
 
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
         Field('password', T_STR, False),
     ]
-    
+
     @with_database('uyu_core')
     @with_validator_self
     def _post_handler(self, *args):
@@ -32,7 +32,7 @@ class ChangePassHandler(core.Handler):
         mobile = params['mobile']
         vcode = params['vcode']
         password = params["password"]
-        
+
         now = int(time.time())
         sql = "select * from verify_code where mobile='%s' and stime<%d and etime>%d" % (mobile,now,now)
         dbret = self.db.get(sql)
@@ -52,20 +52,20 @@ class ChangePassHandler(core.Handler):
 
 
 class LoginHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('password', T_STR, False),
     ]
 
     @with_database('uyu_core')
-    @with_validator_self 
+    @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
         password = params["password"]
         sql = "select * from auth_user where phone_num='%s' and password='%s'" % (mobile, password)
         dbret = self.db.get(sql)
-        
+
         log.debug("db ret: %s", dbret)
         if not dbret:
             return error(UAURET.USERERR)
@@ -77,19 +77,19 @@ class LoginHandler(core.Handler):
             return error(UAURET.ROLEERR)
         ret = {"userid": dbret["id"]}
 #创建SESSION
-        return success(ret) 
-        
+        return success(ret)
+
     def POST(self, *args):
         ret = self._post_handler(args)
         self.write(ret)
 
 
 class SmsHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
     ]
 
-    _get_handler_fields = [ 
+    _get_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
     ]
@@ -117,7 +117,7 @@ class SmsHandler(core.Handler):
         return success(ret)
 
     def POST(self, *args):
-        ret = self._post_handler(args) 
+        ret = self._post_handler(args)
         self.write(ret)
 
     def GET(self, *args):
