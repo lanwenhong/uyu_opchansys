@@ -5,6 +5,7 @@ import uuid, redis, json
 
 from zbase.base import dbpool
 from uyubase.base import response
+from uyubase.base.response import UAURET
 
 import logging, datetime, time
 log = logging.getLogger()
@@ -55,6 +56,7 @@ class SUser:
         v = self.se.get_session()
         if not v:
             return False
+
         log.debug("get session: %s", v)
         log.debug("cuserid: %d", self.userid)
         log.debug("suserid: %d", v["userid"])
@@ -117,9 +119,11 @@ def uyu_set_cookie(g_rt, cookie_conf, sys_role):
             #创建SESSION
             self.session = USession(g_rt, cookie_conf)
             self.session.gen_skey()
-            self.session.set_session(x, sys_role)
 
-            self.set_cookie("sessionid", self.session.sk, **cookie_conf)
+            v = json.loads(x)
+            if v["respcd"] == UAURET.OK:
+                self.session.set_session(v["data"], sys_role)
+                self.set_cookie("sessionid", self.session.sk, **cookie_conf)
             return x
         return _
     return f
