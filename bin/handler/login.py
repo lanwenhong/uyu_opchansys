@@ -3,7 +3,9 @@ from zbase.web import core
 from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 
-from uyubase.base.response import success, error, UAURET, UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
+from uyubase.base.response import success, error, UAURET
+
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_USER_ROLE_SUPER
 
 from zbase.base.dbpool import with_database
 
@@ -65,14 +67,14 @@ class LoginHandler(core.Handler):
 
 
         u_op = UUser()
-        respcd, dbret = u_op.check_userlogin(mobile, password, UYU_USER_ROLE_SUPER)
+        respcd, dbret = u_op.check_userlogin(mobile, password, UYU_SYS_ROLE_OP)
         if respcd != UAURET.OK:
             return error(respcd)
         return success({"userid": dbret["id"]}) 
         
     def POST(self, *args):
         ret = self._post_handler(args)
-        self.write(success(ret))
+        self.write(ret)
 
 
 class SmsHandler(core.Handler):

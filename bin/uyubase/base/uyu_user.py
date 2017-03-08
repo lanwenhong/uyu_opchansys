@@ -6,6 +6,7 @@ import logging, time, random
 import traceback
 
 from uyubase.base.response import success, error, UAURET 
+from uyubase.uyu import define
 
 log = logging.getLogger()
 
@@ -46,9 +47,21 @@ class UUser:
 
     def create_profile(self, *args, **kwargs):
         pass
+    
+    def _check_permission(self, user_type, sys_role):
+        log.debug(define.PERMISSION_CHECK)
+        plist = define.PERMISSION_CHECK.get(sys_role, None)
+        if not plist:
+            return False 
+
+        log.debug("plist: %s", plist)
+        if user_type not in plist:
+            return False
+        return True
+
 
     @with_database('uyu_core')
-    def check_userlogin(self, mobile, password, sys_type):
+    def check_userlogin(self, mobile, password, sys_role):
         sql = "select * from auth_user where phone_num='%s' and password='%s'" % (mobile, password)
         dbret = self.db.get(sql)
         if not dbret:
@@ -56,7 +69,7 @@ class UUser:
         if dbret["password"] != password:
             return UAURET.PWDERR, None
         user_type = dbret.get("user_type", -1)
-        if user_type != sys_type:
+        if not self._check_permission(user_type, sys_role):
             return UAURET.ROLEERR, None
         return UAURET.OK, dbret
 
