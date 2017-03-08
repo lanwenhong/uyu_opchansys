@@ -27,6 +27,7 @@ class UAURET:
     SERVERERR           = "2600"
     METHODERR           = "2601"
     VCODEERR            = "1000"
+    REGISTERERR         = "1001"
 
 error_map = { 
     UAURET.OK                    : u"成功",
@@ -48,8 +49,9 @@ error_map = {
     UAURET.SERVERERR             : u"内部错误",
     UAURET.METHODERR             : u"函数未实现",
     UAURET.VCODEERR              : u"验证码错误",
-
+    UAURET.REGISTERERR           : u"用户注册失败",
 }
+
 def json_default_trans(obj):
     '''json对处理不了的格式的处理方法'''
     if isinstance(obj, datetime.datetime):

@@ -106,7 +106,7 @@ def uyu_check_session(redis_pool, cookie_conf, sys_role):
             self.session = USession(redis_pool, cookie_conf, sk)
 
             params = self.req.input()
-            userid = params.get("userid", -1)
+            userid = params.get("se_userid", -1)
             self.user = SUser(userid, self.session, sys_role)
             self.user.check_permission()
                 

@@ -2,6 +2,10 @@
 
 import os, sys
 
+
+UYU_OP_OK = 0
+UYU_OP_ERR = -1
+
 #用户角色
 UYU_USER_ROLE_CHAN     = 2 
 UYU_USER_ROLE_STORE    = 3 

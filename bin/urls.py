@@ -24,5 +24,6 @@ urls = (
     ('^/channel_op/v1/api/login$', login.LoginHandler),
     ('^/channel_op/v1/api/sms_send$', login.SmsHandler),
     ('^/channel_op/v1/api/passwd_change$', login.ChangePassHandler),
-    ('^/channel_op/v1/api/channel$', channel.ChannelHandler),
+    #创建渠道
+    ('^/channel_op/v1/api/channel_create$', channel.CreateChanHandler),
 )
