@@ -14,8 +14,10 @@ from uyubase.uyu.define import UYU_SYS_ROLE_OP
 
 from runtime import g_rt
 from config import cookie_conf
+from tools import check_session
 
 class ChannelManage(core.Handler):
+    @check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
         self.write(template.render('channel.html'))
 

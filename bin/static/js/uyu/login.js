@@ -21,10 +21,12 @@ $(document).ready(function(){
                         toastr.warning(msg);
                         return false;
                     } else {
+                        var userid = data.data.userid;
                         window.location.href="/channel_op/v1/page/overview.html";
 					}
 	            },
 	            error: function(data) {
+                    toastr.warning('请求数据异常');
 	            },
             });
         }else{
