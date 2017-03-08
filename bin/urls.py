@@ -30,4 +30,5 @@ urls = (
     ('^/channel_op/v1/api/training_op_list$', train.TrainBuyInfoHandler),
     ('^/channel_op/v1/api/training_use_list$', train.TrainUseInfoHandler),
     ('^/channel_op/v1/api/channel$', channel.ChannelHandler),
+    ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
 )

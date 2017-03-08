@@ -8,16 +8,15 @@ from zbase.base.dbpool import with_database
 import logging, datetime, time
 import tools
 log = logging.getLogger()
-from uyubase.base.usession import uyu_check_session
+from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.response import success, error, UAURET
 from uyubase.uyu.define import UYU_SYS_ROLE_OP
 
 from runtime import g_rt
 from config import cookie_conf
-from tools import check_session
 
 class ChannelManage(core.Handler):
-    @check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @uyu_check_session_for_page(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
         self.write(template.render('channel.html'))
 
