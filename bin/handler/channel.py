@@ -2,7 +2,7 @@
 from zbase.web import core
 from zbase.web import template
 from uyubase.base.usession import uyu_check_session 
-from response.response import success, error, UAURET 
+from uyubase.base.response import success, error, UAURET 
 from uyubase.uyu.define import UYU_SYS_ROLE_OP
 
 from runtime import g_rt
@@ -16,7 +16,7 @@ class ChannelManage(core.Handler):
 
 class ChannelHandler(core.Handler):
     
-    @uyu_check_session(g_rt, cookie_conf, UYU_SYS_ROLE_OP)
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def _post_handler(self, *args):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)

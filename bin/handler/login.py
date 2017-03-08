@@ -58,7 +58,7 @@ class LoginHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
-    @uyu_set_cookie(g_rt, cookie_conf, UYU_USER_ROLE_SUPER)
+    @uyu_set_cookie(g_rt.redis_pool, cookie_conf, UYU_USER_ROLE_SUPER)
     @with_validator_self 
     def _post_handler(self, *args):
         params = self.validator.data

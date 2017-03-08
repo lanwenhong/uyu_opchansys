@@ -13,9 +13,9 @@ log = logging.getLogger()
 
 
 class USession:
-    def __init__(self, g_rt, c_conf, sk=None):
+    def __init__(self, redis_pool, c_conf, sk=None):
         self.sk = sk
-        self.g_rt = g_rt
+        self.redis_pool = redis_pool 
         self.c_conf = c_conf
     
     def gen_skey(self):
@@ -26,19 +26,19 @@ class USession:
         svalue["userid"] = value["userid"]
         svalue["user_type"] = sys_role
 
-        client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
+        client = redis.StrictRedis(connection_pool=self.redis_pool)
         client.set(self.sk, json.dumps(svalue))
         client.expire(self.sk, self.c_conf["expires"])
 
     def get_session(self):
-        client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
+        client = redis.StrictRedis(connection_pool=self.redis_pool)
         v = client.get(self.sk)
         if not v:
             return None
         return json.loads(v)
 
     def expire_session(self):
-        client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
+        client = redis.StrictRedis(connection_pool=self.redis_pool)
         client.expire(self.sk, self.c_conf["expires"])
 
 class SUser:
@@ -98,12 +98,12 @@ class SUser:
         self.pdata= self.db.get(sql)
         
 
-def uyu_check_session(g_rt, cookie_conf, sys_role):
+def uyu_check_session(redis_pool, cookie_conf, sys_role):
     def f(func):
         def _(self, *args, **kwargs):
             sk = self.get_cookie("sessionid")
             log.debug("sk: %s", sk)
-            self.session = USession(g_rt, cookie_conf, sk)
+            self.session = USession(redis_pool, cookie_conf, sk)
 
             params = self.req.input()
             userid = params.get("userid", -1)
@@ -117,12 +117,12 @@ def uyu_check_session(g_rt, cookie_conf, sys_role):
         return _
     return f
 
-def uyu_set_cookie(g_rt, cookie_conf, user_role):
+def uyu_set_cookie(redis_pool, cookie_conf, user_role):
     def f(func):
         def _(self, *args, **kwargs):
             x = func(self, *args, **kwargs) 
             #创建SESSION
-            self.session = USession(g_rt, cookie_conf)
+            self.session = USession(redis_pool, cookie_conf)
             self.session.gen_skey()
 
             v = json.loads(x)
