@@ -6,19 +6,6 @@ try:
 except ImportError:
     import json
 
-#用户角色
-UYU_USER_ROLE_CHAN     = 2
-UYU_USER_ROLE_STORE    = 3
-UYU_USER_ROLE_HOSPITAL = 4
-UYU_USER_ROLE_EYESIGHT = 5
-UYU_USER_ROLE_SUPER    = 6
-
-#用户状态
-UYU_USER_STATE_OK = 1
-UYU_USER_STATE_FORBIDDEN = 2
-UYU_USER_STATE_CANCEL = 3
-
-
 
 class UAURET:
     OK                  = "0000"

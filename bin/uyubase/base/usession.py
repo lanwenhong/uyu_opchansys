@@ -6,6 +6,7 @@ import uuid, redis, json
 from zbase.base import dbpool
 from uyubase.base import response
 from uyubase.base.response import UAURET
+from uyubase.uyu import define
 
 import logging, datetime, time
 log = logging.getLogger()
@@ -32,6 +33,8 @@ class USession:
     def get_session(self):
         client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
         v = client.get(self.sk)
+        if not v:
+            return None
         return json.loads(v)
 
     def expire_session(self):
@@ -49,7 +52,6 @@ class SUser:
         self.pdata = None
         self.se = session
         
-    
     #检查SESSION对应的USERID是否有权限获取用户数据
     def check_permission(self):
         #是否能获取SESSION
@@ -63,7 +65,12 @@ class SUser:
 
         #session中的用户角色和系统是否一致
         user_type = v.get("user_type")
-        if user_type != self.sys_role:
+        plist = define.PERMISSION_CHECK.get(self.sys_role, None)  
+        if not plist:
+            return False
+        
+        log.debug("get plist: %s", plist)
+        if user_type not in plist:
             return False
 
         if self.userid != v.get("userid"):
@@ -72,14 +79,12 @@ class SUser:
         self.sauth = True
         return True
 
-        
     @dbpool.with_database('uyu_core')
     def load_user(self):
         sql = "select * from auth_user where userid=%d" % self.userid 
         ret = self.db.get(sql)
         self.udata = ret
     
-
     #load 渠道用户，门店用户的档案数据
     @dbpool.with_database("uyu_core")
     def load_profile(self):
@@ -112,7 +117,7 @@ def uyu_check_session(g_rt, cookie_conf, sys_role):
         return _
     return f
 
-def uyu_set_cookie(g_rt, cookie_conf, sys_role):
+def uyu_set_cookie(g_rt, cookie_conf, user_role):
     def f(func):
         def _(self, *args, **kwargs):
             x = func(self, *args, **kwargs) 
@@ -122,7 +127,7 @@ def uyu_set_cookie(g_rt, cookie_conf, sys_role):
 
             v = json.loads(x)
             if v["respcd"] == UAURET.OK:
-                self.session.set_session(v["data"], sys_role)
+                self.session.set_session(v["data"], user_role)
                 self.set_cookie("sessionid", self.session.sk, **cookie_conf)
             return x
         return _
