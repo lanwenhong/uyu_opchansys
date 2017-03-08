@@ -80,7 +80,6 @@ $(document).ready(function(){
 				{ data: 'op_name' },
 				{ data: 'create_time' },
 				{ data: 'status' },
-
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -101,6 +100,10 @@ $(document).ready(function(){
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
         $("#trainBuyerCreateModal").modal();
+    });
+
+    $("#trainBuyerSearch").click(function(){
+        $('#trainBuyerList').DataTable().draw();
     });
 
     $("#trainBuyerCreateSubmit").click(function(){
