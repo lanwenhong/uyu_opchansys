@@ -33,6 +33,8 @@ class USession:
     def get_session(self):
         client = redis.StrictRedis(connection_pool=self.g_rt.redis_pool)
         v = client.get(self.sk)
+        if not v:
+            return None
         return json.loads(v)
 
     def expire_session(self):
