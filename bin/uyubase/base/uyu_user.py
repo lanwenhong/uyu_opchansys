@@ -39,8 +39,10 @@ class VCode:
 
 
 class UUser:
-    def __init__(self):
-        pass
+    def __init__(self, user_info=None, p_info=None):
+        self.user_info = user_info
+        self.p_info = p_info
+
 
     def user_register(self, *args, **kwargs):
         pass
