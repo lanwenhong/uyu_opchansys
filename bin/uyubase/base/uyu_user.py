@@ -5,7 +5,7 @@ from zbase.base.dbpool import with_database
 import logging, time, random
 import traceback
 
-from uyubase.base.response import success, error, UAURET 
+from uyubase.base.response import success, error, UAURET
 from uyubase.uyu import define
 
 log = logging.getLogger()
@@ -13,7 +13,7 @@ log = logging.getLogger()
 class VCode:
     def __init__(self):
         pass
-    
+
     @with_database('uyu_core')
     def gen_vcode(self, mobile):
         try:
@@ -37,22 +37,22 @@ class VCode:
     def sms_vcode(self, vcode):
         pass
 
-        
+
 class UUser:
     def __init__(self):
         pass
-    
+
     def user_register(self, *args, **kwargs):
         pass
 
     def create_profile(self, *args, **kwargs):
         pass
-    
+
     def _check_permission(self, user_type, sys_role):
         log.debug(define.PERMISSION_CHECK)
         plist = define.PERMISSION_CHECK.get(sys_role, None)
         if not plist:
-            return False 
+            return False
 
         log.debug("plist: %s", plist)
         if user_type not in plist:
@@ -65,7 +65,7 @@ class UUser:
         sql = "select * from auth_user where phone_num='%s' and password='%s'" % (mobile, password)
         dbret = self.db.get(sql)
         if not dbret:
-            return UAURET.USERERR, None 
+            return UAURET.USERERR, None
         if dbret["password"] != password:
             return UAURET.PWDERR, None
         user_type = dbret.get("user_type", -1)
@@ -90,4 +90,3 @@ class UUser:
         except:
             log.warn(traceback.format_exc())
             return UAURET.VCODEERR
-

@@ -4,13 +4,12 @@ from zbase.web import core
 from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 from zbase.base.dbpool import with_database
-from response.response import success, error, UAURET, UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
 
 import logging, datetime, time
 import tools
 log = logging.getLogger()
 from uyubase.base.usession import uyu_check_session
-from response.response import success, error, UAURET
+from uyubase.base.response import success, error, UAURET
 from uyubase.uyu.define import UYU_SYS_ROLE_OP
 
 from runtime import g_rt
@@ -80,7 +79,7 @@ class ChannelInfoHandler(core.Handler):
 
 
 class ChannelHandler(core.Handler):
-    @uyu_check_session(g_rt, cookie_conf, UYU_SYS_ROLE_OP)
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def _post_handler(self, *args):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
