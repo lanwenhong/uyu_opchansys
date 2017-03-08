@@ -21,7 +21,7 @@ $(document).ready(function(){
                         toastr.warning(msg);
                         return false;
                     } else {
-						toastr.info('ok');
+                        window.location.href="/channel_op/v1/page/overview.html";
 					}
 	            },
 	            error: function(data) {
