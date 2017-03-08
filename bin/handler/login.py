@@ -23,7 +23,6 @@ class Login(core.Handler):
         self.write(template.render('login.html'))
 
 
-
 class ChangePassHandler(core.Handler):
 
     _post_handler_fields = [
@@ -32,24 +31,13 @@ class ChangePassHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
-    @with_database('uyu_core')
     @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
         vcode = params['vcode']
         password = params["password"]
-        now = int(time.time())
-        sql = "select * from verify_code where mobile='%s' and stime<%d and etime>%d" % (mobile,now,now)
-        dbret = self.db.get(sql)
-        log.debug("get from db: %s", dbret)
-        if not dbret:
-            return error(UAURET.VCODEERR)
-        elif vcode != dbret["code"]:
-            return error(UAURET.VCODEERR)
 
-        sql = "update auth_user set password='%s' where phone_num='%s'" % (password, mobile)
-        self.db.execute(sql)
         u_op = UUser()
         respcd = u_op.change_password(mobile, vcode, password)
         if respcd != UAURET.OK:
@@ -67,14 +55,14 @@ class LoginHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
-    @with_database('uyu_core')
-    @with_validator_self
     @uyu_set_cookie(g_rt, cookie_conf, UYU_USER_ROLE_SUPER)
     @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
         password = params["password"]
+
+
         u_op = UUser()
         respcd, dbret = u_op.check_userlogin(mobile, password, UYU_USER_ROLE_SUPER)
         if respcd != UAURET.OK:
@@ -83,7 +71,8 @@ class LoginHandler(core.Handler):
 
     def POST(self, *args):
         ret = self._post_handler(args)
-        self.write(success(ret))
+        # self.write(success(ret))
+        return ret
 
 
 class SmsHandler(core.Handler):
@@ -116,3 +105,4 @@ class SmsHandler(core.Handler):
 
     def GET(self, *args):
         pass
+
