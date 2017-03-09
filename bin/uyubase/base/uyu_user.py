@@ -111,7 +111,6 @@ class UUser:
             sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             sql_value["userid"] = userid
-
             return sql_value
 
     
@@ -120,7 +119,13 @@ class UUser:
             sql_value["userid"] = userid
             sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            return sql_value
 
+    def __gen_store_sql(self, userid, sdata):
+            sql_value = self.__gen_vsql(self.skey, sdata)
+            sql_value["userid"] = userid
+            sql_value["is_valid"] = define.UYU_STORE_STATUS_OPEN
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             return sql_value
 
     #创建渠道事务
@@ -166,16 +171,15 @@ class UUser:
             self.db.insert("profile", sql_value)
             
             #创门店相关信息
-            sql_value = self.__gen_vsql(self.skey, sdata)
-            sql_value["userid"] = userid
-            sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
-            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql_value = self.__gen_store_sql(userid, sdata)
             self.db.insert("stores", sql_value)
             store_id = self.db.last_insert_id()
 
             self.db.commit()
             self.userid = userid
             self.store_id = store_id 
+            self.chnid = sdata["channel_id"]
+
         except:
             self.db.rollback()
             raise
@@ -184,7 +188,6 @@ class UUser:
     @with_database('uyu_core')
     def set_chan_state(self, userid, state):
         self.db.update("channel", {"is_valid": state}, {"userid": userid})
-        #self.db.update("channel", {"is_valid": state}, {"userid": userid})
         self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
     
     #设置门店状态，打开/关闭
