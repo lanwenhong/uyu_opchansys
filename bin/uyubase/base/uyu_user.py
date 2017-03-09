@@ -65,6 +65,7 @@ class UUser:
         self.chan_key = [
             "userid", "remain_times", "training_amt_per", "divide_percent",
             "status", "is_valid", "is_prepayment", "ctime",
+            "channel_name",
         ]
     
     def __gen_vsql(self, klist, cdata):
@@ -159,7 +160,7 @@ class UUser:
     #load渠道信息
     @with_database('uyu_core')
     def load_chan_by_userid(self, userid):
-        record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "nick_name", "phone_num"])
+        record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "phone_num"])
         if record:
             for key in self.ukey:
                 if record.get(key, None):

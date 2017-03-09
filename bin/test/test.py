@@ -37,7 +37,7 @@ def test_vcode_verify():
 def test_chn_query():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
-    send = {"userid": 1111, "se_userid": 1000}
+    send = {"userid": 1129, "se_userid": 1000}
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
     ret = client.get('/channel_op/v1/api/channel', send, headers=headers)
 
@@ -53,8 +53,9 @@ def test_chn_register():
         "se_userid": 1000,
 
         "login_name": "13788889999",
-        "nick_name": "张四",
+        #"nick_name": "张四",
         "phone_num": "13788889999",
+        "channel_name": "大中国四川成都牛逼大渠道",
         #"user_type": 2,
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
@@ -82,11 +83,11 @@ def test_chn_change():
      client = HttpClient(SERVER, client_class = RequestsClient)
      send = {
         "se_userid": 1000,
-        "userid": 1128,
+        "userid": 1129,
 
-        "login_name": "18987867889",
+        "login_name": "13788889999",
         "nick_name": "张三",
-        "phone_num": "18987867889",
+        "phone_num": "13788889999",
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
         "license_id": "xxxxxx11111111111", 
@@ -100,9 +101,10 @@ def test_chn_change():
         "contact_phone": "15882895989",
         "contact_email": "lanwenhong@xxxx.com",
         "address": "成都天府新区",
-        "training_amt_per": 59,
+        "training_amt_per": 30,
         "divide_percent": 0.65,
         "is_prepayment": 0,
+        "channel_name": "牛逼渠道",
      }
      headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
      ret = client.post('/channel_op/v1/api/channel', send, headers=headers)
@@ -111,7 +113,7 @@ def test_chn_change():
 def test_chan_set_state():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
-    send = {"se_userid": 1000, "userid": 1111, "state": 1}
+    send = {"se_userid": 1000, "userid": 1128, "state": 1}
 
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
     ret = client.post('/channel_op/v1/api/channel_set_state', send, headers=headers)
@@ -121,7 +123,6 @@ if __name__ == '__main__':
     #test_login()
     #test_vcode()
     #test_vcode_verify()
-    #test_create_chan()
     #test_chn_register()
     #test_chn_query()
     test_chn_change() 
