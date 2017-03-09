@@ -72,9 +72,6 @@ class ChanHandler(core.Handler):
         Field('is_prepayment', T_INT, False),
     ]
 
-    def POST(self, *args):
-        pass
-    
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self):
