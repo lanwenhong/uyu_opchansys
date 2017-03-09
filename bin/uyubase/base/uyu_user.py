@@ -135,7 +135,7 @@ class UUser:
         try:
             self.db.start()
             #创建用户基本信息
-            sql_value = self.__gen_base_user_sql(udata, define.UYU_USER_ROLE_CHAN)
+            sql_value = self.__gen_base_user_sql(define.UYU_USER_ROLE_CHAN, udata)
             log.debug("auth_user sql: %s", sql_value)
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
@@ -163,7 +163,7 @@ class UUser:
         try:
             self.db.start()
             #创建用户基本信息
-            sql_value = self.__gen_base_user_sql(udata, define.UYU_USER_ROLE_STORE)
+            sql_value = self.__gen_base_user_sql(define.UYU_USER_ROLE_STORE, udata)
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
 
