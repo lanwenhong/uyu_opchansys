@@ -52,9 +52,9 @@ def test_chn_register():
      send = {
         "se_userid": 1000,
 
-        "login_name": "13788889999",
+        "login_name": "13788887777",
         #"nick_name": "张四",
-        "phone_num": "13788889999",
+        "phone_num": "13788887777",
         "channel_name": "大中国四川成都牛逼大渠道",
         #"user_type": 2,
         "email": "lanwenhong@xxx.com",
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     #test_login()
     #test_vcode()
     #test_vcode_verify()
-    #test_chn_register()
+    test_chn_register()
     #test_chn_query()
-    test_chn_change() 
+    #test_chn_change() 
     #test_chan_set_state()

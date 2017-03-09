@@ -45,6 +45,7 @@ class UUser:
         self.udata = {}
         self.pdata = {}
         self.cdata = {}
+        self.sdata = {}
 
         self.login = False
 
@@ -67,6 +68,13 @@ class UUser:
             "status", "is_valid", "is_prepayment", "ctime",
             "channel_name",
         ]
+
+        self.skey = [
+            "userid", "channel_id", "store_type", "store_contacter",
+            "store_mobile", "store_addr", "training_amt_per", "divide_percent",
+            "remain_times", "is_valid", "ctime", "utime",
+            "store_name",
+        ]
     
     def __gen_vsql(self, klist, cdata):
         sql_value = {}
@@ -78,21 +86,42 @@ class UUser:
     #用户注册
     @with_database('uyu_core')
     def user_register(self, udata):
-        try:
+        sql_value = self.__gen_vsql(self.ukey, udata)
+        sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        mobile = udata["login_name"]
+        #默认密码手机号后六位
+        sql_value["password"] = mobile[-6:]
+        sql_value["state"] = define.UYU_USER_STATE_OK 
+        self.db.insert("auth_user", sql_value)
+        self.userid = self.db.last_insert_id()
+    
+
+    def __gen_base_user_sql(self, udata):
             sql_value = self.__gen_vsql(self.ukey, udata)
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             mobile = udata["login_name"]
-            #默认密码手机号后六位
             sql_value["password"] = mobile[-6:]
             sql_value["state"] = define.UYU_USER_STATE_OK 
-            ret = self.db.insert("auth_user", sql_value)
-            if ret == 0:
-                return UYU_OP_ERR
-            self.userid = self.db.last_insert_id()
-            return UYU_OP_OK
-        except:
-            log.debug(traceback.format_exc())
-            return UYU_OP_ERR
+            sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
+            return sql_value
+
+    def __gen_profile_sql(self, userid, pdata):
+            sql_value = self.__gen_vsql(self.pkey, pdata)
+            sql_value["userid"] = userid
+            sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql_value["userid"] = userid
+
+            return sql_value
+
+    
+    def __gen_chan_sql(self, userid, cdata):
+            sql_value = self.__gen_vsql(self.chan_key, cdata)
+            sql_value["userid"] = userid
+            sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            return sql_value
 
     #创建渠道事务
     @with_database('uyu_core')
@@ -100,27 +129,18 @@ class UUser:
         try:
             self.db.start()
             #创建用户基本信息
-            sql_value = self.__gen_vsql(self.ukey, udata)
-            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            mobile = udata["login_name"]
-            sql_value["password"] = mobile[-6:]
-            sql_value["state"] = define.UYU_USER_STATE_OK 
-            sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
+            sql_value = self.__gen_base_user_sql(udata)
+            log.debug("auth_user sql: %s", sql_value)
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
 
             #创建渠道档案
-            sql_value = self.__gen_vsql(self.pkey, pdata)
-            sql_value["userid"] = userid
-            sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
-            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql_value = self.__gen_profile_sql(userid, pdata)
+            log.debug("profile sql: %s", sql_value)
             self.db.insert("profile", sql_value)
             
             #创建渠道相关信息
-            sql_value = self.__gen_vsql(self.chan_key, cdata)
-            sql_value["userid"] = userid
-            sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
-            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql_value = self.__gen_chan_sql(userid, cdata)
             self.db.insert("channel", sql_value)
             chnid = self.db.last_insert_id()
 
@@ -131,11 +151,46 @@ class UUser:
             self.db.rollback()
             raise
 
+    #创建门店信息
+    @with_database('uyu_core')
+    def create_store_transaction(self, udata, pdata, sdata):
+        try:
+            self.db.start()
+            #创建用户基本信息
+            sql_value = self.__gen_base_user_sql(udata)
+            self.db.insert("auth_user", sql_value)
+            userid = self.db.last_insert_id()
+
+            #创建渠道档案
+            sql_value = self.__gen_profile_sql(userid, pdata)
+            self.db.insert("profile", sql_value)
+            
+            #创门店相关信息
+            sql_value = self.__gen_vsql(self.skey, sdata)
+            sql_value["userid"] = userid
+            sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.db.insert("stores", sql_value)
+            store_id = self.db.last_insert_id()
+
+            self.db.commit()
+            self.userid = userid
+            self.store_id = store_id 
+        except:
+            self.db.rollback()
+            raise
+
     #设置渠道状态， 打开/关闭
     @with_database('uyu_core')
     def set_chan_state(self, userid, state):
         self.db.update("channel", {"is_valid": state}, {"userid": userid})
         #self.db.update("channel", {"is_valid": state}, {"userid": userid})
+        self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
+    
+    #设置门店状态，打开/关闭
+    @with_database('uyu_core')
+    def set_chan_state(self, userid, state):
+        self.db.update("stores", {"is_valid": state}, {"userid": userid})
         self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
 
     #更新渠道信息
@@ -155,32 +210,64 @@ class UUser:
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("channel", sql_value, {"userid": userid})
         log.debug("update channel succ!!!")
-
-
-    #load渠道信息
+    
+    #更新门店信息
     @with_database('uyu_core')
-    def load_chan_by_userid(self, userid):
-        record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "phone_num"])
+    def chan_info_change(self, userid, udata, pdata, sdata):
+        sql_value = self.__gen_vsql(self.ukey, udata)
+        sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db.update("auth_user", sql_value, {"id": userid})
+        log.debug("update auth_user succ!!!")
+
+        sql_value = self.__gen_vsql(self.pkey, pdata)
+        sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db.update("profile", sql_value, {"userid": userid})
+        log.debug("update profile succ!!!")
+
+        sql_value = self.__gen_vsql(self.skey, sdata)
+        sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db.update("stores", sql_value, {"userid": userid})
+        log.debug("update store succ!!!")
+
+    #load用户信息
+    @with_database('uyu_core')
+    def load_info_by_userid(self, userid):
+        #record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "phone_num"])
+        record = self.db.select_one("auth_user", {"id": userid})
         if record:
             for key in self.ukey:
                 if record.get(key, None):
                     self.udata[key] = record[key]
             self.udata["userid"] = userid
-
-        record = self.db.select_one("profile", {"userid": userid})
-        if record:
-            for key in self.pkey:
-                if record.get(key, None):
-                    self.pdata[key] = record[key]
-            self.udata["userid"] = userid
-
-        record = self.db.select_one("channel", {"userid": userid})
-        if record:
-            for key in self.chan_key:
-                if record.get(key, None):
-                    self.cdata[key] = record[key]        
-            self.cdata["chnid"] = record["id"]
+        else:
+            log.warn("not found: %d", userid)
+            return
+        role = self.udata["user_type"]
         
+        if role == define.UYU_USER_ROLE_CHAN or role == define.UYU_USER_ROLE_STORE: 
+            record = self.db.select_one("profile", {"userid": userid})
+            if record:
+                for key in self.pkey:
+                    if record.get(key, None):
+                        self.pdata[key] = record[key]
+                self.udata["userid"] = userid
+
+        if role == define.UYU_USER_ROLE_CHAN:
+            record = self.db.select_one("channel", {"userid": userid})
+            if record:
+                for key in self.chan_key:
+                    if record.get(key, None):
+                        self.cdata[key] = record[key]        
+                self.cdata["chnid"] = record["id"]
+
+        if role == define.UYU_USER_ROLE_STORE:
+            record = self.db.select_one("stores", {"userid": userid})
+            if record:
+                for key in self.skey:
+                    if record.get(key, None):
+                        self.sdata[key] = record[key]        
+                self.sdata["store_id"] = record["id"]
+            
     def _check_permission(self, user_type, sys_role):
         log.debug(define.PERMISSION_CHECK)
         plist = define.PERMISSION_CHECK.get(sys_role, None)
