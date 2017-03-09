@@ -55,10 +55,10 @@ class UUser:
         ]
 
         self.pkey = [
-            "userid", "org_code", "license_id", "legal_person", 
+            "userid", "org_code", "license_id", "legal_person",
             "business", "front_business", "account_name", "bank_name",
-            "bank_account", "contact_name", "contact_phone", "contact_email", 
-            "address", "org_pic", "license_pic", "idcard_no", 
+            "bank_account", "contact_name", "contact_phone", "contact_email",
+            "address", "org_pic", "license_pic", "idcard_no",
             "idcard_front", "idcard_back", "state", "ctime",
         ]
 
@@ -67,14 +67,14 @@ class UUser:
             "status", "is_valid", "is_prepayment", "ctime",
             "channel_name",
         ]
-    
+
     def __gen_vsql(self, klist, cdata):
         sql_value = {}
         for key in cdata:
             if cdata.get(key, None):
                 sql_value[key] = cdata[key]
         return sql_value
-    
+
     #用户注册
     @with_database('uyu_core')
     def user_register(self, udata):
@@ -84,7 +84,7 @@ class UUser:
             mobile = udata["login_name"]
             #默认密码手机号后六位
             sql_value["password"] = mobile[-6:]
-            sql_value["state"] = define.UYU_USER_STATE_OK 
+            sql_value["state"] = define.UYU_USER_STATE_OK
             ret = self.db.insert("auth_user", sql_value)
             if ret == 0:
                 return UYU_OP_ERR
@@ -104,7 +104,7 @@ class UUser:
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             mobile = udata["login_name"]
             sql_value["password"] = mobile[-6:]
-            sql_value["state"] = define.UYU_USER_STATE_OK 
+            sql_value["state"] = define.UYU_USER_STATE_OK
             sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
@@ -115,7 +115,7 @@ class UUser:
             sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.db.insert("profile", sql_value)
-            
+
             #创建渠道相关信息
             sql_value = self.__gen_vsql(self.chan_key, cdata)
             sql_value["userid"] = userid
@@ -178,9 +178,9 @@ class UUser:
         if record:
             for key in self.chan_key:
                 if record.get(key, None):
-                    self.cdata[key] = record[key]        
+                    self.cdata[key] = record[key]
             self.cdata["chnid"] = record["id"]
-        
+
     def _check_permission(self, user_type, sys_role):
         log.debug(define.PERMISSION_CHECK)
         plist = define.PERMISSION_CHECK.get(sys_role, None)

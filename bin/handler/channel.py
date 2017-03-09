@@ -49,7 +49,7 @@ class ChanStateSetHandler(core.Handler):
         self.write(ret)
 
 class ChanHandler(core.Handler):
-    
+
     _get_handler_fields = [
         Field('userid', T_INT, False)
     ]
@@ -121,7 +121,7 @@ class ChanHandler(core.Handler):
         for key in uop.chan_key:
             if params.get(key, None):
                 chndata[key] = params[key]
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)    
+        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         uop = UUser()
         ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
         if ret == UYU_OP_ERR:
@@ -165,7 +165,7 @@ class ChannelInfoHandler(core.Handler):
     def _query_handler(self, nick_name=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
-                       'channel.divide_percent', 'channel.status', 'channel.ctime',
+                       'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
                        ]
         where = {'auth_user.nick_name': nick_name} if nick_name else {}
@@ -213,7 +213,7 @@ class ChannelInfoHandler(core.Handler):
 #        for key in uop.chan_key:
 #            if params.get(key, None):
 #                chndata[key] = params[key]
-#        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
+#        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
 #        uop = UUser()
 #        ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
 #        if ret == UYU_OP_ERR:
@@ -271,7 +271,7 @@ class CreateChanHandler(core.Handler):
             if params.get(key, None):
                 chndata[key] = params[key]
 
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
+        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         ret = uop.call("create_chan_transaction", udata, pdata, chndata)
         if ret == UYU_OP_ERR:
             return error(UAURET.REGISTERERR)

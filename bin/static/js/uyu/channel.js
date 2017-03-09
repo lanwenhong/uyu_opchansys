@@ -1,10 +1,4 @@
 $(document).ready(function(){
-    $(".setStatus").click(function(e){
-        console.log('click');
-        console.log(e);
-        console.log(e.target);
-    });
-
     var table = $('#channelList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -56,8 +50,6 @@ $(document).ready(function(){
                     }
 	                detail_data = data.data;
 	                num = detail_data.num;
-                    console.log('num:'+num);
-                    console.log('info:'+detail_data.info);
 	                callback({
 	                    recordsTotal: num,
 	                    recordsFiltered: num,
@@ -74,14 +66,10 @@ $(document).ready(function(){
                 targets: 9,
                 data: '操作',
                 render: function(data, type, full) {
-                    // print_object(full);
-                    var status = full.status;
-                    var id =full.id;
+                    var status = full.is_valid;
+                    var uid =full.userid;
                     var msg = status ? '打开' : '关闭';
-                    // return "<button type='button' class='btn btn-default setStatus' data-channelid="+id+">"+msg+"</button>";
-                    // return "<input type='button' class='btn btn-default setStatus' data-channelid=id value=msg+">";
-                    return "<input type='button' class='btn btn-default setStatus' data-channelid="+id+" value="+msg+">";
-                    // return "<a href='/delete?name=" + data + "'>删除</a>&nbsp;<a href='/update?name=" + data + "'>更新</a>";
+                    return "<input type='button' class='btn btn-default setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
                 }
             }
         ],
@@ -93,7 +81,7 @@ $(document).ready(function(){
 				{ data: 'training_amt_per' },
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },
-				{ data: 'status' },
+				{ data: 'is_valid' },
 				{ data: 'ctime' },
 		],
         'oLanguage': {
@@ -128,8 +116,39 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.setStatus', function(){
-        var channel_id = $(this).data('channelid');
-        console.log('view ... '+channel_id);
+        var uid = $(this).data('channelid');
+        var status = $(this).data('status');
+        var value = status ? 0 : 1
+        var se_userid = window.localStorage.getItem('myid');
+        var post_data = {
+            'userid': uid,
+            'state': value,
+            'se_userid': se_userid,
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/channel_set_state',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    $('#channelList').DataTable().draw();
+                    toastr.success('ok');
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
+
     });
 
 });
