@@ -35,7 +35,7 @@ def test_vcode_verify():
 
 
 def test_chn_query():
-    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    SERVER   = [{'addr':('127.0.0.1', 8084), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
     send = {"userid": 1129, "se_userid": 1000}
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
@@ -59,7 +59,7 @@ def test_chn_register():
         #"user_type": 2,
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
-        "license_id": "xxxxxx11111111111", 
+        "license_id": "xxxxxx11111111111",
         "legal_person": "李四",
         "business": "大富豪",
         "front_business": "岁月",
@@ -90,7 +90,7 @@ def test_chn_change():
         "phone_num": "13788889999",
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
-        "license_id": "xxxxxx11111111111", 
+        "license_id": "xxxxxx11111111111",
         "legal_person": "李四",
         "business": "大富豪",
         "front_business": "岁月",
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     #test_login()
     #test_vcode()
     #test_vcode_verify()
-    test_chn_register()
-    #test_chn_query()
-    #test_chn_change() 
+    # test_chn_register()
+    test_chn_query()
+    #test_chn_change()
     #test_chan_set_state()

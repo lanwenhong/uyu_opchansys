@@ -68,8 +68,11 @@ $(document).ready(function(){
                 render: function(data, type, full) {
                     var status = full.is_valid;
                     var uid =full.userid;
+                    var channel_id =full.id;
                     var msg = status ? '打开' : '关闭';
-                    return "<input type='button' class='btn btn-default setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
+                    var op = "<input type='button' class='btn btn-default setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
+                    var view ="<input type='button' class='btn btn-default viewEdit' data-uid="+uid+" value="+'查看'+ " data-channelid="+channel_id+">";
+                    return op+view;
                 }
             }
         ],
@@ -140,6 +143,64 @@ $(document).ready(function(){
         });
     });
 
+
+    $(document).on('click', '.viewEdit', function(){
+        var uid = $(this).data('uid');
+        var channel_id = $(this).data('channelid');
+        var se_userid = window.localStorage.getItem('myid');
+        var get_data = {
+            'userid': uid,
+            'se_userid': se_userid,
+        }
+        console.log('get_data');
+        $.ajax({
+	        url: '/channel_op/v1/api/channel',
+	        type: 'GET',
+	        dataType: 'json',
+	        data: get_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('get data ok');
+                    console.log(data.data.profile);
+                    console.log(data.data.chn_data);
+                    console.log(data.data.u_dasta);
+                    var p_data = data.data.profile;
+                    var ch_data = data.data.chn_data;
+                    var u_data = data.data.u_dasta;
+                    $('#uid').text(uid);
+                    $('#e_channel_id').val(channel_id);
+                    $('#e_phone_num').val(u_data.phone_num);
+                    $('#e_channel_name').val(ch_data.channel_name);
+                    $('#e_create_name').val(ch_data.ctime);
+                    $('#e_legal_person').val(p_data.legal_person);
+                    $('#e_org_code').val(p_data.org_code);
+                    $('#e_license_id').val(p_data.license_id);
+                    $('#e_email').val(u_data.email);
+                    $('#e_account_name').val(p_data.account_name);
+                    $('#e_bank_account').val(p_data.bank_account);
+                    $('#e_contact_name').val(p_data.contact_name);
+                    $('#e_contact_phone').val(p_data.contact_phone);
+                    $('#e_contact_email').val(p_data.contact_email);
+                    $('#e_address').val(p_data.address);
+                    $('#e_training_amt_per').val(ch_data.training_amt_per);
+                    $('#e_is_prepayment').val(ch_data.is_prepayment);
+                    $("#channelEditModal").modal();
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
+    });
+
+
     $(document).on('click', '.setStatus', function(){
         var uid = $(this).data('channelid');
         var status = $(this).data('status');
@@ -174,6 +235,40 @@ $(document).ready(function(){
 	        },
         });
 
+    });
+
+    $('#channelEditSubmit').click(function(){
+        var uid = $('#uid').text();
+        var se_userid = window.localStorage.getItem('myid');
+        var queryString = $('#channelEditForm').formSerialize();
+        var post_data = query_to_obj(queryString);
+        post_data['se_userid'] = se_userid;
+        post_data['userid'] = uid;
+        console.log('edit data');
+        console.log(post_data);
+        $.ajax({
+	        url: '/channel_op/v1/api/channel',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    $('#channelList').DataTable().draw();
+                    toastr.success('ok');
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
     });
 
 });
