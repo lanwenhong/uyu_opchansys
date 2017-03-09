@@ -96,13 +96,14 @@ class UUser:
         self.userid = self.db.last_insert_id()
     
 
-    def __gen_base_user_sql(self, udata):
+    def __gen_base_user_sql(self, role, udata):
             sql_value = self.__gen_vsql(self.ukey, udata)
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             mobile = udata["login_name"]
             sql_value["password"] = mobile[-6:]
             sql_value["state"] = define.UYU_USER_STATE_OK 
-            sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
+            #sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
+            sql_value["user_type"] = role
             return sql_value
 
     def __gen_profile_sql(self, userid, pdata):
@@ -134,7 +135,7 @@ class UUser:
         try:
             self.db.start()
             #创建用户基本信息
-            sql_value = self.__gen_base_user_sql(udata)
+            sql_value = self.__gen_base_user_sql(udata, define.UYU_USER_ROLE_CHAN)
             log.debug("auth_user sql: %s", sql_value)
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
@@ -162,7 +163,7 @@ class UUser:
         try:
             self.db.start()
             #创建用户基本信息
-            sql_value = self.__gen_base_user_sql(udata)
+            sql_value = self.__gen_base_user_sql(udata, define.UYU_USER_ROLE_STORE)
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
 
