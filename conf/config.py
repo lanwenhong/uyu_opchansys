@@ -3,15 +3,14 @@ import os
 HOME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bin')
 rtenv = 'product'
 
-#LOGFILE = {
-#    'root': {
-#        'filename': {
-#            'DEBUG': os.path.join(HOME, '../log/channel_op_debug.log'),
-#            'WARN': os.path.join(HOME, '../log/channel_op_warn.log'),
-#        }
-#    }
-#}
-LOGFILE = None
+LOGFILE = {
+    'root': {
+        'filename': {
+            'DEBUG': os.path.join(HOME, '../log/channel_op_debug.log'),
+            'WARN': os.path.join(HOME, '../log/channel_op_warn.log'),
+        }
+    }
+}
 
 # 数据库配置
 database = {

@@ -110,9 +110,34 @@ $(document).ready(function(){
     });
 
     $("#channelCreateSubmit").click(function(){
+        var se_userid = window.localStorage.getItem('myid');
         var queryString = $('#channelCreateForm').formSerialize();
-        alert(queryString);
-        return false;
+        var post_data = query_to_obj(queryString);
+        post_data['se_userid'] = se_userid;
+        $.ajax({
+	        url: '/channel_op/v1/api/channel_create',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    toastr.success('新建渠道成功');
+		            $("#channelCreateModal").modal('hide');
+                    $('#channelList').DataTable().draw();
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
     });
 
     $(document).on('click', '.setStatus', function(){
@@ -161,4 +186,16 @@ function print_object(obj){
         temp += key + ":" + obj[key] + "\n";
     }
     console.log(temp)
+}
+
+
+function query_to_obj(queryString){
+    var arr = queryString.split('&');
+    var post_data = new Object();
+    for(var i=0; i<arr.length; i++){
+        console.log(arr[i]);
+        var tmp = arr[i].split('=');
+        post_data[tmp[0]] = tmp[1];
+    }
+    return post_data;
 }
