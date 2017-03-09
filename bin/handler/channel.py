@@ -33,10 +33,9 @@ class ChanStateSetHandler(core.Handler):
         uop = UUser()
         params = self.validator.data
         ret = uop.call("set_chan_state", params["userid"], params["state"])
-
-        #ret = uuser_call("set_chan_state", params["userid"], params["state"])
-        if ret == UAURET.VCODEERR:
+        if ret == UYU_OP_ERR:
             return error(UAURET.REQERR)
+        log.debug("set userid: %d state: %d succ", params["userid"], params["state"])
         return success({})
 
     def POST(self, *args):

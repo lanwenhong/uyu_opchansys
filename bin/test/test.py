@@ -118,11 +118,11 @@ def test_chan_set_state():
     log.debug(ret)
 
 if __name__ == '__main__':
-    test_login()
+    #test_login()
     #test_vcode()
     #test_vcode_verify()
     #test_create_chan()
     #test_chn_register()
     #test_chn_query()
     #test_chn_change() 
-    #test_chan_set_state()
+    test_chan_set_state()

@@ -130,7 +130,8 @@ class UUser:
     @with_database('uyu_core')
     def set_chan_state(self, userid, state):
         self.db.update("channel", {"is_valid": state}, {"userid": userid})
-        self.db.update("auth_user", {"state", define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
+        #self.db.update("channel", {"is_valid": state}, {"userid": userid})
+        self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
 
     #更新渠道信息
     @with_database('uyu_core')
