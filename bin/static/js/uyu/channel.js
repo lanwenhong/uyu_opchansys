@@ -197,5 +197,6 @@ function query_to_obj(queryString){
         var tmp = arr[i].split('=');
         post_data[tmp[0]] = tmp[1];
     }
+    console.log('-----');
     return post_data;
 }
