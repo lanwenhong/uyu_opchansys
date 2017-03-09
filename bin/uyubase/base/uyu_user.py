@@ -124,12 +124,14 @@ class UUser:
             sql_value = self.__gen_vsql(self.pkey, pdata)
             sql_value["userid"] = userid
             sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.db.insert("profile", sql_value)
             
             #创建渠道相关信息
             sql_value = self.__gen_vsql(self.chan_key, cdata)
             sql_value["userid"] = userid
             sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
+            sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.db.insert("channel", sql_value)
             chnid = self.db.last_insert_id()
 
@@ -147,19 +149,20 @@ class UUser:
     def chan_info_change(self, userid, udata, pdata, cdata):
         try:
             sql_value = self.__gen_vsql(self.ukey, udata)
-            ret = self.db.update("auth_user", sql_value, {"userid": userid})
-            if ret == 0:
-                return UYU_OP_ERR
+            sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.db.update("auth_user", sql_value, {"id": userid})
+            log.debug("update auth_user succ!!!")
 
             sql_value = self.__gen_vsql(self.pkey, pdata)
-            ret = self.db.update("profile", sql_value, {"userid": userid})
-            if ret == 0:
-                return UYU_OP_ERR
+            sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.db.update("profile", sql_value, {"userid": userid})
+            log.debug("update profile succ!!!")
 
             sql_value = self.__gen_vsql(self.chan_key, cdata)
-            ret = self.db.update("channel", sql_value, {"userid": userid})
-            if ret == 0:
-                return UYU_OP_ERR
+            sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.db.update("channel", sql_value, {"userid": userid})
+            log.debug("update channel succ!!!")
+
             return UYU_OP_OK
         except:
             log.debug(traceback.format_exc())

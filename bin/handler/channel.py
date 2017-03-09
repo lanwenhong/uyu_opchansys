@@ -75,9 +75,14 @@ class ChanHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
         params = self.validator.data
+
         udata = {}
-        for key in uop.ukey:
+        for key in ["login_name", "nick_name", "phone_num"]:
             if params.get(key, None):
                 udata[key] = params[key]
 
@@ -92,10 +97,10 @@ class ChanHandler(core.Handler):
                 chndata[key] = params[key]
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
         uop = UUser()
-        ret = uop.chan_info_change(udata, pdata, chndata)
+        ret = uop.chan_info_change(params["userid"], udata, pdata, chndata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGECHANERR)
-        return success({})
+        return success({"userid": params["userid"]})
 
     def POST(self, *args):
         ret = self._post_handler()
