@@ -2,14 +2,16 @@
 import os
 HOME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bin')
 rtenv = 'product'
-LOGFILE = {
-    'root': {
-        'filename': {
-            'DEBUG': os.path.join(HOME, '../log/channel_op_debug.log'),
-            'WARN': os.path.join(HOME, '../log/channel_op_warn.log'),
-        }
-    }
-}
+
+#LOGFILE = {
+#    'root': {
+#        'filename': {
+#            'DEBUG': os.path.join(HOME, '../log/channel_op_debug.log'),
+#            'WARN': os.path.join(HOME, '../log/channel_op_warn.log'),
+#        }
+#    }
+#}
+LOGFILE = None
 
 # 数据库配置
 database = {
@@ -49,7 +51,7 @@ template = os.path.join(HOME, 'template')
 # 服务地址
 HOST = '0.0.0.0'
 # 服务端口
-PORT = 8084
+PORT = 8083
 #redis
 redis_url = 'redis://127.0.0.1:4600/0'
 #cookie 配置

@@ -39,7 +39,6 @@ class VCode:
     def sms_vcode(self, vcode):
         pass
 
-<<<<<<< HEAD
 class UUser:
     def __init__(self):
         self.userid = None

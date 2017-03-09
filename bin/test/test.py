@@ -52,9 +52,9 @@ def test_chn_register():
      send = {
         "se_userid": 1000,
 
-        "login_name": "13682895987",
+        "login_name": "13788889999",
         "nick_name": "张四",
-        "phone_num": "13682895987",
+        "phone_num": "13788889999",
         #"user_type": 2,
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
@@ -82,11 +82,11 @@ def test_chn_change():
      client = HttpClient(SERVER, client_class = RequestsClient)
      send = {
         "se_userid": 1000,
-        "userid": 1111,
+        "userid": 1128,
+
         "login_name": "18987867889",
         "nick_name": "张三",
         "phone_num": "18987867889",
-        #"user_type": 2,
         "email": "lanwenhong@xxx.com",
         "org_code": "xxxxxx1111111111",
         "license_id": "xxxxxx11111111111", 
@@ -101,7 +101,7 @@ def test_chn_change():
         "contact_email": "lanwenhong@xxxx.com",
         "address": "成都天府新区",
         "training_amt_per": 59,
-        "divide_percent": 0.75,
+        "divide_percent": 0.65,
         "is_prepayment": 0,
      }
      headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
@@ -124,5 +124,5 @@ if __name__ == '__main__':
     #test_create_chan()
     #test_chn_register()
     #test_chn_query()
-    #test_chn_change() 
-    test_chan_set_state()
+    test_chn_change() 
+    #test_chan_set_state()
