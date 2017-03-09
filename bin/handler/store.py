@@ -5,6 +5,7 @@ from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
+from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
 from uyubase.uyu.define import UYU_SYS_ROLE_OP
 
@@ -12,11 +13,10 @@ from runtime import g_rt
 from config import cookie_conf
 import logging, datetime, time
 import tools
-from tools import check_session
 log = logging.getLogger()
 
 class StoreManage(core.Handler):
-    @check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @uyu_check_session_for_page(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
         self.write(template.render('store.html'))
 

@@ -132,3 +132,56 @@ def uyu_set_cookie(redis_pool, cookie_conf, user_role):
             return x
         return _
     return f
+
+
+def uyu_check_session_for_page(redis_pool, cookie_conf, sys_role):
+    def f(func):
+        def _(self, *args, **kwargs):
+            try:
+                flag = True
+                sk = self.get_cookie("sessionid")
+                log.debug("sk: %s", sk)
+                self.session = USession(redis_pool, cookie_conf, sk)
+                v = self.session.get_session()
+                if not v:
+                    flag = False
+
+                plist = define.PERMISSION_CHECK.get(sys_role, None)
+                if not plist:
+                    log.debug('tool permission error')
+                    flag = False
+
+                log.debug("tool get plist: %s", plist)
+                user_type = v.get("user_type")
+                if user_type not in plist:
+                    log.debug('tool user type error')
+                    flag = False
+
+                if not flag:
+                    self.redirect('/channel_op/v1/page/login.html')
+
+                ret = func(self, *args, **kwargs)
+                return ret
+            except Exception as e:
+                log.warn(e)
+                log.debug('tool except redirect')
+                self.redirect('/channel_op/v1/page/login.html')
+        return _
+    return f
+
+
+def check_login(func):
+    """sessionid userid all"""
+    def _(self, *args, **kwargs):
+        try:
+            if not self.user.sauth:
+                # 带修改
+                self.redirect('/channel_op/v1/page/login.html')
+            ret = func(self, *args, **kwargs)
+            return ret
+        except Exception as e:
+            log.warn(e)
+            print 'except redirect'
+            # 带修改
+            self.redirect('/channel_op/v1/page/login.html')
+    return _
