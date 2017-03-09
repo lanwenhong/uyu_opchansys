@@ -26,43 +26,43 @@ class Login(core.Handler):
 
 
 class ChangePassHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
         Field('password', T_STR, False),
     ]
+
     @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
         vcode = params['vcode']
         password = params["password"]
-        
+
         u_op = UUser()
         respcd = u_op.change_password(mobile, vcode, password)
         if respcd != UAURET.OK:
             return error(respcd)
         return success({})
-        
+
     def POST(self, *args):
         ret = self._post_handler(self, args)
         self.write(ret)
 
 class LoginHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('password', T_STR, False),
     ]
 
     @uyu_set_cookie(g_rt.redis_pool, cookie_conf, UYU_USER_ROLE_SUPER)
-    @with_validator_self 
+    @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
         password = params["password"]
 
         u_op = UUser()
-        
         ret = u_op.call("check_userlogin", mobile, password, UYU_SYS_ROLE_OP)
         if not u_op.login or ret == UYU_OP_ERR:
             log.warn("mobile: %s login forbidden", mobile)
@@ -74,15 +74,14 @@ class LoginHandler(core.Handler):
         
     def POST(self, *args):
         ret = self._post_handler(args)
-        self.write(ret)
-
+        return ret
 
 class SmsHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
     ]
 
-    _get_handler_fields = [ 
+    _get_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
     ]
@@ -91,7 +90,7 @@ class SmsHandler(core.Handler):
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
-        
+
         vop = VCode()
         vcode = vop.gen_vcode(mobile)
 
@@ -102,8 +101,9 @@ class SmsHandler(core.Handler):
         return success({})
 
     def POST(self, *args):
-        ret = self._post_handler(args) 
+        ret = self._post_handler(args)
         self.write(ret)
 
     def GET(self, *args):
         pass
+

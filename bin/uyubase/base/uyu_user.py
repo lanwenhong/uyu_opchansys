@@ -5,7 +5,7 @@ from zbase.base.dbpool import with_database
 import logging, time, random
 import traceback
 
-from uyubase.base.response import success, error, UAURET 
+from uyubase.base.response import success, error, UAURET
 from uyubase.uyu import define
 from uyubase.uyu.define import UYU_OP_OK, UYU_OP_ERR
 
@@ -15,7 +15,7 @@ log = logging.getLogger()
 class VCode:
     def __init__(self):
         pass
-    
+
     @with_database('uyu_core')
     def gen_vcode(self, mobile):
         try:
@@ -39,6 +39,7 @@ class VCode:
     def sms_vcode(self, vcode):
         pass
 
+<<<<<<< HEAD
 class UUser:
     def __init__(self):
         self.userid = None
@@ -184,7 +185,7 @@ class UUser:
         log.debug(define.PERMISSION_CHECK)
         plist = define.PERMISSION_CHECK.get(sys_role, None)
         if not plist:
-            return False 
+            return False
 
         log.debug("plist: %s", plist)
         if user_type not in plist:
@@ -230,4 +231,3 @@ class UUser:
         except:
             log.warn(traceback.format_exc())
             return UYU_OP_ERR
-            
