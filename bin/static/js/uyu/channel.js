@@ -1,5 +1,11 @@
 $(document).ready(function(){
-    $('#channelList').DataTable({
+    $(".setStatus").click(function(e){
+        console.log('click');
+        console.log(e);
+        console.log(e.target);
+    });
+
+    var table = $('#channelList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
         "serverSide": true,
@@ -63,6 +69,22 @@ $(document).ready(function(){
 
             });
         },
+        'columnDefs': [
+            {
+                targets: 9,
+                data: '操作',
+                render: function(data, type, full) {
+                    // print_object(full);
+                    var status = full.status;
+                    var id =full.id;
+                    var msg = status ? '打开' : '关闭';
+                    // return "<button type='button' class='btn btn-default setStatus' data-channelid="+id+">"+msg+"</button>";
+                    // return "<input type='button' class='btn btn-default setStatus' data-channelid=id value=msg+">";
+                    return "<input type='button' class='btn btn-default setStatus' data-channelid="+id+" value="+msg+">";
+                    // return "<a href='/delete?name=" + data + "'>删除</a>&nbsp;<a href='/update?name=" + data + "'>更新</a>";
+                }
+            }
+        ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'nick_name' },
@@ -72,7 +94,7 @@ $(document).ready(function(){
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },
 				{ data: 'status' },
-				{ data: 'create_time' },
+				{ data: 'ctime' },
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -104,4 +126,20 @@ $(document).ready(function(){
         alert(queryString);
         return false;
     });
+
+    $(document).on('click', '.setStatus', function(){
+        var channel_id = $(this).data('channelid');
+        console.log('view ... '+channel_id);
+    });
+
 });
+
+
+function print_object(obj){
+    console.log('print object start');
+    var temp = ""
+    for(var key in obj){
+        temp += key + ":" + obj[key] + "\n";
+    }
+    console.log(temp)
+}

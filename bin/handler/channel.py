@@ -54,7 +54,7 @@ class ChannelInfoHandler(core.Handler):
     def _query_handler(self, nick_name=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
-                       'channel.divide_percent', 'channel.status', 'channel.create_time',
+                       'channel.divide_percent', 'channel.status', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
                        ]
         where = {'auth_user.nick_name': nick_name} if nick_name else {}
@@ -64,7 +64,7 @@ class ChannelInfoHandler(core.Handler):
             profile_ret = self.db.select_one(table='profile', fields=profile_fields, where={'userid': userid})
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
             item['contact_phone'] = profile_ret.get('contact_phone', '') if profile_ret else ''
-            item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
 
         return ret
 
