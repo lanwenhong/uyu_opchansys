@@ -5,7 +5,7 @@ from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 
 from uyubase.base.response import success, error, UAURET
 
-from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_USER_ROLE_SUPER
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_USER_ROLE_SUPER,UYU_OP_ERR
 
 from zbase.base.dbpool import with_database
 
@@ -61,12 +61,16 @@ class LoginHandler(core.Handler):
         mobile = params['mobile']
         password = params["password"]
 
-
         u_op = UUser()
-        respcd, dbret = u_op.check_userlogin(mobile, password, UYU_SYS_ROLE_OP)
-        if respcd != UAURET.OK:
-            return error(respcd)
-        return success({"userid": dbret["id"]}) 
+        
+        ret = u_op.call("check_userlogin", mobile, password, UYU_SYS_ROLE_OP)
+        if not u_op.login or ret == UYU_OP_ERR:
+            log.warn("mobile: %s login forbidden", mobile)
+            return error(UAURET.USERERR)
+
+        log.debug("get user data: %s", u_op.udata)
+        log.debug("userid: %d login succ", u_op.udata["id"])
+        return success({"userid": u_op.udata["id"]})
         
     def POST(self, *args):
         ret = self._post_handler(args)

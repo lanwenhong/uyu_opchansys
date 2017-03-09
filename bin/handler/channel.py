@@ -18,6 +18,31 @@ class ChannelManage(core.Handler):
     def GET(self):
         self.write(template.render('channel.html'))
 
+
+class ChanStateSetHandler(core.Handler):
+    _post_handler_fields = [
+        Field('userid', T_INT, False),
+        Field('state', T_INT, False),
+    ]
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
+        params = self.validator.data
+        ret = uop.call("set_chan_state", params["userid"], params["state"])
+
+        #ret = uuser_call("set_chan_state", params["userid"], params["state"])
+        if ret == UAURET.VCODEERR:
+            return error(UAURET.REQERR)
+        return success({})
+
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)
+
 class ChanHandler(core.Handler):
     
     _get_handler_fields = [
@@ -58,7 +83,7 @@ class ChanHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         params = self.validator.data
         uop = UUser()
-        ret = uop.load_chan_by_userid(params["userid"])
+        ret = uop.call("load_chan_by_userid", params["userid"])
         if ret ==  UYU_OP_ERR:
             return error(UAURET.USERERR)
 
@@ -75,7 +100,6 @@ class ChanHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
-
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         uop = UUser()
@@ -97,7 +121,7 @@ class ChanHandler(core.Handler):
                 chndata[key] = params[key]
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
         uop = UUser()
-        ret = uop.chan_info_change(params["userid"], udata, pdata, chndata)
+        ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGECHANERR)
         return success({"userid": params["userid"]})
@@ -153,7 +177,7 @@ class CreateChanHandler(core.Handler):
                 chndata[key] = params[key]
 
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
-        ret = uop.create_chan_transaction(udata, pdata, chndata)
+        ret = uop.call("create_chan_transaction", udata, pdata, chndata)
         if ret == UYU_OP_ERR:
             return error(UAURET.REGISTERERR)
 

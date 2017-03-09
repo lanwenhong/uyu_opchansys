@@ -27,4 +27,5 @@ urls = (
     #创建渠道
     ('^/channel_op/v1/api/channel_create$', channel.CreateChanHandler),
     ('^/channel_op/v1/api/channel$', channel.ChanHandler),
+    ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
 )
