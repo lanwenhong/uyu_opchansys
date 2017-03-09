@@ -109,25 +109,30 @@ class UUser:
     def create_chan_transaction(self, udata, pdata, cdata):
         try:
             self.db.start()
+            #创建用户基本信息
             sql_value = self.__gen_vsql(self.ukey, udata)
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             mobile = udata["login_name"]
             sql_value["password"] = mobile[-6:]
             sql_value["state"] = define.UYU_USER_STATE_OK 
-
+            sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
             self.db.insert("auth_user", sql_value)
             userid = self.db.last_insert_id()
+
+            #创建渠道档案
             sql_value = self.__gen_vsql(self.pkey, pdata)
             sql_value["userid"] = userid
+            sql_value["state"] = define.UYU_USER_PROFILE_STATE_UNAUDITED
             self.db.insert("profile", sql_value)
             
+            #创建渠道相关信息
             sql_value = self.__gen_vsql(self.chan_key, cdata)
             sql_value["userid"] = userid
-
+            sql_value["is_valid"] = define.UYU_CHAN_STATUS_OPEN
             self.db.insert("channel", sql_value)
             chnid = self.db.last_insert_id()
-            self.db.commit()
 
+            self.db.commit()
             self.userid = userid
             self.chnid = chnid
             return UYU_OP_OK
