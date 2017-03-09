@@ -28,6 +28,7 @@ class UAURET:
     METHODERR           = "2601"
     VCODEERR            = "1000"
     REGISTERERR         = "1001"
+    CHANGECHANERR       = "1002"
 
 error_map = { 
     UAURET.OK                    : u"成功",
@@ -50,6 +51,7 @@ error_map = {
     UAURET.METHODERR             : u"函数未实现",
     UAURET.VCODEERR              : u"验证码错误",
     UAURET.REGISTERERR           : u"用户注册失败",
+    UAURET.CHANGECHANERR         : u"更新渠道信息失败",
 }
 
 def json_default_trans(obj):

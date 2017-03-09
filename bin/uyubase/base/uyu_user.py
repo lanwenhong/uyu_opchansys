@@ -44,6 +44,7 @@ class UUser:
         self.userid = None
         self.udata = {}
         self.pdata = {}
+        self.cdata = {}
 
         self.ukey = [
             "login_name", "nick_name", "phone_num", "password",
@@ -139,6 +140,65 @@ class UUser:
         except:
             log.debug(traceback.format_exc())
             self.db.rollback()
+            return UYU_OP_ERR
+
+    #更新渠道信息
+    @with_database('uyu_core')
+    def chan_info_change(self, userid, udata, pdata, cdata):
+        try:
+            sql_value = self.__gen_vsql(self.ukey, udata)
+            ret = self.db.update("auth_user", sql_value, {"userid": userid})
+            if ret == 0:
+                return UYU_OP_ERR
+
+            sql_value = self.__gen_vsql(self.pkey, pdata)
+            ret = self.db.update("profile", sql_value, {"userid": userid})
+            if ret == 0:
+                return UYU_OP_ERR
+
+            sql_value = self.__gen_vsql(self.chan_key, cdata)
+            ret = self.db.update("channel", sql_value, {"userid": userid})
+            if ret == 0:
+                return UYU_OP_ERR
+            return UYU_OP_OK
+        except:
+            log.debug(traceback.format_exc())
+            return UYU_OP_ERR 
+
+    #load渠道信息
+    @with_database('uyu_core')
+    def load_chan_by_userid(self, userid):
+        try:
+            record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "nick_name", "phone_num"])
+            if not record:
+                log.warn("userid: %d get auth_user error", userid)
+                return UYU_OP_ERR
+            for key in self.ukey:
+                if record.get(key, None):
+                    self.udata[key] = record[key]
+            self.udata["userid"] = userid
+
+            record = self.db.select_one("profile", {"userid": userid})
+            if not record:
+                log.warn("userid: %d get profile error", userid)
+                return UYU_OP_ERR
+            for key in self.pkey:
+                if record.get(key, None):
+                    self.pdata[key] = record[key]
+            self.udata["userid"] = userid
+
+            record = self.db.select_one("channel", {"userid": userid})
+            if not record:
+                log.warn("userid: %d get chan error", userid) 
+                return UYU_OP_ERR
+            for key in self.chan_key:
+                if record.get(key, None):
+                    self.cdata[key] = record[key]        
+            self.cdata["chnid"] = record["id"]
+        
+            return UYU_OP_OK
+        except:
+            log.debug(traceback.format_exc())
             return UYU_OP_ERR
 
     def _check_permission(self, user_type, sys_role):

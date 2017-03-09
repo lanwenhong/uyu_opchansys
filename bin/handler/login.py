@@ -25,15 +25,12 @@ class Login(core.Handler):
         self.write(template.render('login.html'))
 
 
-
 class ChangePassHandler(core.Handler):
-
     _post_handler_fields = [ 
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
         Field('password', T_STR, False),
     ]
-    
     @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
@@ -50,7 +47,6 @@ class ChangePassHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler(self, args)
         self.write(ret)
-
 
 class LoginHandler(core.Handler):
     _post_handler_fields = [ 
