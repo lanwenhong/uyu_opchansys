@@ -10,7 +10,7 @@ from uyubase.base.uyu_user import UUser
 
 
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
-from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_ERR
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_STORE_ROLE_MAP, UYU_STORE_STATUS_MAP
 
 from runtime import g_rt
 from config import cookie_conf
@@ -24,11 +24,11 @@ class StoreManage(core.Handler):
         self.write(template.render('store.html'))
 
 class StoreStateSetHandler(core.Handler):
-    _post_handler_fields = [ 
+    _post_handler_fields = [
         Field('userid', T_INT, False),
         Field('state', T_INT, False),
     ]
-    
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -45,8 +45,9 @@ class StoreStateSetHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler()
         self.write(ret)
-    
+
 class StoreInfoHandler(core.Handler):
+
 
     _get_handler_fields = [
         Field('page', T_INT, False),
@@ -68,9 +69,7 @@ class StoreInfoHandler(core.Handler):
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            #channel_name -> channel_id
-            #store_name -> store_id
-            info_data = self._query_handler(channel_id=None, store_id=None)
+            info_data = self._query_handler(channel_name, store_name)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -80,24 +79,29 @@ class StoreInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_id, store_id):
+    def _query_handler(self, channel_name=None, store_name=None):
         where = {}
-        if channel_id:
-            where.update({'channel_id': channel_id})
-        if store_id:
-            where.update({'store_id': store_id})
+        if channel_name:
+            where.update({'channel_name': channel_name})
+        if store_name:
+            where.update({'store_name': store_name})
 
-        keep_fields = ['id', 'userid', 'channel_id', 'store_type', 'store_contacter',
-                       'store_mobile', 'store_addr', 'training_amt_per', 'divide_percent',
-                       'remain_times', 'is_valid', 'ctime']
-        ret = self.db.select(table='stores', fields=keep_fields, where=where)
+        keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
+                       'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',
+                       'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name']
+        ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where)
+        # ret = self.db.select(table='stores', fields=keep_fields, where=st_where)
         for item in ret:
-            item['channel_name'] = str(item['channel_id'])
+            ch_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            item['channel_name'] = ch_ret.get('channel_name', '') if ch_ret else ''
             user_ret = self.db.select_one(table='auth_user', fields='nick_name', where={'id': item['userid']})
             item['nick_name'] = user_ret.get('nick_name') if user_ret else ''
             profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
             item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
+            item['store_type'] = UYU_STORE_ROLE_MAP.get(item['store_type'], '')
+            item['status'] = item['is_valid']
+            item['is_valid'] = UYU_STORE_STATUS_MAP.get(item['is_valid'], '')
 
         return ret
 
@@ -139,15 +143,15 @@ class StoreHandler(core.Handler):
         #门店信息
         Field('training_amt_per', T_INT, False),
         Field('divide_percent', T_FLOAT, False),
-        Field('is_prepayment', T_INT, False),
-        Field('channel_id', T_INT, False),
+        # Field('is_prepayment', T_INT, False),
+        # Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
-        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
-    ]    
-    
+        # Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
+    ]
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -165,21 +169,21 @@ class StoreHandler(core.Handler):
         for key in uop.pkey:
             if params.get(key, None):
                 pdata[key] = params[key]
-        
-        log.debug("store_type: %d", params["store_type"])
+
+        # log.debug("store_type: %d", params["store_type"])
         sdata = {}
         for key in uop.skey:
             if params.get(key, None) != None:
                 log.debug("key: %s v: %s", key, params[key])
                 sdata[key] = params[key]
 
-        log.debug("udata: %s pdata: %s sdata: %s", udata, pdata, sdata)    
+        log.debug("udata: %s pdata: %s sdata: %s", udata, pdata, sdata)
         uop = UUser()
         ret = uop.call("store_info_change", params["userid"], udata, pdata, sdata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGESTOREERR)
         return success({"userid": params["userid"]})
-    
+
     def POST(self):
         return self._post_handler()
 
@@ -213,14 +217,12 @@ class StoreHandler(core.Handler):
     def GET(self, *args):
         return self._get_handler()
 
-<<<<<<< HEAD
-=======
 
 class StoreEyeHandler(core.Handler):
     _get_handler_fields = [
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
     ]
-    
+
     _post_handler_fields = [
         Field('userid', T_INT, False, match=r'^([0-9]{0,10})$'),
         Field('store_id', T_INT, False, match=r'^([0-9]{0,10})$'),
@@ -234,8 +236,8 @@ class StoreEyeHandler(core.Handler):
         uop = UUser()
         uop.call("load_user_by_mobile", params["mobile"])
         if len(uop.udata) == 0 or uop.user.get("user_type", -1) != define.UYU_USER_ROLE_EYESIGHT:
-            return error(UAURET.USERROLEERR) 
-            
+            return error(UAURET.USERROLEERR)
+
         ret = {}
         ret["mobile"] = uop.udata["phone_num"]
         ret["nick_name"] = uop.udata["nick_name"]
@@ -253,7 +255,6 @@ class StoreEyeHandler(core.Handler):
     def POST(self, *arg):
         return self._post_handler()
 
->>>>>>> lanwenhong
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
         #用户基本信息
@@ -276,7 +277,7 @@ class CreateStoreHandler(core.Handler):
         #门店信息
         Field('training_amt_per', T_INT, False),
         Field('divide_percent', T_FLOAT, False),
-        Field('is_prepayment', T_INT, False),
+        # Field('is_prepayment', T_INT, False),
         Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),

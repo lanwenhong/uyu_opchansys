@@ -259,8 +259,8 @@ class UUser:
         record = self.db.select_one("auth_user", {"id": userid})
         if record:
             for key in self.ukey:
-                if record.get(key, None):
-                    self.udata[key] = record[key]
+                # if record.get(key, None):
+                self.udata[key] = record[key]
             self.udata["userid"] = userid
         else:
             log.warn("not found: %d", userid)
@@ -271,24 +271,24 @@ class UUser:
             record = self.db.select_one("profile", {"userid": userid})
             if record:
                 for key in self.pkey:
-                    if record.get(key, None):
-                        self.pdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.pdata[key] = record[key]
                 self.udata["userid"] = userid
 
         if role == define.UYU_USER_ROLE_CHAN:
             record = self.db.select_one("channel", {"userid": userid})
             if record:
                 for key in self.chan_key:
-                    if record.get(key, None):
-                        self.cdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.cdata[key] = record[key]
                 self.cdata["chnid"] = record["id"]
 
         if role == define.UYU_USER_ROLE_STORE:
             record = self.db.select_one("stores", {"userid": userid})
             if record:
                 for key in self.skey:
-                    if record.get(key, None):
-                        self.sdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.sdata[key] = record[key]
                 self.sdata["store_id"] = record["id"]
 
     def _check_permission(self, user_type, sys_role):

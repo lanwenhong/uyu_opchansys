@@ -10,7 +10,7 @@ import tools
 log = logging.getLogger()
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.response import success, error, UAURET
-from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR, UYU_CHAN_MAP
 from uyubase.base.uyu_user import UUser
 
 from runtime import g_rt
@@ -144,7 +144,7 @@ class ChannelInfoHandler(core.Handler):
     _get_handler_fields = [
         Field('page', T_INT, False),
         Field('maxnum', T_INT, False),
-        Field('nick_name', T_STR, True),
+        Field('channel_name', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -157,9 +157,9 @@ class ChannelInfoHandler(core.Handler):
             params = self.validator.data
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            nick_name = params.get('nick_name')
+            channel_name = params.get('channel_name')
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(nick_name=nick_name)
+            info_data = self._query_handler(channel_name=channel_name)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -169,14 +169,14 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, nick_name=None):
+    def _query_handler(self, channel_name=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
                        'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
                        'channel.channel_name',
                        ]
-        where = {'auth_user.nick_name': nick_name} if nick_name else {}
+        where = {'channel.channel_name': channel_name} if channel_name else {}
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
         for item in ret:
             userid = item['userid']
@@ -184,6 +184,8 @@ class ChannelInfoHandler(core.Handler):
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
             item['contact_phone'] = profile_ret.get('contact_phone', '') if profile_ret else ''
             item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
+            item['status'] = item['is_valid']
+            item['is_valid'] = UYU_CHAN_MAP.get(item['is_valid'], '')
 
         return ret
 
@@ -206,8 +208,8 @@ class CreateChanHandler(core.Handler):
         Field('org_code',  T_STR, False),
         Field('license_id',  T_STR, False),
         Field('legal_person',  T_STR, False),
-        # Field('business',  T_STR, False),
-        # Field('front_business',  T_STR, False),
+        Field('business',  T_STR, False),
+        Field('front_business',  T_STR, False),
         Field('account_name',  T_STR, False),
         Field('bank_name',  T_STR, False),
         Field('bank_account',  T_STR, False),
