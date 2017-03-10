@@ -213,8 +213,6 @@ class StoreHandler(core.Handler):
     def GET(self, *args):
         return self._get_handler()
 
-<<<<<<< HEAD
-
 class StoreEyeHandler(core.Handler):
     _get_handler_fields = [
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
@@ -252,8 +250,6 @@ class StoreEyeHandler(core.Handler):
     def POST(self, *arg):
         return self._post_handler()
 
-=======
->>>>>>> dengcheng
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
         #用户基本信息
