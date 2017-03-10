@@ -195,6 +195,17 @@ def test_chan_set_state():
     ret = client.post('/channel_op/v1/api/channel_set_state', send, headers=headers)
     log.debug(ret)
 
+def test_store_set_state():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000, "userid": 1152, "state": 1}
+
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.post('/channel_op/v1/api/store_set_state', send, headers=headers)
+    log.debug(ret)
+
+
+
 def test_store_query():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
@@ -213,4 +224,5 @@ if __name__ == '__main__':
     #test_chan_set_state()
     #test_store_register()
     #test_store_query()
-    test_store_change()
+    #test_store_change()
+    test_store_set_state()

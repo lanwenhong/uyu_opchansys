@@ -23,7 +23,29 @@ class StoreManage(core.Handler):
     def GET(self):
         self.write(template.render('store.html'))
 
+class StoreStateSetHandler(core.Handler):
+    _post_handler_fields = [ 
+        Field('userid', T_INT, False),
+        Field('state', T_INT, False),
+    ]
+    
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
+        params = self.validator.data
+        ret = uop.call("set_store_state", params["userid"], params["state"])
+        if ret == UYU_OP_ERR:
+            return error(UAURET.REQERR)
+        log.debug("set userid: %d state: %d succ", params["userid"], params["state"])
+        return success({})
 
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)
+    
 class StoreInfoHandler(core.Handler):
 
     _get_handler_fields = [
