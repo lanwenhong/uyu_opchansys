@@ -94,6 +94,70 @@ class StoreHandler(core.Handler):
          Field('userid', T_INT, False)
     ]
 
+    _post_handler_fields = [
+        Field("se_userid", T_INT, False),
+        Field('userid', T_INT, False),
+        Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
+        Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
+        Field('email', T_STR, False, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
+        #profile信息
+        Field('org_code',  T_STR, False),
+        Field('license_id',  T_STR, False),
+        Field('legal_person',  T_STR, False),
+        Field('business',  T_STR, False),
+        Field('front_business',  T_STR, False),
+        Field('account_name',  T_STR, False),
+        Field('bank_name',  T_STR, False),
+        Field('bank_account',  T_STR, False),
+        Field('contact_name',  T_STR, False),
+        Field('contact_phone',  T_STR, False),
+        Field('contact_email',  T_STR, False),
+        Field('address',  T_STR, False),
+
+        #门店信息
+        Field('training_amt_per', T_INT, False),
+        Field('divide_percent', T_FLOAT, False),
+        Field('is_prepayment', T_INT, False),
+        Field('channel_id', T_INT, False),
+        Field('store_contacter', T_STR, False),
+        Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
+        Field('store_addr', T_STR, False),
+        Field('store_name', T_STR, False),
+    ]    
+    
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
+        params = self.validator.data
+
+        udata = {}
+        for key in ["login_name", "nick_name", "phone_num"]:
+            if params.get(key, None):
+                udata[key] = params[key]
+
+        pdata = {}
+        for key in uop.pkey:
+            if params.get(key, None):
+                pdata[key] = params[key]
+
+        sdata = {}
+        for key in uop.skey:
+            if params.get(key, None):
+                sdata[key] = params[key]
+
+        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, sdata)    
+        uop = UUser()
+        ret = uop.call("store_info_change", params["userid"], udata, pdata, sdata)
+        if ret == UYU_OP_ERR:
+            return error(UAURET.CHANGESTOREERR)
+        return success({"userid": params["userid"]})
+    
+    def POST(self):
+        return self._post_handler()
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self):
