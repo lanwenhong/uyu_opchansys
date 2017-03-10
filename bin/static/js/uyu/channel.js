@@ -152,7 +152,6 @@ $(document).ready(function(){
             'userid': uid,
             'se_userid': se_userid,
         }
-        console.log('get_data');
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'GET',
@@ -168,9 +167,6 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('get data ok');
-                    console.log(data.data.profile);
-                    console.log(data.data.chn_data);
-                    console.log(data.data.u_dasta);
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
                     var u_data = data.data.u_dasta;
@@ -249,8 +245,6 @@ $(document).ready(function(){
         var post_data = query_to_obj(queryString);
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
-        console.log('edit data');
-        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'POST',
@@ -266,8 +260,10 @@ $(document).ready(function(){
                     return false;
                 }
                 else {
+                    toastr.success('保存修改成功');
+                    $("#channelEditForm").resetForm();
+                    $("#channelEditModal").modal('hide');
                     $('#channelList').DataTable().draw();
-                    toastr.success('ok');
                 }
 	        },
 	        error: function(data) {
@@ -280,12 +276,10 @@ $(document).ready(function(){
 
 
 function print_object(obj){
-    console.log('print object start');
     var temp = ""
     for(var key in obj){
         temp += key + ":" + obj[key] + "\n";
     }
-    console.log(temp)
 }
 
 
@@ -293,7 +287,6 @@ function query_to_obj(queryString){
     var arr = queryString.split('&');
     var post_data = new Object();
     for(var i=0; i<arr.length; i++){
-        console.log(arr[i]);
         var tmp = arr[i].split('=');
         post_data[tmp[0]] = tmp[1];
     }
