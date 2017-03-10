@@ -67,6 +67,21 @@ $(document).ready(function(){
 
             });
         },
+        'columnDefs': [
+            {
+                targets: 12,
+                data: '操作',
+                render: function(data, type, full) {
+                    var status = full.is_valid;
+                    var uid =full.userid;
+                    var store_id =full.id;
+                    var msg = status ? '打开' : '关闭';
+                    var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
+                    return op+view;
+                }
+            }
+        ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
@@ -107,7 +122,34 @@ $(document).ready(function(){
     });
 
     $("#storeCreateSubmit").click(function(){
-       var queryString = $('#storeCreateForm').formSerialize();
-       alert(queryString);
+        var se_userid = window.localStorage.getItem('myid');
+        var queryString = $('#storeCreateForm').formSerialize();
+        var post_data = query_to_obj(queryString);
+        post_data['se_userid'] = se_userid;
+        $.ajax({
+	        url: '/channel_op/v1/api/store_create',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    toastr.success('新建成功');
+                    $("#storeCreateForm").resetForm();
+                    $("#storeCreateModal").modal('hide');
+                    $('#storeList').DataTable().draw();
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+         });
     });
 });
