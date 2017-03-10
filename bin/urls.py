@@ -8,6 +8,7 @@ from handler import store
 from handler import device
 from handler import train
 from handler import settle
+from handler import eyesight
 urls = (
     ('/ping', ping.Ping),
     #页面
@@ -30,7 +31,7 @@ urls = (
     ('^/channel_op/v1/api/channel$', channel.ChanHandler),
     ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
     ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
-    
+
     #门店API
     ('^/channel_op/v1/api/store_set_state', store.StoreStateSetHandler),
     ('^/channel_op/v1/api/store_create$', store.CreateStoreHandler),
@@ -43,4 +44,7 @@ urls = (
     ('^/channel_op/v1/api/training_use_list$', train.TrainUseInfoHandler),
     #('^/channel_op/v1/api/channel$', channel.ChannelHandler),
     ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
+
+    #视光师
+    ('^/channel_op/v1/api/eyesight_list$', eyesight.EyeSightInfoHandler),
 )
