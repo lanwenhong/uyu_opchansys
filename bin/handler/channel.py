@@ -174,6 +174,7 @@ class ChannelInfoHandler(core.Handler):
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
                        'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
+                       'channel.channel_name',
                        ]
         where = {'auth_user.nick_name': nick_name} if nick_name else {}
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)

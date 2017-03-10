@@ -78,7 +78,7 @@ $(document).ready(function(){
         ],
 		'columns': [
 				{ data: 'id' },
-				{ data: 'nick_name' },
+				{ data: 'channel_name' },
 				{ data: 'contact_name' },
 				{ data: 'contact_phone' },
 				{ data: 'training_amt_per' },
@@ -113,10 +113,52 @@ $(document).ready(function(){
     });
 
     $("#channelCreateSubmit").click(function(){
+        var post_data = {}
         var se_userid = window.localStorage.getItem('myid');
-        var queryString = $('#channelCreateForm').formSerialize();
-        var post_data = query_to_obj(queryString);
+		var login_name = $('#login_name').val();
+		var phone_num = $('#phone_num').val();
+		var email = $('#email').val();
+		var org_code = $('#org_code').val();
+		var license_id = $('#license_id').val();
+		var legal_person = $('#legal_person').val();
+		var account_name = $('#account_name').val();
+		var bank_name = $('#bank_name').val();
+		var bank_account = $('#bank_account').val();
+		var channel_name= $('#channel_name').val();
+		var contact_name= $('#contact_name').val();
+		var contact_phone= $('#contact_phone').val();
+		var contact_email= $('#contact_email').val();
+		var address= $('#address').val();
+		var training_amt_per= $('#training_amt_per').val();
+		var divide_percent= $('#divide_percent').val();
+		var is_prepayment= $('#is_prepayment').val();
+		var business = $('#business').val();
+		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
+		post_data['login_name'] = login_name;
+		post_data['phone_num'] = phone_num;
+		post_data['email'] = email;
+		post_data['org_code'] = org_code;
+		post_data['license_id'] = license_id;
+		post_data['legal_person'] = legal_person;
+		post_data['account_name'] = account_name;
+		post_data['bank_name'] = bank_name;
+		post_data['bank_account'] = bank_account;
+		post_data['channel_name'] = channel_name;
+		post_data['contact_name'] = contact_name;
+		post_data['contact_phone'] = contact_phone;
+		post_data['contact_email'] = contact_email;
+		post_data['address'] = address;
+		post_data['training_amt_per'] = training_amt_per;
+		post_data['divide_percent'] = divide_percent;
+		post_data['is_prepayment'] = is_prepayment;
+		post_data['business'] = business;
+		post_data['front_business'] = front_business;
+        var flag = check_obj_val(post_data);
+        if(!flag){
+            toastr.warning('请核实输入字段内容');
+            return false;
+        }
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -169,7 +211,7 @@ $(document).ready(function(){
                     toastr.success('get data ok');
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
-                    var u_data = data.data.u_dasta;
+                    var u_data = data.data.u_data;
                     $('#uid').text(uid);
                     $('#e_channel_id').val(channel_id);
                     $('#e_login_name').val(u_data.login_name);

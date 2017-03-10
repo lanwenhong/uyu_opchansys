@@ -36,8 +36,8 @@ class OverViewInfoHandler(core.Handler):
         try:
             data = {}
             params = self.validator.data
-            userid = params.get('se_userid')
-            channel_total, store_total = self._query_handler(userid)
+            # userid = params.get('se_userid')
+            channel_total, store_total = self._query_handler()
             data['channel_total'] = channel_total
             data['store_total'] = store_total
             return success(data)
@@ -47,11 +47,9 @@ class OverViewInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, userid):
-        channel_ret = self.db.select_one(table='channel', fields='sum(id) as total', where={'userid': userid})
-        store_ret = self.db.select_one(table='stores', fields='sum(id) as total', where={'userid': userid})
-        print channel_ret
-        print store_ret
+    def _query_handler(self):
+        channel_ret = self.db.select_one(table='channel', fields='count(id) as total')
+        store_ret = self.db.select_one(table='stores', fields='count(id) as total')
         channel_len = int(channel_ret['total']) if channel_ret['total'] else 0
         store_len = int(store_ret['total']) if store_ret['total'] else 0
         return channel_len, store_len
