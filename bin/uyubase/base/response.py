@@ -30,6 +30,7 @@ class UAURET:
     REGISTERERR         = "1001"
     CHANGECHANERR       = "1002"
     CHANGESTOREERR      = "1003"
+    USERROLEERR         = "1004"
 
 error_map = { 
     UAURET.OK                    : u"成功",
@@ -54,6 +55,7 @@ error_map = {
     UAURET.REGISTERERR           : u"用户注册失败",
     UAURET.CHANGECHANERR         : u"更新渠道信息失败",
     UAURET.CHANGESTOREERR        : u"更新门店信息失败",
+    UAURET.USERROLEERR           : u"用户身份出错",
 }
 
 def json_default_trans(obj):

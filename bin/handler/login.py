@@ -90,14 +90,17 @@ class SmsHandler(core.Handler):
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
+        
+        uop = UUser()
+        uop.load_user_by_mobile(mobile)
+        if len(uop.udata) == 0:
+            return error(UAURET.USERROLEERR)
 
         vop = VCode()
         vcode = vop.gen_vcode(mobile)
-
         log.debug("get vcode: %s", vcode)
         if not vcode:
             return error(UAURET.VCODEERR)
-
         return success({})
 
     def POST(self, *args):
