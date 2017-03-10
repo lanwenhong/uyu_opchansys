@@ -79,7 +79,7 @@ class UUser:
     def __gen_vsql(self, klist, cdata):
         sql_value = {}
         for key in cdata:
-            if cdata.get(key, None):
+            if cdata.get(key, None) != None:
                 sql_value[key] = cdata[key]
         return sql_value
 
@@ -95,6 +95,14 @@ class UUser:
         self.db.insert("auth_user", sql_value)
         self.userid = self.db.last_insert_id()
 
+    @with_database('uyu_core')
+    def load_user_by_mobile(self, mobile):
+        record = self.db.select_one("auth_user", {"phone_num": mobile})
+        if not record:
+            for key in self.ukey:
+                if record.get(key, None):
+                    self.udata[key] = record[key]
+            self.udata["userid"] = record["id"]
 
     def __gen_base_user_sql(self, role, udata):
             sql_value = self.__gen_vsql(self.ukey, udata)
@@ -226,7 +234,6 @@ class UUser:
         self.db.update("stores", sql_value, {"userid": userid})
         log.debug("update store succ!!!")
 
-
     #更新渠道信息
     def chan_info_change(self, userid, udata, pdata, cdata):
         self.__update_user(userid, udata)
@@ -238,6 +245,13 @@ class UUser:
         self.__update_user(userid, udata)
         self.__update_profile(userid, pdata)
         self.__update_store(userid, sdata)
+
+    #门店绑定视光师
+    @with_database("uyu_core")
+    def store_bind_eyesight(self, userid, store_id, chan_id):
+        sql_value = {"eyesight_id": userid, "store_id": store_id, "channel_id": chan_id}
+        sql_value['ctime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db.insert("store_eyesight_bind", sql_value)
 
     #load用户信息
     @with_database('uyu_core')
@@ -313,7 +327,6 @@ class UUser:
                 sql = "update auth_user set password='%s' where phone_num='%s'" % (password, mobile)
                 self.db.execute(sql)
                 return UAURET.OK
-
             return UAURET.VCODEERR
         except:
             log.warn(traceback.format_exc())
