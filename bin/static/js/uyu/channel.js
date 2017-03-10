@@ -176,21 +176,26 @@ $(document).ready(function(){
                     var u_data = data.data.u_dasta;
                     $('#uid').text(uid);
                     $('#e_channel_id').val(channel_id);
+                    $('#e_login_name').val(u_data.login_name);
                     $('#e_phone_num').val(u_data.phone_num);
                     $('#e_channel_name').val(ch_data.channel_name);
-                    $('#e_create_name').val(ch_data.ctime);
+                    $('#e_create_time').val(ch_data.ctime);
                     $('#e_legal_person').val(p_data.legal_person);
                     $('#e_org_code').val(p_data.org_code);
                     $('#e_license_id').val(p_data.license_id);
                     $('#e_email').val(u_data.email);
+                    $('#e_business').val(p_data.business);
+                    $('#e_front_business').val(p_data.front_business);
                     $('#e_account_name').val(p_data.account_name);
                     $('#e_bank_account').val(p_data.bank_account);
+                    $('#e_bank_name').val(p_data.bank_name);
                     $('#e_contact_name').val(p_data.contact_name);
                     $('#e_contact_phone').val(p_data.contact_phone);
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
                     $('#e_training_amt_per').val(ch_data.training_amt_per);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
+                    $('#e_divide_percent').val(ch_data.divide_percent);
                     $("#channelEditModal").modal();
                 }
 	        },
