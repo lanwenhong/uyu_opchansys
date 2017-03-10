@@ -145,6 +145,7 @@ class StoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
+        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]    
     
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -164,13 +165,15 @@ class StoreHandler(core.Handler):
         for key in uop.pkey:
             if params.get(key, None):
                 pdata[key] = params[key]
-
+        
+        log.debug("store_type: %d", params["store_type"])
         sdata = {}
         for key in uop.skey:
-            if params.get(key, None):
+            if params.get(key, None) != None:
+                log.debug("key: %s v: %s", key, params[key])
                 sdata[key] = params[key]
 
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, sdata)    
+        log.debug("udata: %s pdata: %s sdata: %s", udata, pdata, sdata)    
         uop = UUser()
         ret = uop.call("store_info_change", params["userid"], udata, pdata, sdata)
         if ret == UYU_OP_ERR:

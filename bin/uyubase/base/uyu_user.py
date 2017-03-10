@@ -79,7 +79,7 @@ class UUser:
     def __gen_vsql(self, klist, cdata):
         sql_value = {}
         for key in cdata:
-            if cdata.get(key, None):
+            if cdata.get(key, None) != None:
                 sql_value[key] = cdata[key]
         return sql_value
     
