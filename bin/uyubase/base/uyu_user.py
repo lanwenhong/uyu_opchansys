@@ -193,50 +193,55 @@ class UUser:
 
     #设置门店状态，打开/关闭
     @with_database('uyu_core')
-    def set_chan_state(self, userid, state):
+    def set_store_state(self, userid, state):
         self.db.update("stores", {"is_valid": state}, {"userid": userid})
         self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
 
-    #更新渠道信息
     @with_database('uyu_core')
-    def chan_info_change(self, userid, udata, pdata, cdata):
+    def __update_user(self, userid, udata):
         sql_value = self.__gen_vsql(self.ukey, udata)
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("auth_user", sql_value, {"id": userid})
         log.debug("update auth_user succ!!!")
 
+    @with_database('uyu_core')
+    def __update_profile(self, userid, pdata):
         sql_value = self.__gen_vsql(self.pkey, pdata)
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("profile", sql_value, {"userid": userid})
         log.debug("update profile succ!!!")
 
+    @with_database('uyu_core')
+    def __update_chan(self, userid, cdata):
         sql_value = self.__gen_vsql(self.chan_key, cdata)
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("channel", sql_value, {"userid": userid})
         log.debug("update channel succ!!!")
 
-    #更新门店信息
+
     @with_database('uyu_core')
-    def chan_info_store(self, userid, udata, pdata, sdata):
-        sql_value = self.__gen_vsql(self.ukey, udata)
-        sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.db.update("auth_user", sql_value, {"id": userid})
-        log.debug("update auth_user succ!!!")
-
-        sql_value = self.__gen_vsql(self.pkey, pdata)
-        sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.db.update("profile", sql_value, {"userid": userid})
-        log.debug("update profile succ!!!")
-
+    def __update_store(self, userid, sdata):
         sql_value = self.__gen_vsql(self.skey, sdata)
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("stores", sql_value, {"userid": userid})
         log.debug("update store succ!!!")
 
+
+    #更新渠道信息
+    def chan_info_change(self, userid, udata, pdata, cdata):
+        self.__update_user(userid, udata)
+        self.__update_profile(userid, pdata)
+        self.__update_chan(userid, cdata)
+
+    #更新门店信息
+    def store_info_change(self, userid, udata, pdata, sdata):
+        self.__update_user(userid, udata)
+        self.__update_profile(userid, pdata)
+        self.__update_store(userid, sdata)
+
     #load用户信息
     @with_database('uyu_core')
     def load_info_by_userid(self, userid):
-        #record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "phone_num"])
         record = self.db.select_one("auth_user", {"id": userid})
         if record:
             for key in self.ukey:
