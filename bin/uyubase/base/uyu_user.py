@@ -231,45 +231,16 @@ class UUser:
         self.__update_user(userid, udata)
         self.__update_profile(userid, pdata)
         self.__update_chan(userid, cdata)
-        #sql_value = self.__gen_vsql(self.ukey, udata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("auth_user", sql_value, {"id": userid})
-        #log.debug("update auth_user succ!!!")
-
-        #sql_value = self.__gen_vsql(self.pkey, pdata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("profile", sql_value, {"userid": userid})
-        #log.debug("update profile succ!!!")
-
-        #sql_value = self.__gen_vsql(self.chan_key, cdata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("channel", sql_value, {"userid": userid})
-        #log.debug("update channel succ!!!")
     
     #更新门店信息
     def store_info_change(self, userid, udata, pdata, sdata):
         self.__update_user(userid, udata)
         self.__update_profile(userid, pdata)
         self.__update_store(userid, sdata)
-        #sql_value = self.__gen_vsql(self.ukey, udata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("auth_user", sql_value, {"id": userid})
-        #log.debug("update auth_user succ!!!")
-
-        #sql_value = self.__gen_vsql(self.pkey, pdata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("profile", sql_value, {"userid": userid})
-        #log.debug("update profile succ!!!")
-
-        #sql_value = self.__gen_vsql(self.skey, sdata)
-        #sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #self.db.update("stores", sql_value, {"userid": userid})
-        #log.debug("update store succ!!!")
 
     #load用户信息
     @with_database('uyu_core')
     def load_info_by_userid(self, userid):
-        #record = self.db.select_one("auth_user", {"id": userid}, fields=["login_name", "phone_num"])
         record = self.db.select_one("auth_user", {"id": userid})
         if record:
             for key in self.ukey:
