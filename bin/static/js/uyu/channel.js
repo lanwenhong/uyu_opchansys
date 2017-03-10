@@ -169,7 +169,9 @@ $(document).ready(function(){
                     toastr.success('get data ok');
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
-                    var u_data = data.data.u_dasta;
+                    var u_data = data.data.u_data;
+                    console.log('U_data');
+                    console.log(u_data);
                     $('#uid').text(uid);
                     $('#e_channel_id').val(channel_id);
                     $('#e_login_name').val(u_data.login_name);

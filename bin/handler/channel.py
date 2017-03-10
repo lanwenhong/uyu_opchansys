@@ -95,7 +95,7 @@ class ChanHandler(core.Handler):
         data["chn_data"] = uop.cdata
 
         udata = {}
-        ret_filed = ["nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
         for key in ret_filed:
             udata[key] = uop.udata[key]
         udata["userid"] =uop.udata["id"]
@@ -104,6 +104,7 @@ class ChanHandler(core.Handler):
 
     def GET(self, *args):
         ret = self._get_handler()
+        log.debug("ret: %s", ret)
         self.write(ret)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
