@@ -99,7 +99,7 @@ class ChanHandler(core.Handler):
         for key in ret_filed:
             udata[key] = uop.udata[key]
         udata["userid"] =uop.udata["id"]
-        data["u_dasta"] = udata
+        data["u_data"] = udata
         return success(data)
 
     def GET(self, *args):
