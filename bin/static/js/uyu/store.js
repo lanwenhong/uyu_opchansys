@@ -322,10 +322,10 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
-                    toastr.success('ok');
                     var sight_data = data.data.info;
                     var table = $('#EyeSightList');
+                    var tbody = $('#EyeSightList tbody');
+                    tbody.html("");
                     for(var i=0; i<sight_data.length; i++){
                         var index = i+1;
                         var nick_name = sight_data[i].nick_name;
