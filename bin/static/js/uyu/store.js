@@ -54,8 +54,6 @@ $(document).ready(function(){
                     }
 	                detail_data = data.data;
 	                num = detail_data.num;
-                    console.log('num:'+num);
-                    console.log('info:'+detail_data.info);
 	                callback({
 	                    recordsTotal: num,
 	                    recordsFiltered: num,
@@ -67,6 +65,21 @@ $(document).ready(function(){
 
             });
         },
+        'columnDefs': [
+            {
+                targets: 12,
+                data: '操作',
+                render: function(data, type, full) {
+                    var status = full.is_valid;
+                    var uid =full.userid;
+                    var store_id =full.id;
+                    var msg = status ? '打开' : '关闭';
+                    var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
+                    return op+view;
+                }
+            }
+        ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
@@ -107,7 +120,70 @@ $(document).ready(function(){
     });
 
     $("#storeCreateSubmit").click(function(){
-       var queryString = $('#storeCreateForm').formSerialize();
-       alert(queryString);
+        var se_userid = window.localStorage.getItem('myid');
+        var queryString = $('#storeCreateForm').formSerialize();
+        var post_data = query_to_obj(queryString);
+        post_data['se_userid'] = se_userid;
+        $.ajax({
+	        url: '/channel_op/v1/api/store_create',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    toastr.success('新建成功');
+                    $("#storeCreateForm").resetForm();
+                    $("#storeCreateModal").modal('hide');
+                    $('#storeList').DataTable().draw();
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+         });
     });
+
+    $(document).on('click', '.setStatus', function(){
+        var uid = $(this).data('uid');
+        var status = $(this).data('status');
+        var value = status ? 0 : 1
+        var se_userid = window.localStorage.getItem('myid');
+        var post_data = {
+            'userid': uid,
+            'state': value,
+            'se_userid': se_userid,
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/store_set_state',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    $('#storeList').DataTable().draw();
+                    toastr.success('操作成功');
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
+    });
+
 });

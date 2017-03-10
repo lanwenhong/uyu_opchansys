@@ -89,7 +89,7 @@ class StoreInfoHandler(core.Handler):
 
         keep_fields = ['id', 'userid', 'channel_id', 'store_type', 'store_contacter',
                        'store_mobile', 'store_addr', 'training_amt_per', 'divide_percent',
-                       'remain_times', 'is_valid', 'create_time']
+                       'remain_times', 'is_valid', 'ctime']
         ret = self.db.select(table='stores', fields=keep_fields, where=where)
         for item in ret:
             item['channel_name'] = str(item['channel_id'])
@@ -97,7 +97,7 @@ class StoreInfoHandler(core.Handler):
             item['nick_name'] = user_ret.get('nick_name') if user_ret else ''
             profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
             item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
-            item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
 
         return ret
 
@@ -198,7 +198,7 @@ class StoreHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.sdata
-    
+
         udata = {}
 
         ret_filed = ["nick_name", "phone_num", "user_type", "email", "sex", "state"]
@@ -213,6 +213,7 @@ class StoreHandler(core.Handler):
     def GET(self, *args):
         return self._get_handler()
 
+<<<<<<< HEAD
 
 class StoreEyeHandler(core.Handler):
     _get_handler_fields = [
@@ -251,6 +252,8 @@ class StoreEyeHandler(core.Handler):
     def POST(self, *arg):
         return self._post_handler()
 
+=======
+>>>>>>> dengcheng
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
         #用户基本信息
@@ -279,11 +282,11 @@ class CreateStoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
-    ]    
-    
+    ]
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
-    def _post_handler(self): 
+    def _post_handler(self):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data

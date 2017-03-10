@@ -48,8 +48,9 @@ class ChanStateSetHandler(core.Handler):
         ret = self._post_handler()
         self.write(ret)
 
+
 class ChanHandler(core.Handler):
-    
+
     _get_handler_fields = [
         Field('userid', T_INT, False)
     ]
@@ -77,7 +78,7 @@ class ChanHandler(core.Handler):
         Field('divide_percent', T_FLOAT, False),
         Field('is_prepayment', T_INT, False),
     ]
-    
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self):
@@ -92,7 +93,7 @@ class ChanHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
-        
+
         udata = {}
         ret_filed = ["nick_name", "phone_num", "user_type", "email", "sex", "state"]
         for key in ret_filed:
@@ -127,7 +128,7 @@ class ChanHandler(core.Handler):
         for key in uop.chan_key:
             if params.get(key, None):
                 chndata[key] = params[key]
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)    
+        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         uop = UUser()
         ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
         if ret == UYU_OP_ERR:
@@ -171,7 +172,7 @@ class ChannelInfoHandler(core.Handler):
     def _query_handler(self, nick_name=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
-                       'channel.divide_percent', 'channel.status', 'channel.create_time',
+                       'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
                        ]
         where = {'auth_user.nick_name': nick_name} if nick_name else {}
@@ -181,7 +182,7 @@ class ChannelInfoHandler(core.Handler):
             profile_ret = self.db.select_one(table='profile', fields=profile_fields, where={'userid': userid})
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
             item['contact_phone'] = profile_ret.get('contact_phone', '') if profile_ret else ''
-            item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
 
         return ret
 
@@ -204,8 +205,8 @@ class CreateChanHandler(core.Handler):
         Field('org_code',  T_STR, False),
         Field('license_id',  T_STR, False),
         Field('legal_person',  T_STR, False),
-        Field('business',  T_STR, False),
-        Field('front_business',  T_STR, False),
+        # Field('business',  T_STR, False),
+        # Field('front_business',  T_STR, False),
         Field('account_name',  T_STR, False),
         Field('bank_name',  T_STR, False),
         Field('bank_account',  T_STR, False),
@@ -242,7 +243,7 @@ class CreateChanHandler(core.Handler):
             if params.get(key, None):
                 chndata[key] = params[key]
 
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)         
+        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         ret = uop.call("create_chan_transaction", udata, pdata, chndata)
         if ret == UYU_OP_ERR:
             return error(UAURET.REGISTERERR)

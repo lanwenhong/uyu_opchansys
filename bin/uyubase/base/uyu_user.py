@@ -56,10 +56,10 @@ class UUser:
         ]
 
         self.pkey = [
-            "userid", "org_code", "license_id", "legal_person", 
+            "userid", "org_code", "license_id", "legal_person",
             "business", "front_business", "account_name", "bank_name",
-            "bank_account", "contact_name", "contact_phone", "contact_email", 
-            "address", "org_pic", "license_pic", "idcard_no", 
+            "bank_account", "contact_name", "contact_phone", "contact_email",
+            "address", "org_pic", "license_pic", "idcard_no",
             "idcard_front", "idcard_back", "state", "ctime",
         ]
 
@@ -75,14 +75,14 @@ class UUser:
             "remain_times", "is_valid", "ctime", "utime",
             "store_name",
         ]
-    
+
     def __gen_vsql(self, klist, cdata):
         sql_value = {}
         for key in cdata:
             if cdata.get(key, None) != None:
                 sql_value[key] = cdata[key]
         return sql_value
-    
+
     #用户注册
     @with_database('uyu_core')
     def user_register(self, udata):
@@ -91,7 +91,7 @@ class UUser:
         mobile = udata["login_name"]
         #默认密码手机号后六位
         sql_value["password"] = mobile[-6:]
-        sql_value["state"] = define.UYU_USER_STATE_OK 
+        sql_value["state"] = define.UYU_USER_STATE_OK
         self.db.insert("auth_user", sql_value)
         self.userid = self.db.last_insert_id()
     
@@ -109,7 +109,7 @@ class UUser:
             sql_value["ctime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             mobile = udata["login_name"]
             sql_value["password"] = mobile[-6:]
-            sql_value["state"] = define.UYU_USER_STATE_OK 
+            sql_value["state"] = define.UYU_USER_STATE_OK
             #sql_value["user_type"] = define.UYU_USER_ROLE_CHAN
             sql_value["user_type"] = role
             return sql_value
@@ -122,7 +122,7 @@ class UUser:
             sql_value["userid"] = userid
             return sql_value
 
-    
+
     def __gen_chan_sql(self, userid, cdata):
             sql_value = self.__gen_vsql(self.chan_key, cdata)
             sql_value["userid"] = userid
@@ -152,7 +152,7 @@ class UUser:
             sql_value = self.__gen_profile_sql(userid, pdata)
             log.debug("profile sql: %s", sql_value)
             self.db.insert("profile", sql_value)
-            
+
             #创建渠道相关信息
             sql_value = self.__gen_chan_sql(userid, cdata)
             self.db.insert("channel", sql_value)
@@ -178,7 +178,7 @@ class UUser:
             #创建渠道档案
             sql_value = self.__gen_profile_sql(userid, pdata)
             self.db.insert("profile", sql_value)
-            
+
             #创门店相关信息
             sql_value = self.__gen_store_sql(userid, sdata)
             self.db.insert("stores", sql_value)
@@ -186,7 +186,7 @@ class UUser:
 
             self.db.commit()
             self.userid = userid
-            self.store_id = store_id 
+            self.store_id = store_id
             self.chnid = sdata["channel_id"]
 
         except:
@@ -198,13 +198,13 @@ class UUser:
     def set_chan_state(self, userid, state):
         self.db.update("channel", {"is_valid": state}, {"userid": userid})
         self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
-    
+
     #设置门店状态，打开/关闭
     @with_database('uyu_core')
     def set_store_state(self, userid, state):
         self.db.update("stores", {"is_valid": state}, {"userid": userid})
         self.db.update("auth_user", {"state": define.UYU_USER_STATE_FORBIDDEN}, {"id": userid})
-    
+
     @with_database('uyu_core')
     def __update_user(self, userid, udata):
         sql_value = self.__gen_vsql(self.ukey, udata)
@@ -226,6 +226,7 @@ class UUser:
         self.db.update("channel", sql_value, {"userid": userid})
         log.debug("update channel succ!!!")
 
+
     @with_database('uyu_core')
     def __update_store(self, userid, sdata):
         sql_value = self.__gen_vsql(self.skey, sdata)
@@ -238,7 +239,7 @@ class UUser:
         self.__update_user(userid, udata)
         self.__update_profile(userid, pdata)
         self.__update_chan(userid, cdata)
-    
+
     #更新门店信息
     def store_info_change(self, userid, udata, pdata, sdata):
         self.__update_user(userid, udata)
@@ -265,8 +266,8 @@ class UUser:
             log.warn("not found: %d", userid)
             return
         role = self.udata["user_type"]
-        
-        if role == define.UYU_USER_ROLE_CHAN or role == define.UYU_USER_ROLE_STORE: 
+
+        if role == define.UYU_USER_ROLE_CHAN or role == define.UYU_USER_ROLE_STORE:
             record = self.db.select_one("profile", {"userid": userid})
             if record:
                 for key in self.pkey:
@@ -279,7 +280,7 @@ class UUser:
             if record:
                 for key in self.chan_key:
                     if record.get(key, None):
-                        self.cdata[key] = record[key]        
+                        self.cdata[key] = record[key]
                 self.cdata["chnid"] = record["id"]
 
         if role == define.UYU_USER_ROLE_STORE:
@@ -287,9 +288,9 @@ class UUser:
             if record:
                 for key in self.skey:
                     if record.get(key, None):
-                        self.sdata[key] = record[key]        
+                        self.sdata[key] = record[key]
                 self.sdata["store_id"] = record["id"]
-            
+
     def _check_permission(self, user_type, sys_role):
         log.debug(define.PERMISSION_CHECK)
         plist = define.PERMISSION_CHECK.get(sys_role, None)
