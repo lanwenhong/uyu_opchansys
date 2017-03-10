@@ -75,7 +75,7 @@ $(document).ready(function(){
                     var store_id =full.id;
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
-                    var view ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看'+ " data-storeid="+store_id+">";
                     return op+view;
                 }
             }
@@ -185,5 +185,60 @@ $(document).ready(function(){
 	        },
         });
     });
+
+    $(document).on('click', '.viewEyesight', function(){
+        var uid = $(this).data('uid');
+        var store_id = $(this).data('storeid');
+        var se_userid = window.localStorage.getItem('myid');
+        var get_data = {
+            'userid': uid,
+            'se_userid': se_userid,
+            'store_id': store_id,
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/eyesight_list',
+	        type: 'GET',
+	        dataType: 'json',
+	        data: get_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    toastr.success('ok');
+                    var sight_data = data.data.info;
+                    var table = $('#EyeSightList');
+                    for(var i=0; i<sight_data.length; i++){
+                        var index = i+1;
+                        var nick_name = sight_data[i].nick_name;
+                        var phone_num = sight_data[i].phone_num;
+                        var ctime = sight_data[i].ctime;
+                        var is_valid = sight_data[i].is_valid;
+                        var row = '<td>'+index+'</td>';
+                        row += '<td>'+nick_name+'</td>';
+                        row += '<td>'+phone_num+'</td>';
+                        row += '<td>'+ctime+'</td>';
+                        row += '<td>'+is_valid+'</td>';
+                        var btn = '<button type="button" class="btn btn-primary btn-sm">删除</button>';
+                        row += '<td>'+btn+'</td>';
+                        var tr = $('<tr>'+row+'</tr>');
+                        console.log(tr);
+                        tr.appendTo(table);
+                        row = '';
+                    }
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求异常');
+	        },
+        });
+        $("#viewEyeSightModal").modal();
+    });
+
 
 });
