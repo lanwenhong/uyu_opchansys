@@ -30,6 +30,7 @@ urls = (
     ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
     ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
     ('^/channel_op/v1/api/store_create$', store.CreateStoreHandler),
+    ('^/channel_op/v1/api/store$', store.StoreHandler),
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),
     ('^/channel_op/v1/api/training_op_list$', train.TrainBuyInfoHandler),

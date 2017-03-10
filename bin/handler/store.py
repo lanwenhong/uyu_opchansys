@@ -88,6 +88,42 @@ class StoreInfoHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
 
+
+class StoreHandler(core.Handler):
+    _get_handler_fields = [
+         Field('userid', T_INT, False)
+    ]
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _get_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+
+        params = self.validator.data
+        uop = UUser()
+        ret = uop.call("load_info_by_userid", params["userid"])
+        if ret ==  UYU_OP_ERR:
+            return error(UAURET.USERERR)
+
+        data = {}
+        data["profile"] = uop.pdata
+        data["chn_data"] = uop.sdata
+    
+        udata = {}
+
+        ret_filed = ["nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        for key in ret_filed:
+            if uop.udata.get(key, None):
+                udata[key] = uop.udata[key]
+
+        udata["userid"] =uop.udata["id"]
+        data["u_data"] = udata
+        return success(data)
+
+    def GET(self, *args):
+        return self._get_handler()
+        
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
         #用户基本信息

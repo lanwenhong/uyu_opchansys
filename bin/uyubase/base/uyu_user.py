@@ -217,7 +217,7 @@ class UUser:
     
     #更新门店信息
     @with_database('uyu_core')
-    def chan_info_change(self, userid, udata, pdata, sdata):
+    def chan_info_store(self, userid, udata, pdata, sdata):
         sql_value = self.__gen_vsql(self.ukey, udata)
         sql_value["utime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.update("auth_user", sql_value, {"id": userid})
