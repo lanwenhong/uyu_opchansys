@@ -10,7 +10,7 @@ import tools
 log = logging.getLogger()
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.response import success, error, UAURET
-from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR, UYU_CHAN_MAP
 from uyubase.base.uyu_user import UUser
 
 from runtime import g_rt
@@ -47,6 +47,7 @@ class ChanStateSetHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler()
         self.write(ret)
+
 
 class ChanHandler(core.Handler):
 
@@ -85,18 +86,27 @@ class ChanHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         params = self.validator.data
         uop = UUser()
-        ret = uop.call("load_chan_by_userid", params["userid"])
+        ret = uop.call("load_info_by_userid", params["userid"])
         if ret ==  UYU_OP_ERR:
             return error(UAURET.USERERR)
 
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
-        data["u_dasta"] = uop.udata
+        
+        log.debug("get data: %s", uop.udata)
+        udata = {}
+        #ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        ret_filed = ["login_name", "phone_num", "user_type", "email", "sex", "state"]
+        for key in ret_filed:
+            udata[key] = uop.udata[key]
+        udata["userid"] =uop.udata["id"]
+        data["u_data"] = udata
         return success(data)
 
     def GET(self, *args):
         ret = self._get_handler()
+        log.debug("ret: %s", ret)
         self.write(ret)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -137,7 +147,7 @@ class ChannelInfoHandler(core.Handler):
     _get_handler_fields = [
         Field('page', T_INT, False),
         Field('maxnum', T_INT, False),
-        Field('nick_name', T_STR, True),
+        Field('channel_name', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -150,9 +160,9 @@ class ChannelInfoHandler(core.Handler):
             params = self.validator.data
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            nick_name = params.get('nick_name')
+            channel_name = params.get('channel_name')
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(nick_name=nick_name)
+            info_data = self._query_handler(channel_name=channel_name)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -162,13 +172,14 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, nick_name=None):
+    def _query_handler(self, channel_name=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
                        'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
+                       'channel.channel_name',
                        ]
-        where = {'auth_user.nick_name': nick_name} if nick_name else {}
+        where = {'channel.channel_name': channel_name} if channel_name else {}
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
         for item in ret:
             userid = item['userid']
@@ -176,6 +187,8 @@ class ChannelInfoHandler(core.Handler):
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
             item['contact_phone'] = profile_ret.get('contact_phone', '') if profile_ret else ''
             item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
+            item['status'] = item['is_valid']
+            item['is_valid'] = UYU_CHAN_MAP.get(item['is_valid'], '')
 
         return ret
 
@@ -190,51 +203,16 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.SERVERERR)
 
 
-#class ChannelHandler(core.Handler):
-#    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
-#    @with_validator_self
-#    def _post_handler(self):
-#        if not self.user.sauth:
-#            return error(UAURET.SESSIONERR)
-#        uop = UUser()
-#        params = self.validator.data
-#
-#        udata = {}
-#        for key in ["login_name", "nick_name", "phone_num"]:
-#            if params.get(key, None):
-#                udata[key] = params[key]
-#
-#        pdata = {}
-#        for key in uop.pkey:
-#            if params.get(key, None):
-#                pdata[key] = params[key]
-#
-#        chndata = {}
-#        for key in uop.chan_key:
-#            if params.get(key, None):
-#                chndata[key] = params[key]
-#        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
-#        uop = UUser()
-#        ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
-#        if ret == UYU_OP_ERR:
-#            return error(UAURET.CHANGECHANERR)
-#        return success({"userid": params["userid"]})
-#
-#    def POST(self, *args):
-#        ret = self._post_handler()
-#        self.write(ret)
-
 class CreateChanHandler(core.Handler):
     _post_handler_fields = [
-        Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
-        #Field('nick_name',  T_STR, False),
+        # Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
         Field('email', T_STR, False, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
         Field('org_code',  T_STR, False),
         Field('license_id',  T_STR, False),
         Field('legal_person',  T_STR, False),
-        # Field('business',  T_STR, False),
-        # Field('front_business',  T_STR, False),
+        Field('business',  T_STR, False),
+        Field('front_business',  T_STR, False),
         Field('account_name',  T_STR, False),
         Field('bank_name',  T_STR, False),
         Field('bank_account',  T_STR, False),
@@ -280,3 +258,18 @@ class CreateChanHandler(core.Handler):
 
     def POST(self, *args):
         return self._post_handler()
+
+
+class ChanNameList(core.Handler):
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_database('uyu_core')
+    def GET(self):
+        sql = "select channel_name from channel"
+        db_ret = self.db.query(sql)
+        
+        ret_list = []
+        for item in db_ret:
+            ret_list.append(item.get("channel_name", ""))
+         
+        self.write(success(ret_list))

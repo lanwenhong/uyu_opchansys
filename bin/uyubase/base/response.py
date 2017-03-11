@@ -29,8 +29,11 @@ class UAURET:
     VCODEERR            = "1000"
     REGISTERERR         = "1001"
     CHANGECHANERR       = "1002"
+    CHANGESTOREERR      = "1003"
+    USERROLEERR         = "1004"
+    ORDERERR            = "1005"
 
-error_map = { 
+error_map = {
     UAURET.OK                    : u"成功",
     UAURET.DBERR                 : u"数据库查询错误",
     UAURET.THIRDERR              : u"第三方系统错误",
@@ -52,6 +55,9 @@ error_map = {
     UAURET.VCODEERR              : u"验证码错误",
     UAURET.REGISTERERR           : u"用户注册失败",
     UAURET.CHANGECHANERR         : u"更新渠道信息失败",
+    UAURET.CHANGESTOREERR        : u"更新门店信息失败",
+    UAURET.USERROLEERR           : u"用户身份出错",
+    UAURET.ORDERERR              : u"订单操作失败",
 }
 
 def json_default_trans(obj):

@@ -72,19 +72,96 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" id="channelCreateForm" role="form">
+
 						<div class="form-group">
-							<label for="loginName" class="col-sm-2 control-label">登录名称</label>
+							<label for="modalChannelName" class="col-sm-2 control-label">渠道名称</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="loginName" name="login_name" placeholder="">
+								<input type="text" class="form-control" id="channel_name" name="channel_name" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
 							<label for="phoneNum" class="col-sm-2 control-label">手机号</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="phoneNum" name="phone_num" placeholder="">
+								<input type="text" class="form-control" id="phone_num" name="phone_num" placeholder="">
 							</div>
 						</div>
+
+						<div class="form-group">
+							<label for="address" class="col-sm-2 control-label">地址</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="address" name="address" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_name" class="col-sm-2 control-label">渠道联系人</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="contact_phone" name="contact_phone" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="bank_account" name="bank_account" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="account_name" name="account_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="modalChannelTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="is_prepayment" class="col-sm-2 control-label">结算模式</label>
+							<div class="col-sm-10">
+								<!--
+								<input type="text" class="form-control" id="is_prepayment" name="is_prepayment" placeholder="">
+								-->
+								<select class="form-control is_prepayment" name="is_prepayment">
+									<option value="1">分成</option>
+									<option value="0">次卡</option>
+								</select>
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="modalChannelDividePercent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+							    <input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="">
+							</div>
+						</div> 
 
 						<div class="form-group">
 							<label for="email" class="col-sm-2 control-label">邮箱</label>
@@ -115,79 +192,16 @@
 						</div>
 
 						<div class="form-group">
-							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<label for="business" class="col-sm-2 control-label">经营范围</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="account_name" name="account_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="bank_account" name="bank_account" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalChannelName" class="col-sm-2 control-label">渠道名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="modalChannelName" name="channel_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="contact_name" class="col-sm-2 control-label">渠道联系人</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="contact_phone" name="contact_phone" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="address" class="col-sm-2 control-label">地址</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="address" name="address" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalChannelTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalChannelTrainPricePer" name="training_amt_per"  placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalChannelDividePercent" class="col-sm-2 control-label">分成比例</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalChannelDividePercent" name="divide_percent" placeholder="">
+							    <input type="text" class="form-control" id="business" name="business" placeholder="">
 							</div>
 						</div> 
 
 						<div class="form-group">
-							<label for="is_prepayment" class="col-sm-2 control-label">分配规则</label>
+							<label for="front_business" class="col-sm-2 control-label">前置经营范围</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="is_prepayment" name="is_prepayment" placeholder="">
+							    <input type="text" class="form-control" id="front_business" name="front_business" placeholder="">
 							</div>
 						</div> 
 					</form>
@@ -200,11 +214,180 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="channelEditModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">修改</h4><span id="uid" hidden></span>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="channelEditForm" role="form">
+                        <div class="form-group">
+                            <label for="ID" class="col-sm-2 control-label">ID</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_channel_id" name="ID" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login_name" class="col-sm-2 control-label">登录名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_login_name" name="login_name">
+                            </div>
+						</div>
+
+                        <div class="form-group">
+                            <label for="channel_name" class="col-sm-2 control-label">渠道名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_channel_name" name="channel_name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone_num" class="col-sm-2 control-label">手机号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_phone_num" name="phone_num">
+                            </div>
+						</div>
+
+                        <div class="form-group">
+                            <label for="business" class="col-sm-2 control-label">经营范围</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_business" name="business">
+                            </div>
+						</div>
+
+                        <div class="form-group">
+                            <label for="front_business" class="col-sm-2 control-label">前置经营范围</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_front_business" name="front_business">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="create_time" class="col-sm-2 control-label">创建时间</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_create_time" name="create_time" disabled>
+                            </div>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label for="legal_person" class="col-sm-2 control-label">法人姓名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_legal_person" name="legal_person" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="org_code" class="col-sm-2 control-label">组织机构代码</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_org_code" name="org_code" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="license_id" class="col-sm-2 control-label">工商注册号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_license_id" name="license_id" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_email" name="email" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="contact_name" class="col-sm-2 control-label">渠道联系人</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_contact_name" name="contact_name" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_contact_phone" name="contact_phone" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_contact_email" name="contact_email" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address" class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_address" name="address" placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="modalChannelTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_training_amt_per" name="training_amt_per"  placeholder="">
+                            </div>
+						</div>
+
+                        <div class="form-group">
+                            <label for="is_prepayment" class="col-sm-2 control-label">分配规则</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_is_prepayment" name="is_prepayment" placeholder="">
+                            </div>
+                        </div> 
+
+                        <div class="form-group">
+                            <label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="e_divide_percent" name="divide_percent" placeholder="">
+                            </div>
+                        </div> 
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="channelEditSubmit">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </%block>
 
 <%block name="body_media">
     <script src="/static/js/jquery.validate.js" type="text/javascript"></script>
     <script src="/static/js/jquery.validate.messages_cn.js" type="text/javascript"></script>
     <script src="/static/js/jquery.form.js" type="text/javascript"></script>
+    <script src="/static/js/uyu/base.js" type="text/javascript"></script>
     <script src="/static/js/uyu/channel.js" type="text/javascript"></script>
 </%block>
