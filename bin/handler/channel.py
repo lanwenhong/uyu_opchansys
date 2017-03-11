@@ -202,7 +202,7 @@ class ChannelInfoHandler(core.Handler):
 
 class CreateChanHandler(core.Handler):
     _post_handler_fields = [
-        Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
+        # Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
         Field('email', T_STR, False, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
         Field('org_code',  T_STR, False),

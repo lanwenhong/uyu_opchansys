@@ -115,7 +115,6 @@ $(document).ready(function(){
     $("#channelCreateSubmit").click(function(){
         var post_data = {}
         var se_userid = window.localStorage.getItem('myid');
-		var login_name = $('#login_name').val();
 		var phone_num = $('#phone_num').val();
 		var email = $('#email').val();
 		var org_code = $('#org_code').val();
@@ -135,7 +134,6 @@ $(document).ready(function(){
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
-		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
 		post_data['org_code'] = org_code;
