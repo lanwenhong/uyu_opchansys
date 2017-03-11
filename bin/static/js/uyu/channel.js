@@ -1,5 +1,9 @@
 $(document).ready(function(){
 
+    search_source();
+
+    $('#channelName').typeahead({source: subjects});
+
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
         var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
@@ -542,4 +546,36 @@ function query_to_obj(queryString){
     }
     console.log('-----');
     return post_data;
+}
+
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.resmsg;
+                var msg = resperr ? resperr : resmsg;
+                toastr.warning(msg);
+                return false;
+            }
+            else {
+                subjects = data.data;
+                console.log(data.data);
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+
 }
