@@ -31,6 +31,7 @@ urls = (
     ('^/channel_op/v1/api/channel$', channel.ChanHandler),
     ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
     ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
+    ('^/channel_op/v1/api/chan_name_list$', channel.ChanNameList),
 
     #门店API
     ('^/channel_op/v1/api/store_set_state', store.StoreStateSetHandler),
@@ -38,6 +39,7 @@ urls = (
     ('^/channel_op/v1/api/store$', store.StoreHandler),
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
     ('^/channel_op/v1/api/store_eye$', store.StoreEyeHandler),
+    ('^/channel_op/v1/api/store_name_list$', store.StoreNameListHandler),
 
 
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),

@@ -6,7 +6,8 @@ from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
-from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP
+from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_OP_OK
+from uyubase.base.training_op import TrainingOP
 
 from runtime import g_rt
 from config import cookie_conf
@@ -150,3 +151,25 @@ class TrainUseInfoHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+
+class ChanBuyTrainingsOrderHandler(core.Handler):
+    _post_handler_fields = [
+        Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
+        Field('channel_id', T_STR, False),
+        Field('training_times', T_INT, False),
+        Field('training_amt', T_INT, False),
+        Field('ch_training_amt_per', T_INT, False),
+    ]
+    
+    @with_validator_self
+    def _post_handler(self):
+        params = self.validator.data
+        top = TrainingOP(params)
+        ret = top.create_chan_buy_trainings_order()
+        if ret == UYU_OP_ERR:
+            return error(UAURET.ORDERERR)
+        return success({})
+
+    def POST(self):
+        return self._post_handler()

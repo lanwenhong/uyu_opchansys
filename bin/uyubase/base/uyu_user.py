@@ -94,6 +94,7 @@ class UUser:
         sql_value["state"] = define.UYU_USER_STATE_OK
         self.db.insert("auth_user", sql_value)
         self.userid = self.db.last_insert_id()
+    
 
     @with_database('uyu_core')
     def load_user_by_mobile(self, mobile):

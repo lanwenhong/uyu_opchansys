@@ -93,9 +93,11 @@ class ChanHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
-
+        
+        log.debug("get data: %s", uop.udata)
         udata = {}
-        ret_filed = ["nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        #ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        ret_filed = ["login_name", "phone_num", "user_type", "email", "sex", "state"]
         for key in ret_filed:
             udata[key] = uop.udata[key]
         udata["userid"] =uop.udata["id"]
@@ -104,6 +106,7 @@ class ChanHandler(core.Handler):
 
     def GET(self, *args):
         ret = self._get_handler()
+        log.debug("ret: %s", ret)
         self.write(ret)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -255,3 +258,18 @@ class CreateChanHandler(core.Handler):
 
     def POST(self, *args):
         return self._post_handler()
+
+
+class ChanNameList(core.Handler):
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_database('uyu_core')
+    def GET(self):
+        sql = "select channel_name from channel"
+        db_ret = self.db.query(sql)
+        
+        ret_list = []
+        for item in db_ret:
+            ret_list.append(item.get("channel_name", ""))
+         
+        self.write(success(ret_list))
