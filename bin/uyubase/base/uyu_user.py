@@ -95,6 +95,7 @@ class UUser:
         self.db.insert("auth_user", sql_value)
         self.userid = self.db.last_insert_id()
     
+
     @with_database('uyu_core')
     def load_user_by_mobile(self, mobile):
         record = self.db.select_one("auth_user", {"phone_num": mobile})
@@ -245,22 +246,22 @@ class UUser:
         self.__update_user(userid, udata)
         self.__update_profile(userid, pdata)
         self.__update_store(userid, sdata)
-    
+
     #门店绑定视光师
     @with_database("uyu_core")
     def store_bind_eyesight(self, userid, store_id, chan_id):
         sql_value = {"eyesight_id": userid, "store_id": store_id, "channel_id": chan_id}
         sql_value['ctime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.insert("store_eyesight_bind", sql_value)
-        
+
     #load用户信息
     @with_database('uyu_core')
     def load_info_by_userid(self, userid):
         record = self.db.select_one("auth_user", {"id": userid})
         if record:
             for key in self.ukey:
-                if record.get(key, None):
-                    self.udata[key] = record[key]
+                # if record.get(key, None):
+                self.udata[key] = record[key]
             self.udata["userid"] = userid
         else:
             log.warn("not found: %d", userid)
@@ -271,24 +272,24 @@ class UUser:
             record = self.db.select_one("profile", {"userid": userid})
             if record:
                 for key in self.pkey:
-                    if record.get(key, None):
-                        self.pdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.pdata[key] = record[key]
                 self.udata["userid"] = userid
 
         if role == define.UYU_USER_ROLE_CHAN:
             record = self.db.select_one("channel", {"userid": userid})
             if record:
                 for key in self.chan_key:
-                    if record.get(key, None):
-                        self.cdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.cdata[key] = record[key]
                 self.cdata["chnid"] = record["id"]
 
         if role == define.UYU_USER_ROLE_STORE:
             record = self.db.select_one("stores", {"userid": userid})
             if record:
                 for key in self.skey:
-                    if record.get(key, None):
-                        self.sdata[key] = record[key]
+                    # if record.get(key, None):
+                    self.sdata[key] = record[key]
                 self.sdata["store_id"] = record["id"]
 
     def _check_permission(self, user_type, sys_role):

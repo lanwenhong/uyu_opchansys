@@ -28,8 +28,8 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length,
             }
-            var channel_name = $("#channelName").val();
-            var store_name = $("#storeName").val();
+            var channel_name = $("#channel_name").val();
+            var store_name = $("#store_name").val();
             if(channel_name!=''&&channel_name!=undefined){
                 get_data.channel_name = channel_name;
             }
@@ -70,20 +70,21 @@ $(document).ready(function(){
                 targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
-                    var status = full.is_valid;
+                    var status = full.status;
                     var uid =full.userid;
                     var store_id =full.id;
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
-                    var view ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看'+ " data-storeid="+store_id+">";
-                    return op+view;
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+">";
+                    var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
+                    return op+view+view_eye;
                 }
             }
         ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
-				{ data: 'nick_name' },
+				{ data: 'store_name' },
 				{ data: 'store_type' },
 				{ data: 'contact_name' },
 				{ data: 'store_mobile' },
@@ -120,10 +121,59 @@ $(document).ready(function(){
     });
 
     $("#storeCreateSubmit").click(function(){
+        var post_data = {}
         var se_userid = window.localStorage.getItem('myid');
-        var queryString = $('#storeCreateForm').formSerialize();
-        var post_data = query_to_obj(queryString);
         post_data['se_userid'] = se_userid;
+		var login_name = $('#login_name').val();
+		var phone_num = $('#phone_num').val();
+		var email = $('#email').val();
+		var org_code = $('#org_code').val();
+		var license_id = $('#license_id').val();
+		var legal_person = $('#legal_person').val();
+		var account_name = $('#account_name').val();
+		var bank_name = $('#bank_name').val();
+		var bank_account = $('#bank_account').val();
+		var contact_name= $('#contact_name').val();
+		var contact_phone= $('#contact_phone').val();
+		var contact_email= $('#contact_email').val();
+		var address= $('#address').val();
+        var store_name = $('#store_name').val();
+        var store_contacter = $('#store_contacter').val();
+        var store_mobile = $('#store_mobile').val();
+        var store_addr = $('#store_addr').val();
+		var training_amt_per= $('#training_amt_per').val();
+		var divide_percent= $('#divide_percent').val();
+		var business = $('#business').val();
+		var front_business = $('#front_business').val();
+		var channel_id = $('#channel_id').val();
+        post_data['se_userid'] = se_userid;
+		post_data['login_name'] = login_name;
+		post_data['phone_num'] = phone_num;
+		post_data['email'] = email;
+		post_data['org_code'] = org_code;
+		post_data['license_id'] = license_id;
+		post_data['legal_person'] = legal_person;
+		post_data['account_name'] = account_name;
+		post_data['bank_name'] = bank_name;
+		post_data['bank_account'] = bank_account;
+		post_data['contact_name'] = contact_name;
+		post_data['contact_phone'] = contact_phone;
+		post_data['contact_email'] = contact_email;
+		post_data['address'] = address;
+		post_data['store_name'] = store_name;
+		post_data['store_contacter'] = store_contacter;
+		post_data['store_mobile'] = store_mobile;
+		post_data['store_addr'] = store_addr;
+		post_data['training_amt_per'] = training_amt_per;
+		post_data['divide_percent'] = divide_percent;
+		post_data['business'] = business;
+		post_data['front_business'] = front_business;
+		post_data['channel_id'] = channel_id;
+        var flag = check_obj_val(post_data);
+        if(!flag){
+            toastr.warning('请核实输入字段内容');
+            return false;
+        }
         $.ajax({
 	        url: '/channel_op/v1/api/store_create',
 	        type: 'POST',
@@ -186,6 +236,69 @@ $(document).ready(function(){
         });
     });
 
+    $(document).on('click', '.viewStore', function(){
+        var uid = $(this).data('uid');
+        var store_id = $(this).data('storeid');
+        var se_userid = window.localStorage.getItem('myid');
+        var get_data = {
+            'userid': uid,
+            'se_userid': se_userid,
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/store',
+	        type: 'GET',
+	        dataType: 'json',
+	        data: get_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    var p_data = data.data.profile;
+                    var ch_data = data.data.chn_data;
+                    var u_data = data.data.u_data;
+                    console.log(p_data);
+                    console.log(ch_data);
+                    console.log(u_data);
+                    $('#uid').text(uid);
+                    $('#e_login_name').val(u_data.phone_num);
+                    $('#e_phone_num').val(u_data.phone_num);
+                    $('#e_legal_person').val(p_data.legal_person);
+                    $('#e_org_code').val(p_data.org_code);
+                    $('#e_license_id').val(p_data.license_id);
+                    $('#e_email').val(u_data.email);
+                    $('#e_business').val(p_data.business);
+                    $('#e_front_business').val(p_data.front_business);
+                    $('#e_account_name').val(p_data.account_name);
+                    $('#e_bank_account').val(p_data.bank_account);
+                    $('#e_bank_name').val(p_data.bank_name);
+                    $('#e_contact_name').val(p_data.contact_name);
+                    $('#e_contact_phone').val(p_data.contact_phone);
+                    $('#e_contact_email').val(p_data.contact_email);
+                    $('#e_address').val(p_data.address);
+                    $('#e_training_amt_per').val(ch_data.training_amt_per);
+                    $('#e_is_prepayment').val(ch_data.is_prepayment);
+                    $('#e_divide_percent').val(ch_data.divide_percent);
+                    $('#e_store_name').val(ch_data.store_name);
+                    $('#e_store_contacter').val(ch_data.store_contacter);
+                    $('#e_store_mobile').val(ch_data.store_mobile);
+                    $('#e_store_addr').val(ch_data.store_addr);
+                    $('#storeEditModal').modal();
+                }
+	        },
+	        error: function(data) {
+                toastr.warning('请求数据异常');
+	        },
+
+        });
+
+    })
+
     $(document).on('click', '.viewEyesight', function(){
         var uid = $(this).data('uid');
         var store_id = $(this).data('storeid');
@@ -240,5 +353,88 @@ $(document).ready(function(){
         $("#viewEyeSightModal").modal();
     });
 
+
+    $('#storeEditSubmit').click(function(){
+        var post_data = {}
+        var uid = $('#uid').text();
+        var se_userid = window.localStorage.getItem('myid');
+        post_data['se_userid'] = se_userid;
+        post_data['userid'] = uid;
+		var login_name = $('#e_login_name').val();
+		var phone_num = $('#e_phone_num').val();
+		var email = $('#e_email').val();
+		var org_code = $('#e_org_code').val();
+		var license_id = $('#e_license_id').val();
+		var legal_person = $('#e_legal_person').val();
+		var account_name = $('#e_account_name').val();
+		var bank_name = $('#e_bank_name').val();
+		var bank_account = $('#e_bank_account').val();
+		var contact_name= $('#e_contact_name').val();
+		var contact_phone= $('#e_contact_phone').val();
+		var contact_email= $('#e_contact_email').val();
+		var address= $('#e_address').val();
+        var store_name = $('#e_store_name').val();
+        var store_contacter = $('#e_store_contacter').val();
+        var store_mobile = $('#e_store_mobile').val();
+        var store_addr = $('#e_store_addr').val();
+		var training_amt_per= $('#e_training_amt_per').val();
+		var divide_percent= $('#e_divide_percent').val();
+		var business = $('#e_business').val();
+		var front_business = $('#e_front_business').val();
+        post_data['se_userid'] = se_userid;
+		post_data['login_name'] = login_name;
+		post_data['phone_num'] = phone_num;
+		post_data['email'] = email;
+		post_data['org_code'] = org_code;
+		post_data['license_id'] = license_id;
+		post_data['legal_person'] = legal_person;
+		post_data['account_name'] = account_name;
+		post_data['bank_name'] = bank_name;
+		post_data['bank_account'] = bank_account;
+		post_data['contact_name'] = contact_name;
+		post_data['contact_phone'] = contact_phone;
+		post_data['contact_email'] = contact_email;
+		post_data['address'] = address;
+		post_data['store_name'] = store_name;
+		post_data['store_contacter'] = store_contacter;
+		post_data['store_mobile'] = store_mobile;
+		post_data['store_addr'] = store_addr;
+		post_data['training_amt_per'] = training_amt_per;
+		post_data['divide_percent'] = divide_percent;
+		post_data['business'] = business;
+		post_data['front_business'] = front_business;
+        var flag = check_obj_val(post_data);
+        if(!flag){
+            toastr.warning('请核实输入字段内容');
+            return false;
+        }
+        console.log('post data');
+        console.log(post_data);
+        $.ajax({
+	        url: '/channel_op/v1/api/store',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('修改成功');
+                    $('#storeEditModal').modal('hide');
+                    $("#storeEditForm").resetForm();
+                    $('#storeList').DataTable().draw();
+                }
+	        },
+	        error: function(data) {
+                toastr.success('请求异常');
+	        },
+
+        });
+    });
 
 });
