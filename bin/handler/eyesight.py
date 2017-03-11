@@ -10,6 +10,7 @@ from uyubase.base.uyu_user import UUser
 
 
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
+from uyubase.uyu.define import UYU_STORE_EYESIGHT_BIND, UYU_STORE_EYESIGHT_BIND_MAP
 from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_ERR
 
 from runtime import g_rt
@@ -49,16 +50,18 @@ class EyeSightInfoHandler(core.Handler):
     def _query_handler(self, store_id):
         where = {}
         if store_id:
-            where.update({'store_id': store_id})
+            where.update({'store_id': store_id, 'is_valid': UYU_STORE_EYESIGHT_BIND})
 
         user_fields = ['id', 'nick_name', 'phone_num']
-        keep_fields = ['eyesight_id', 'channel_id', 'ctime', 'id', 'is_valid']
+        keep_fields = ['eyesight_id', 'store_id', 'ctime', 'id', 'is_valid']
         ret = self.db.select(table='store_eyesight_bind', fields=keep_fields, where=where)
         for item in ret:
             user_ret = self.db.select_one(table='auth_user', fields=user_fields, where={'id': item['eyesight_id']})
             item['nick_name'] = user_ret.get('nick_name') if user_ret else ''
             item['phone_num'] = user_ret.get('phone_num') if user_ret else ''
             item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
+            item['status'] = item['is_valid']
+            item['is_valid'] = UYU_STORE_EYESIGHT_BIND_MAP.get(item['is_valid'], '')
 
         return ret
 

@@ -37,6 +37,7 @@ urls = (
     ('^/channel_op/v1/api/store_create$', store.CreateStoreHandler),
     ('^/channel_op/v1/api/store$', store.StoreHandler),
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
+    ('^/channel_op/v1/api/store_eye$', store.StoreEyeHandler),
 
 
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),

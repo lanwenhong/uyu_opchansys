@@ -73,11 +73,13 @@ $(document).ready(function(){
                     var status = full.status;
                     var uid =full.userid;
                     var store_id =full.id;
+                    var channel_id =full.channel_id;
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
                     var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+">";
                     var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
-                    return op+view+view_eye;
+                    var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
+                    return op+view+view_eye+add_eye;
                 }
             }
         ],
@@ -299,6 +301,19 @@ $(document).ready(function(){
 
     })
 
+    $(document).on('click', '.addEyesight', function(){
+        $('#eye_phone_num').val('');
+        $('#nick_name').val();
+        $('#username').val();
+        var channel_id = $(this).data('channelid');
+        var store_id = $(this).data('storeid');
+        console.log('channelid: '+channel_id);
+        console.log('storeid: '+store_id);
+        $('#span_channel_id').text(channel_id);
+        $('#span_store_id').text(store_id);
+        $('#addEyesight').modal();
+    })
+
     $(document).on('click', '.viewEyesight', function(){
         var uid = $(this).data('uid');
         var store_id = $(this).data('storeid');
@@ -332,12 +347,15 @@ $(document).ready(function(){
                         var phone_num = sight_data[i].phone_num;
                         var ctime = sight_data[i].ctime;
                         var is_valid = sight_data[i].is_valid;
+                        var eyeid = sight_data[i].eyesight_id;
+                        var storeid = sight_data[i].store_id;
                         var row = '<td>'+index+'</td>';
                         row += '<td>'+nick_name+'</td>';
                         row += '<td>'+phone_num+'</td>';
                         row += '<td>'+ctime+'</td>';
                         row += '<td>'+is_valid+'</td>';
-                        var btn = '<button type="button" class="btn btn-primary btn-sm">删除</button>';
+                        // var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight">删除</button>';
+                        var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'">删除</button>'
                         row += '<td>'+btn+'</td>';
                         var tr = $('<tr>'+row+'</tr>');
                         console.log(tr);
@@ -437,4 +455,91 @@ $(document).ready(function(){
         });
     });
 
+    $(document).on('click', '#deleteEyesight', function(){
+        var eyesight_id = $(this).data['eyeid'];
+        var store_id = $(this).data['storeid'];
+        console.log('delete ...');
+    });
+
+    $('#find_phone').click(function(){
+        var se_userid = window.localStorage.getItem('myid');
+        var phone_num = $('#eye_phone_num').val();
+        if(!phone_num){
+            toastr.warning('请输入手机号');
+        }
+        var get_data = {
+            'phone_num': phone_num,
+            'se_userid': se_userid,
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/store_eye',
+	        type: 'GET',
+	        dataType: 'json',
+	        data: get_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    var u_data = data.data;
+                    var nick_name= u_data.nick_name;
+                    var username = u_data.username;
+                    var eyesight_id = u_data.id;
+                    $('#eyesight_id').text(eyesight_id);
+                    $('#nick_name').val(nick_name);
+                    $('#username').val(username);
+                }
+	        },
+	        error: function(data) {
+                toastr.success('请求异常');
+	        },
+
+        });
+    });
+
+    $('#addEyesightSubmit').click(function(){
+        var se_userid = window.localStorage.getItem('myid');
+        var channel_id = $('#span_channel_id').text();
+        var store_id = $('#span_store_id').text();
+        var eyesight_id = $('#eyesight_id').text();
+        var post_data = {
+            'channel_id': channel_id,
+            'store_id': store_id,
+            'userid': eyesight_id,
+            'se_userid': se_userid
+        }
+        var phone_num = $('#eye_phone_num').val();
+        var nick_name = $('#nick_name').val();
+        if(!phone_num || !nick_name){
+            toastr.warning('请核实手机号和昵称');
+            return false;
+        }
+        $.ajax({
+	        url: '/channel_op/v1/api/store_eye',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    $('#addEyesight').modal('hide');
+                    toastr.success('添加成功');
+                }
+	        },
+	        error: function(data) {
+                toastr.success('请求异常');
+	        },
+
+        });
+    })
 });

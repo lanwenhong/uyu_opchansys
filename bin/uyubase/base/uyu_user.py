@@ -52,7 +52,7 @@ class UUser:
         self.ukey = [
             "login_name", "nick_name", "phone_num", "password",
             "ctime", "utime", "user_type", "email",
-            "sex", "state", "id",
+            "sex", "state", "id", "username",
         ]
 
         self.pkey = [
@@ -98,7 +98,8 @@ class UUser:
     @with_database('uyu_core')
     def load_user_by_mobile(self, mobile):
         record = self.db.select_one("auth_user", {"phone_num": mobile})
-        if not record:
+        log.debug('#record: %s', record)
+        if record:
             for key in self.ukey:
                 if record.get(key, None):
                     self.udata[key] = record[key]
@@ -249,7 +250,7 @@ class UUser:
     #门店绑定视光师
     @with_database("uyu_core")
     def store_bind_eyesight(self, userid, store_id, chan_id):
-        sql_value = {"eyesight_id": userid, "store_id": store_id, "channel_id": chan_id}
+        sql_value = {"eyesight_id": userid, "store_id": store_id, "channel_id": chan_id, 'is_valid': define.UYU_STORE_EYESIGHT_BIND}
         sql_value['ctime'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.db.insert("store_eyesight_bind", sql_value)
 

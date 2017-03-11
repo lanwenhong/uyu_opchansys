@@ -9,7 +9,7 @@ from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.uyu_user import UUser
 
 
-from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
+from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_USER_ROLE_EYESIGHT
 from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_STORE_ROLE_MAP, UYU_STORE_STATUS_MAP
 
 from runtime import g_rt
@@ -234,23 +234,33 @@ class StoreEyeHandler(core.Handler):
     def _get_handler(self):
         params = self.validator.data
         uop = UUser()
-        uop.call("load_user_by_mobile", params["mobile"])
-        if len(uop.udata) == 0 or uop.user.get("user_type", -1) != define.UYU_USER_ROLE_EYESIGHT:
+        uop.call("load_user_by_mobile", params["phone_num"])
+        log.debug('udata: %s', uop.udata)
+        if len(uop.udata) == 0 or uop.udata.get("user_type", -1) != UYU_USER_ROLE_EYESIGHT:
             return error(UAURET.USERROLEERR)
 
         ret = {}
+        ret["id"] = uop.udata["id"]
         ret["mobile"] = uop.udata["phone_num"]
         ret["nick_name"] = uop.udata["nick_name"]
+        ret["username"] = uop.udata.get("username", '')
 
         return success(ret)
 
     def GET(self, *args):
         return self._get_handler()
 
+    @with_validator_self
     def _post_handler(self):
-        params = self.validator.data
-        uop = UUser()
-        uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+        try:
+            params = self.validator.data
+            uop = UUser()
+            uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+            return success({})
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.DATAEXIST)
 
     def POST(self, *arg):
         return self._post_handler()
