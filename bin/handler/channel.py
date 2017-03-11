@@ -93,9 +93,11 @@ class ChanHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
-
+        
+        log.debug("get data: %s", uop.udata)
         udata = {}
-        ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        #ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
+        ret_filed = ["login_name", "phone_num", "user_type", "email", "sex", "state"]
         for key in ret_filed:
             udata[key] = uop.udata[key]
         udata["userid"] =uop.udata["id"]

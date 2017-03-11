@@ -22,12 +22,12 @@ class TrainingOP:
             myid = new_id64(conn=conn)
             return datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(myid)
     
-    def __gen_vsql(self):
+    def __gen_vsql(self, cdata):
         sql_value = {}
         order_no = self.create_orderno()
         log.debug("order_no: %s", order_no)
 
-        for key in self.cdata:
+        for key in cdata:
             if self.cdata.get(key, None):
                 sql_value[key] = self.cdata[key]
 
@@ -38,20 +38,20 @@ class TrainingOP:
 
         return sql_value
 
-    @with_database('uyu_core')
-    def create(self):
-        sql_value = self.__gen_vsql() 
-        try:
-            self.db.insert("training_operator_record", sql_value)
-            return UYU_OP_OK
-        except:
-            log.warn(traceback.format_exc())
-            return UYU_OP_ERR
+    #@with_database('uyu_core')
+    #def create(self, cdata):
+    #    sql_value = self.__gen_vsql(cdata) 
+    #    try:
+    #        self.db.insert("training_operator_record", sql_value)
+    #        return UYU_OP_OK
+    #    except:
+    #        log.warn(traceback.format_exc())
+    #        return UYU_OP_ERR
     
     #公司分配给渠道训练次数的订单
     @with_database('uyu_core')
-    def create_org_allot_to_chan_order(self, chan_id):
-        sql_value = self.__gen_vsql()
+    def create_org_allot_to_chan_order(self, chan_id, cdata):
+        sql_value = self.__gen_vsql(cdata)
         try:
             self.db.start()
             self.db.insert("training_operator_record", sql_value)
