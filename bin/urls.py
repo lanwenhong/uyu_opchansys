@@ -46,5 +46,5 @@ urls = (
     ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
 
     #视光师
-    ('^/channel_op/v1/api/eyesight_list$', eyesight.EyeSightInfoHandler),
+    ('^/channel_op/v1/api/eyesight_info$', eyesight.EyeSightInfoHandler),
 )

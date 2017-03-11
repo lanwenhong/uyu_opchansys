@@ -32,7 +32,7 @@ class UAURET:
     CHANGESTOREERR      = "1003"
     USERROLEERR         = "1004"
 
-error_map = { 
+error_map = {
     UAURET.OK                    : u"成功",
     UAURET.DBERR                 : u"数据库查询错误",
     UAURET.THIRDERR              : u"第三方系统错误",

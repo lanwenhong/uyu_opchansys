@@ -77,7 +77,7 @@ $(document).ready(function(){
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
                     var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+">";
-                    var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+">";
+                    var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+ " data-channel_id="+channel_id+ ">";
                     var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
                     return op+view+view_eye+add_eye;
                 }
@@ -303,8 +303,8 @@ $(document).ready(function(){
 
     $(document).on('click', '.addEyesight', function(){
         $('#eye_phone_num').val('');
-        $('#nick_name').val();
-        $('#username').val();
+        $('#nick_name').val('');
+        $('#username').val('');
         var channel_id = $(this).data('channelid');
         var store_id = $(this).data('storeid');
         console.log('channelid: '+channel_id);
@@ -317,14 +317,18 @@ $(document).ready(function(){
     $(document).on('click', '.viewEyesight', function(){
         var uid = $(this).data('uid');
         var store_id = $(this).data('storeid');
+        var channel_id = $(this).data('channel_id');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
             'se_userid': se_userid,
             'store_id': store_id,
+            'channel_id': channel_id,
         }
+        console.log('get_data');
+        console.log(get_data);
         $.ajax({
-	        url: '/channel_op/v1/api/eyesight_list',
+	        url: '/channel_op/v1/api/eyesight_info',
 	        type: 'GET',
 	        dataType: 'json',
 	        data: get_data,
@@ -355,7 +359,8 @@ $(document).ready(function(){
                         row += '<td>'+ctime+'</td>';
                         row += '<td>'+is_valid+'</td>';
                         // var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight">删除</button>';
-                        var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'">删除</button>'
+                        // var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'">删除</button>'
+                        var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'" data-channel_id="'+channel_id+'" >删除</button>'
                         row += '<td>'+btn+'</td>';
                         var tr = $('<tr>'+row+'</tr>');
                         console.log(tr);
@@ -456,9 +461,39 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '#deleteEyesight', function(){
-        var eyesight_id = $(this).data['eyeid'];
-        var store_id = $(this).data['storeid'];
+        var se_userid = window.localStorage.getItem('myid');
+        var eyesight_id = $(this).data('eyeid');
+        var store_id = $(this).data('storeid');
+        var channel_id = $(this).data('channel_id');
+        var post_data = {}
+        post_data['se_userid'] = se_userid;
+        post_data['userid'] = eyesight_id;
+        post_data['store_id'] = store_id;
+        post_data['channel_id'] = channel_id;
         console.log('delete ...');
+        console.log(post_data);
+        $.ajax({
+	        url: '/channel_op/v1/api/eyesight_info',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: post_data,
+	        success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.resmsg;
+                    var msg = resperr ? resperr : resmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    $('#viewEyeSightModal').modal('hide');
+                    toastr.success('解绑成功');
+                }
+	        },
+	        error: function(data) {
+                toastr.success('请求异常');
+	        },
+        });
     });
 
     $('#find_phone').click(function(){
@@ -482,6 +517,9 @@ $(document).ready(function(){
                     var resperr = data.resperr;
                     var respmsg = data.resmsg;
                     var msg = resperr ? resperr : resmsg;
+                    $('#eyesight_id').text('');
+                    $('#nick_name').val('');
+                    $('#username').val('');
                     toastr.warning(msg);
                 }
                 else {
