@@ -214,6 +214,25 @@ def test_store_query():
     ret = client.get('/channel_op/v1/api/store', send, headers=headers)
     log.debug(ret)
 
+
+def test_channel_name_list():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000}
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.get('/channel_op/v1/api/chan_name_list', send, headers=headers)
+    log.debug(ret)
+
+def test_store_name_list():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000}
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.get('/channel_op/v1/api/store_name_list', send, headers=headers)
+    log.debug(ret)
+
+
+
 if __name__ == '__main__':
     #test_login()
     #test_vcode()
@@ -225,4 +244,6 @@ if __name__ == '__main__':
     #test_store_register()
     #test_store_query()
     #test_store_change()
-    test_store_set_state()
+    #test_store_set_state()
+    #test_channel_name_list()
+    test_store_name_list()

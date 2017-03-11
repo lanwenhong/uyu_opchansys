@@ -316,3 +316,17 @@ class CreateStoreHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler()
         self.write(ret)
+
+
+class StoreNameListHandler(core.Handler):
+    
+    @with_database('uyu_core')
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    def GET(self):
+        sql = "select store_name from stores" 
+        db_ret = self.db.query(sql)
+
+        ret_list = []
+        for item in db_ret:
+            ret_list.append(item.get("store_name", ""))
+        self.write(success(ret_list))
