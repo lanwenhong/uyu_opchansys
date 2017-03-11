@@ -23,11 +23,11 @@
 					<div class="row">
 						<form class="form-inline">
 							<div class="form-group">
-							  <label for="channelID">渠道名称</label>
+							  <label for="channel_name">渠道名称</label>
 							  <input type="text" class="form-control" id="channel_name" placeholder="">
 							</div>
 							<div class="form-group">
-							  <label for="storeID">门店名称</label>
+							  <label for="store_name">门店名称</label>
 							  <input type="text" class="form-control" id="store_name" placeholder="">
 							</div>
 							<button type="button" class="btn btn-primary" id="storeSearch">搜索</button>
@@ -492,6 +492,7 @@
 
 <%block name="body_media">
     <script src="/static/js/jquery.form.js" type="text/javascript"></script>
+	<script src="/static/js/bootstrap-typeahead.js" type="text/javascript"></script>
     <script src="/static/js/uyu/base.js" type="text/javascript"></script>
     <script src="/static/js/uyu/store.js" type="text/javascript"></script>
 </%block>

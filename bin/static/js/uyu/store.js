@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    search_source();
+
     $('#storeList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -581,3 +583,53 @@ $(document).ready(function(){
         });
     })
 });
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.resmsg;
+                var msg = resperr ? resperr : resmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                $('#channel_name').typeahead({source: data.data});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+    $.ajax({
+        url: '/channel_op/v1/api/store_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.resmsg;
+                var msg = resperr ? resperr : resmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                $('#store_name').typeahead({source: data.data});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
