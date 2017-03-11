@@ -1,15 +1,10 @@
 $(document).ready(function(){
-
     search_source();
-
-    $('#channelName').typeahead({source: subjects});
-
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
         var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
-
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -548,12 +543,10 @@ function query_to_obj(queryString){
     return post_data;
 }
 
-
 function search_source() {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
-
     $.ajax({
         url: '/channel_op/v1/api/chan_name_list',
         type: 'GET',
@@ -566,16 +559,14 @@ function search_source() {
                 var respmsg = data.resmsg;
                 var msg = resperr ? resperr : resmsg;
                 toastr.warning(msg);
-                return false;
             }
             else {
-                subjects = data.data;
                 console.log(data.data);
+                $('#channelName').typeahead({source: data.data});
             }
         },
         error: function(data) {
             toastr.warning('请求异常');
         }
     });
-
 }
