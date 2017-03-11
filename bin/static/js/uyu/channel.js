@@ -371,7 +371,82 @@ $(document).ready(function(){
     });
 
     $('#channelEditSubmit').click(function(){
-	    var post_data = {}
+
+        var channel_edit_vt = $('#channelEditForm').validate({
+            rules: {
+                channel_name: {
+                    required: true,
+                    maxlength: 256,
+                },
+                phone_num: {
+                    required: true,
+                    isMobile: '#phone_num',
+                },
+                address: {
+                    required: true,
+                    maxlength: 256,
+                },
+                contact_name: {
+                    required: true,
+                    maxlength: 128,
+                },
+                contact_phone: {
+                    required: true,
+                    maxlength: 128,
+                },
+                contact_email: {
+                    email: true,
+                },
+                training_amt_per: {
+                    required: true,
+                    isYuan: '#training_amt_per',
+                },
+                is_prepayment: {
+                    required: true,
+                    range:[0, 2]
+                }
+            },
+            messages: {
+                channel_name: {
+                    required: '请输入渠道名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                },
+                phone_num: {
+                    required: '请输入手机号',
+                },
+                address: {
+                    required: '请输入地址',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                },
+                contact_name: {
+                    required: '请输入联系人姓名',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                },
+                contact_phone: {
+                    required: '请输入联系人手机号',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                },
+                contact_email: {
+                    email: "请输入正确格式的电子邮件",
+                },
+                training_amt_per: {
+                    required: '请输入单次训练价格',
+                    digits: "只能输入整数",
+                },
+                is_prepayment: {
+                    required: '请选择结算模式',
+                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+                }
+            },
+        });
+        console.log($('.is_prepayment').val());
+        console.log($('#training_amt_per').val() * 100);
+        var ok = channel_edit_vt.form();
+        if(!ok){
+            return false;
+        }
+
+	    var post_data = {};
         var uid = $('#uid').text();
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
