@@ -8,6 +8,7 @@ from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_OP_OK
 from uyubase.base.training_op import TrainingOP
+from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP
 
 from runtime import g_rt
 from config import cookie_conf
@@ -64,13 +65,15 @@ class TrainBuyInfoHandler(core.Handler):
         keep_fields = ['id', 'channel_id', 'store_id', 'consumer_id', 'category', 'op_type', 'training_times', 'training_amt', 'op_name', 'status', 'create_time']
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
         for item in ret:
-            channel_ret = self.db.select_one(table='channel', fields='userid', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='userid', where={'id': item['store_id']})
-            channel_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': channel_ret['userid']})
-            store_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': store_ret['userid']})
-            item['channel_name'] = channel_name['nick_name']
-            item['store_name'] = store_name['nick_name']
+            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            item['channel_name'] = channel_ret['nick_name']
+            item['store_name'] = store_ret['nick_name']
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
+            item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
+            item['training_amt'] = item['training_amt'] / 100.0
+            item['status'] = UYU_ORDER_STATUS_MAP.get(item['UYU_ORDER_STATUS_MAP'], '')
 
         return ret
 
