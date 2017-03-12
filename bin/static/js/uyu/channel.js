@@ -259,7 +259,7 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-		if(is_prepayment == 1){
+		if(is_prepayment == 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
 		        return false;
@@ -351,15 +351,14 @@ $(document).ready(function(){
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
-                    /*
                     var is_prepayment = ch_data.is_prepayment;
-                    if(is_prepayment==1){
+                    console.log('is_prepayment: '+is_prepayment);
+                    if(is_prepayment==0){
                         $('#edit_divide_percent_div').hide();
                     }
                     else {
                         $('#edit_divide_percent_div').show();
                     }
-                    */
                     $("#channelEditModal").modal();
                 }
 	        },
@@ -487,7 +486,6 @@ $(document).ready(function(){
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
-		var login_name = $('#e_login_name').val();
 		var phone_num = $('#e_phone_num').val();
 		var email = $('#e_email').val();
 		var org_code = $('#e_org_code').val();
@@ -501,13 +499,12 @@ $(document).ready(function(){
 		var contact_phone= $('#e_contact_phone').val();
 		var contact_email= $('#e_contact_email').val();
 		var address= $('#e_address').val();
-		var training_amt_per= $('#e_training_amt_per').val();
+		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
 		var is_prepayment= $('#e_is_prepayment').val();
 		var business = $('#e_business').val();
 		var front_business = $('#e_front_business').val();
         post_data['se_userid'] = se_userid;
-		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
 		post_data['org_code'] = org_code;
@@ -532,13 +529,8 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
-        /*
-        var flag = check_obj_val(post_data);
-        if(!flag){
-            toastr.warning('请核实输入字段内容');
-            return false;
-        }
-        */
+        console.log('post data');
+        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'POST',

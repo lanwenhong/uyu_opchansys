@@ -74,7 +74,7 @@ class ChanHandler(core.Handler):
         Field('contact_phone',  T_STR, False),
         Field('contact_email',  T_STR, True),
         Field('address',  T_STR, False),
-        Field('training_amt_per', T_INT, False),
+        Field('training_amt_per', T_FLOAT, False),
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, False),
     ]
@@ -196,6 +196,7 @@ class ChannelInfoHandler(core.Handler):
             item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_CHAN_MAP.get(item['is_valid'], '')
+            item['training_amt_per'] = item['training_amt_per'] / 100.0 if item['training_amt_per'] else 0.00
 
         return ret
 
