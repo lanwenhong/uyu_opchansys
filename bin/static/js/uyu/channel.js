@@ -2,7 +2,8 @@ $(document).ready(function(){
     search_source();
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
+        // var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
+        var mobile = /^(1\d{10})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
@@ -566,7 +567,7 @@ $(document).ready(function(){
 
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
-        if(is_prepayment==1){
+        if(is_prepayment==0){
             $('#create_divide_percent_div').hide();
         }else{
             $('#create_divide_percent_div').show();
@@ -575,7 +576,7 @@ $(document).ready(function(){
 
     $('#e_is_prepayment').change(function(){
 		var is_prepayment= $('#e_is_prepayment').val();
-        if(is_prepayment==1){
+        if(is_prepayment==0){
             $('#edit_divide_percent_div').hide();
         }else{
             $('#edit_divide_percent_div').show();
