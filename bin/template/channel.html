@@ -88,14 +88,14 @@
 					<form class="form-horizontal" id="channelCreateForm" role="form">
 
 						<div class="form-group">
-							<label for="modalChannelName" class="col-sm-2 control-label">渠道名称</label>
+							<label for="channel_name" class="col-sm-2 control-label">渠道名称</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="channel_name" name="channel_name" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="phoneNum" class="col-sm-2 control-label">手机号</label>
+							<label for="phone_num" class="col-sm-2 control-label">手机号</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="phone_num" name="phone_num" placeholder="">
 							</div>
@@ -151,7 +151,7 @@
 						</div>
 
 						<div class="form-group">
-							<label for="modalChannelTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
+							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位">
 							</div>
@@ -163,14 +163,14 @@
 								<!--
 								<input type="text" class="form-control" id="is_prepayment" name="is_prepayment" placeholder="">
 								-->
-								<select class="form-control is_prepayment" name="is_prepayment">
+								<select class="form-control is_prepayment" id="is_prepayment" name="is_prepayment">
 									<option value="1">分成</option>
 									<option value="0">次卡</option>
 								</select>
 							</div>
 						</div> 
 
-						<div class="form-group">
+						<div class="form-group" hidden id="create_divide_percent_div">
 							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="">
@@ -239,7 +239,7 @@
                 <div class="modal-body">
                     <form class="form-horizontal" id="channelEditForm" role="form">
                         <div class="form-group">
-                            <label for="ID" class="col-sm-2 control-label">ID</label>
+                            <label for="e_channel_id" class="col-sm-2 control-label">ID</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_channel_id" name="ID" disabled>
                             </div>
@@ -322,14 +322,14 @@
 						<div class="form-group">
 							<label for="e_is_prepayment" class="col-sm-2 control-label">结算模式</label>
 							<div class="col-sm-10">
-								<select class="form-control e_is_prepayment" name="is_prepayment">
+								<select class="form-control e_is_prepayment" id="e_is_prepayment" name="is_prepayment">
 									<option value="1">分成</option>
 									<option value="0">次卡</option>
 								</select>
 							</div>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group" hidden id="edit_divide_percent_div">
 							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_divide_percent" name="divide_percent" placeholder="">

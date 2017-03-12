@@ -127,6 +127,10 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
+        var is_prepayment= $('.is_prepayment').val();
+        if(is_prepayment==1){
+            $('#create_divide_percent_div').attr('hidden', false);
+        }
 		$("#channelCreateModal").modal();
 	});
 
@@ -245,15 +249,23 @@ $(document).ready(function(){
 		post_data['contact_email'] = contact_email;
 		post_data['address'] = address;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
+		if(is_prepayment == 1){
+		    if(!divide_percent){
+		        toastr.warning('分成模式分成比例必填');
+		        return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
+        /*
         var flag = check_obj_val(post_data);
         if(!flag){
             toastr.warning('请核实输入字段内容');
             return false;
         }
+        */
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -332,6 +344,10 @@ $(document).ready(function(){
                     $('#e_training_amt_per').val(ch_data.training_amt_per);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
+                    var is_prepayment = ch_data.is_prepayment;
+                    if(is_prepayment==1){
+                        $('#edit_divide_percent_div').attr('hidden', false);
+                    }
                     $("#channelEditModal").modal();
                 }
 	        },
@@ -494,15 +510,23 @@ $(document).ready(function(){
 		post_data['contact_email'] = contact_email;
 		post_data['address'] = address;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
+		if(is_prepayment==1){
+		    if(!divide_percent){
+		        toastr.warning('分成模式分成比例必填');
+		        return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
+        /*
         var flag = check_obj_val(post_data);
         if(!flag){
             toastr.warning('请核实输入字段内容');
             return false;
         }
+        */
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'POST',
