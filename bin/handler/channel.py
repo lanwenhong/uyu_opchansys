@@ -148,6 +148,8 @@ class ChannelInfoHandler(core.Handler):
         Field('page', T_INT, False),
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
+        Field('phone_num', T_STR, True),
+        Field('is_prepayment', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -160,9 +162,11 @@ class ChannelInfoHandler(core.Handler):
             params = self.validator.data
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            channel_name = params.get('channel_name')
+            channel_name = params.get('channel_name', None)
+            phone_num = params.get('phone_num', None)
+            is_prepayment = params.get('is_prepayment', None)
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name=channel_name)
+            info_data = self._query_handler(channel_name, phone_num, is_prepayment)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -172,7 +176,7 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None):
+    def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None):
         profile_fields = ['contact_name', 'contact_phone']
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
                        'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
@@ -180,6 +184,9 @@ class ChannelInfoHandler(core.Handler):
                        'channel.channel_name',
                        ]
         where = {'channel.channel_name': channel_name} if channel_name else {}
+        if phone_num:
+            where.update({'auth_user.phone_num': phone_num})
+        where.update({'channel.is_prepayment': is_prepayment})
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
         for item in ret:
             userid = item['userid']

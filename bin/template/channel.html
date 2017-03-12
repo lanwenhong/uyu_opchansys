@@ -31,12 +31,18 @@
 							  <input type="text" class="form-control" id="channelName" placeholder="">
 							</div>
 							<div class="form-group">
-								<label for="phone_num">手机号</label>
-								<input type="text" class="form-control" id="phone_num" placeholder="">
+								<label for="s_phone_num">手机号</label>
+								<input type="text" class="form-control" id="s_phone_num" placeholder="">
 							</div>
 							<div class="form-group">
-								<label for="is_prepayment">结算模式</label>
-								<input type="text" class="form-control" id="is_prepayment" placeholder="">
+								<label for="s_is_prepayment">结算模式</label>
+								<!--
+								<input type="text" class="form-control" id="s_is_prepayment" placeholder="">
+								-->
+								<select class="form-control" id="s_is_prepayment" name="is_prepayment">
+									<option value="1">分成</option>
+									<option value="0">次卡</option>
+								</select>
 							</div>
 							<button type="button" class="btn btn-primary" id="channelNameSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="channelCreate">新建渠道</button>
@@ -165,7 +171,7 @@
 						</div> 
 
 						<div class="form-group">
-							<label for="modalChannelDividePercent" class="col-sm-2 control-label">分成比例</label>
+							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="">
 							</div>

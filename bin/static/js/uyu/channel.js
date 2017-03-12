@@ -39,12 +39,21 @@ $(document).ready(function(){
         "ajax": function(data, callback, settings){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length,
-            }
+	           'maxnum': data.length
+            };
             var channel_name = $("#channelName").val();
-            if(channel_name!=''&&channel_name!=undefined){
+            var phone_num = $("#s_phone_num").val();
+            var is_prepayment = $("#s_is_prepayment").val();
+            if(channel_name){
                 get_data.channel_name = channel_name;
             }
+            if(phone_num){
+                get_data.phone_num = phone_num;
+            }
+
+            get_data.is_prepayment = is_prepayment;
+
+
             $.ajax({
 	            url: '/channel_op/v1/api/chninfo_pagelist',
 	            type: 'GET',
