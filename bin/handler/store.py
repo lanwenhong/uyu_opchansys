@@ -124,21 +124,21 @@ class StoreHandler(core.Handler):
     _post_handler_fields = [
         Field("se_userid", T_INT, False),
         Field('userid', T_INT, False),
-        Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
+        # Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
-        Field('email', T_STR, False, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
+        Field('email', T_STR, True, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
         #profile信息
-        Field('org_code',  T_STR, False),
-        Field('license_id',  T_STR, False),
-        Field('legal_person',  T_STR, False),
-        Field('business',  T_STR, False),
-        Field('front_business',  T_STR, False),
-        Field('account_name',  T_STR, False),
-        Field('bank_name',  T_STR, False),
-        Field('bank_account',  T_STR, False),
+        Field('org_code',  T_STR, True),
+        Field('license_id',  T_STR, True),
+        Field('legal_person',  T_STR, True),
+        Field('business',  T_STR, True),
+        Field('front_business',  T_STR, True),
+        Field('account_name',  T_STR, True),
+        Field('bank_name',  T_STR, True),
+        Field('bank_account',  T_STR, True),
         Field('contact_name',  T_STR, False),
         Field('contact_phone',  T_STR, False),
-        Field('contact_email',  T_STR, False),
+        Field('contact_email',  T_STR, True),
         Field('address',  T_STR, False),
 
         #门店信息
@@ -270,19 +270,19 @@ class CreateStoreHandler(core.Handler):
         #用户基本信息
         Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
-        Field('email', T_STR, False, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
+        Field('email', T_STR, True, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
         #profile信息
-        Field('org_code',  T_STR, False),
-        Field('license_id',  T_STR, False),
-        Field('legal_person',  T_STR, False),
-        Field('business',  T_STR, False),
-        Field('front_business',  T_STR, False),
-        Field('account_name',  T_STR, False),
-        Field('bank_name',  T_STR, False),
-        Field('bank_account',  T_STR, False),
+        Field('org_code',  T_STR, True),
+        Field('license_id',  T_STR, True),
+        Field('legal_person',  T_STR, True),
+        Field('business',  T_STR, True),
+        Field('front_business',  T_STR, True),
+        Field('account_name',  T_STR, True),
+        Field('bank_name',  T_STR, True),
+        Field('bank_account',  T_STR, True),
         Field('contact_name',  T_STR, False),
         Field('contact_phone',  T_STR, False),
-        Field('contact_email',  T_STR, False),
+        Field('contact_email',  T_STR, True),
         Field('address',  T_STR, False),
         #门店信息
         Field('training_amt_per', T_INT, False),
@@ -330,11 +330,11 @@ class CreateStoreHandler(core.Handler):
 
 
 class StoreNameListHandler(core.Handler):
-    
+
     @with_database('uyu_core')
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
-        sql = "select store_name from stores" 
+        sql = "select store_name from stores"
         db_ret = self.db.query(sql)
 
         ret_list = []

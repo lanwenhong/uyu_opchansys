@@ -171,6 +171,18 @@ $(document).ready(function(){
                 store_name: {
                     required: true,
                     maxlength: 128
+                },
+                store_contacter: {
+                    required: true,
+                    maxlength: 128
+                },
+                store_mobile: {
+                    required: true,
+                    isMobile: '#store_mobile'
+                },
+                store_addr: {
+                    required: true,
+                    maxlength: 128
                 }
             },
             messages: {
@@ -202,6 +214,18 @@ $(document).ready(function(){
                 },
                 store_name: {
                     required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                store_contacter: {
+                    required: '请输入门店联系人',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                store_mobile: {
+                    required: '请输入门店手机号',
+                    isMobile: '#store_mobile'
+                },
+                store_addr: {
+                    required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 }
             }
@@ -489,7 +513,20 @@ $(document).ready(function(){
                 store_name: {
                     required: true,
                     maxlength: 128
+                },
+                store_contacter: {
+                    required: true,
+                    maxlength: 128
+                },
+                store_mobile: {
+                    required: true,
+                    isMobile: '#store_mobile'
+                },
+                store_addr: {
+                    required: true,
+                    maxlength: 128
                 }
+            },
             },
             messages: {
                 phone_num: {
@@ -516,6 +553,18 @@ $(document).ready(function(){
                 },
                 store_name: {
                     required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                store_contacter: {
+                    required: '请输入门店联系人',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                store_mobile: {
+                    required: '请输入门店手机号',
+                    isMobile: '#store_mobile'
+                },
+                store_addr: {
+                    required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 }
             }
