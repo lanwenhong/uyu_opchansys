@@ -2,7 +2,8 @@ $(document).ready(function(){
     search_source();
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
+        // var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
+        var mobile = /^(1\d{10})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
