@@ -251,7 +251,7 @@ $(document).ready(function(){
 		var contact_phone= $('#contact_phone').val();
 		var contact_email= $('#contact_email').val();
 		var address= $('#address').val();
-        var store_name = $('#store_name').val();
+        var store_name = $('#c_store_name').val();
         var store_contacter = $('#store_contacter').val();
         var store_mobile = $('#store_mobile').val();
         var store_addr = $('#store_addr').val();
@@ -526,7 +526,6 @@ $(document).ready(function(){
                     required: true,
                     maxlength: 128
                 }
-            },
             },
             messages: {
                 phone_num: {
