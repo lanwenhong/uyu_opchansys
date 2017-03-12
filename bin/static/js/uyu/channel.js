@@ -127,10 +127,15 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
+        /*
         var is_prepayment= $('.is_prepayment').val();
         if(is_prepayment==1){
-            $('#create_divide_percent_div').attr('hidden', false);
+            $('#create_divide_percent_div').hide();
         }
+        else {
+            $('#create_divide_percent_div').show();
+        }
+        */
 		$("#channelCreateModal").modal();
 	});
 
@@ -344,10 +349,15 @@ $(document).ready(function(){
                     $('#e_training_amt_per').val(ch_data.training_amt_per);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
+                    /*
                     var is_prepayment = ch_data.is_prepayment;
                     if(is_prepayment==1){
-                        $('#edit_divide_percent_div').attr('hidden', false);
+                        $('#edit_divide_percent_div').hide();
                     }
+                    else {
+                        $('#edit_divide_percent_div').show();
+                    }
+                    */
                     $("#channelEditModal").modal();
                 }
 	        },
@@ -552,6 +562,24 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
 	        },
         });
+    });
+
+    $('.is_prepayment').change(function(){
+        var is_prepayment = $('.is_prepayment').val();
+        if(is_prepayment==1){
+            $('#create_divide_percent_div').hide();
+        }else{
+            $('#create_divide_percent_div').show();
+        }
+    });
+
+    $('#e_is_prepayment').change(function(){
+		var is_prepayment= $('#e_is_prepayment').val();
+        if(is_prepayment==1){
+            $('#edit_divide_percent_div').hide();
+        }else{
+            $('#edit_divide_percent_div').show();
+        }
     });
 
 });
