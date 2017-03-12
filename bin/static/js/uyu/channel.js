@@ -128,10 +128,15 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
+        /*
         var is_prepayment= $('.is_prepayment').val();
         if(is_prepayment==1){
-            $('#create_divide_percent_div').attr('hidden', false);
+            $('#create_divide_percent_div').hide();
         }
+        else {
+            $('#create_divide_percent_div').show();
+        }
+        */
 		$("#channelCreateModal").modal();
 	});
 
@@ -236,6 +241,7 @@ $(document).ready(function(){
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
+        post_data['login_name'] = phone_num;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
 		post_data['org_code'] = org_code;
@@ -342,13 +348,18 @@ $(document).ready(function(){
                     $('#e_contact_phone').val(p_data.contact_phone);
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
-                    $('#e_training_amt_per').val(ch_data.training_amt_per);
+                    $('#e_training_amt_per').val(ch_data.training_amt_per / 100);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
+                    /*
                     var is_prepayment = ch_data.is_prepayment;
                     if(is_prepayment==1){
-                        $('#edit_divide_percent_div').attr('hidden', false);
+                        $('#edit_divide_percent_div').hide();
                     }
+                    else {
+                        $('#edit_divide_percent_div').show();
+                    }
+                    */
                     $("#channelEditModal").modal();
                 }
 	        },
@@ -553,6 +564,24 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
 	        },
         });
+    });
+
+    $('.is_prepayment').change(function(){
+        var is_prepayment = $('.is_prepayment').val();
+        if(is_prepayment==0){
+            $('#create_divide_percent_div').hide();
+        }else{
+            $('#create_divide_percent_div').show();
+        }
+    });
+
+    $('#e_is_prepayment').change(function(){
+		var is_prepayment= $('#e_is_prepayment').val();
+        if(is_prepayment==0){
+            $('#edit_divide_percent_div').hide();
+        }else{
+            $('#edit_divide_percent_div').show();
+        }
     });
 
 });
