@@ -1,4 +1,11 @@
 $(document).ready(function(){
+
+    $.validator.addMethod("isYuan", function(value, element) {
+        var length = value.length;
+        var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        return this.optional(element) || (length && yuan.test(value));
+    }, "请正确填写您的价格");
+
     $('#trainBuyerList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -27,16 +34,17 @@ $(document).ready(function(){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length,
-            }
-            var channel_name = $("#channelName").val();
-            if(channel_name!=''&&channel_name!=undefined){
+            };
+            var channel_name = $("#channel_name").val();
+            if(channel_name){
                 get_data.channel_name = channel_name;
             }
 
-            var store_name = $("#storeName").val();
-            if(store_name!=''&&store_name!=undefined){
+            var store_name = $("#store_name").val();
+            if(store_name){
                 get_data.store_name = store_name;
             }
+
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
 	            type: 'GET',
@@ -48,8 +56,8 @@ $(document).ready(function(){
                         $processing = $("#trainBuyerList_processing");
                         $processing.css('display', 'none');
                         var resperr = data.resperr;
-                        var respmsg = data.resmsg;
-                        var msg = resperr ? resperr : resmsg;
+                        var respmsg = data.respmsg;
+                        var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
                         return false;
                     }
@@ -64,10 +72,20 @@ $(document).ready(function(){
 	                });
 	            },
 	            error: function(data) {
-	            },
-
+	            }
             });
         },
+        'columnDefs': [
+            {
+                targets: 11,
+                data: '操作',
+                render: function(data, type, full) {
+                    var orderno = full.orderno;
+                    var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
+                    return cancel;
+                }
+            }
+        ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
@@ -79,7 +97,7 @@ $(document).ready(function(){
 				{ data: 'training_amt' },
 				{ data: 'op_name' },
 				{ data: 'create_time' },
-				{ data: 'status' },
+				{ data: 'status' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -91,14 +109,14 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
+                'sLast': '尾页'
+            }
         }
-
     });
 
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
+        channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
 
@@ -107,7 +125,237 @@ $(document).ready(function(){
     });
 
     $("#trainBuyerCreateSubmit").click(function(){
-       var queryString = $('#trainBuyerCreateForm').formSerialize();
-       alert(queryString);
+        var buyer_vt = $('#trainBuyerCreateForm').validate({
+            rules: {
+                channel_name: {
+                    required: true
+                },
+                store_name : {
+                    required: true
+                },
+                consumer: {
+                    required: true,
+                    maxlength: 128
+                },
+                category: {
+                    required: true
+                },
+                op_type: {
+                    required: true,
+                    range: [0, 2]
+                },
+                training_times: {
+                    required: true,
+                    digits: true
+                },
+                training_amt: {
+                    required: true,
+                    isYuan: '#training_amt'
+                }
+            },
+            messages: {
+                channel_name: {
+                    required: "请选择渠道"
+                },
+                store_name : {
+                    required: "请选择门店"
+                },
+                consumer: {
+                    required: "请输入消费者",
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                category: {
+                    required: "请选择类别"
+                },
+                op_type: {
+                    required: "请选择操作类型",
+                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
+                },
+                training_times: {
+                    required: "请输入训练次数",
+                    digits: "只能输入整数"
+                },
+                training_amt: {
+                    required: "请输入训练金额"
+                }
+            }
+        });
+        var ok = buyer_vt.form();
+        if(!ok){
+            return false;
+        }
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data.se_userid = se_userid;
+        var channel_id = $('.c_channel_name').val();
+        var store_id = $('.c_store_name').val();
+        var consumer = $('#consumer').val();
+        var category = $('#c_category').val();
+        var op_type = $('#c_op_type').val();
+        var training_times = $('#training_times').val();
+        var training_amt = $('#training_amt').val();
+        post_data.channel_id = channel_id;
+        post_data.store_id = store_id;
+        post_data.consumer = consumer;
+        post_data.category = category;
+        post_data.op_type = op_type;
+        post_data.training_times = training_times;
+        post_data.training_amt = training_amt * 100;
+
+        $.ajax({
+            url: '',
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    $('#trainBuyerCreateForm').resetForm();
+                    $('#trainBuyerCreateModal').modal('hide');
+                    toastr.success('新增成功');
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
     });
+
+    $('.c_channel_name').change(function () {
+        var get_data = {};
+        var channel_id = $(this).val();
+        var se_userid = window.localStorage.getItem('myid');
+        get_data['se_userid'] = se_userid;
+        get_data['channel_id'] = channel_id;
+        $.ajax({
+            url: '/channel_op/v1/api/chan_store_list',
+            type: 'GET',
+            data: get_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    var c_store_name = $('.c_store_name');
+                    for(var i=0; i<data.data.length; i++){
+                        var store_id = data.data[i].store_id;
+                        var store_name = data.data[i].store_name;
+                        var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                        option_str.appendTo(c_store_name);
+                    }
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+    });
+
+    $(document).on('click', '.order-cancel', function(){
+        alert('准备提交撤销操作');
+    });
+    
 });
+
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var subjects = new Array();
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].channel_name)
+                }
+                $('#s_channel_name').typeahead({source: subjects});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+    $.ajax({
+        url: '/channel_op/v1/api/store_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                $('#s_store_name').typeahead({source: data.data});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
+function channel_name_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var c_channel_name = $('.c_channel_name');
+                for(var i=0; i<data.data.length; i++){
+                    var channel_id = data.data[i].channel_id;
+                    var channel_name = data.data[i].channel_name;
+                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    option_str.appendTo(c_channel_name);
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+

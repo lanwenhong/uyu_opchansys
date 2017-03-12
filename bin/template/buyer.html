@@ -21,16 +21,16 @@
 					<div class="row">
 						<form class="form-inline">
 							<div class="form-group">
-							  <label for="channelName">渠道</label>
-							  <input type="text" class="form-control" id="channelName" placeholder="">
+							  <label for="s_channel_name">渠道</label>
+							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
-							  <label for="storeName">门店</label>
-							  <input type="text" class="form-control" id="storeName" placeholder="">
+							  <label for="s_store_name">门店</label>
+							  <input type="text" class="form-control" id="s_store_name" placeholder="">
 							</div>
 							<div class="form-group">
-							  <label for="consumerMobile">用户</label>
-							  <input type="text" class="form-control" id="consumerMobile" placeholder="">
+							  <label for="s_comsumer_mobile">用户</label>
+							  <input type="text" class="form-control" id="s_comsumer_mobile" placeholder="">
 							</div>
 							<button type="button" class="btn btn-primary" id="trainBuyerSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="trainBuyerCreate">新增</button>
@@ -52,9 +52,7 @@
 									<th>操作人</th>
 									<th>创建时间</th>
 									<th>状态</th>
-									<!--
 									<th>操作</th>
-									-->
 								</tr>
 							</thead>
 							<tbody>
@@ -78,51 +76,58 @@
 				<div class="modal-body">
 					<form class="form-horizontal" id="trainBuyerCreateForm" role="form">
 						<div class="form-group">
-							<label for="modalChannelName" class="col-sm-2 control-label">渠道名称</label>
+							<label for="c_channel_name" class="col-sm-2 control-label">渠道名称</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="modalChannelName" name="channelID" placeholder="">
+								<select class="form-control c_channel_name" id="c_channel_name" name="channel_name">
+								</select>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalStore" class="col-sm-2 control-label">门店</label>
+							<label for="c_store_name" class="col-sm-2 control-label">门店</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalStore" name="storeID" placeholder="">
+								<select class="form-control c_store_name" id="c_store_name" name="store_name">
+								</select>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalConsumer" class="col-sm-2 control-label">用户</label>
+							<label for="consumer" class="col-sm-2 control-label">用户</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalConsumer" name="consumer" placeholder="">
+							    <input type="text" class="form-control" id="consumer" name="consumer">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalCategory" class="col-sm-2 control-label">类别</label>
+							<label for="c_category" class="col-sm-2 control-label">类别</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalCategory" name="category"  placeholder="">
+								<select class="form-control c_category" id="c_category" name="category">
+									<option value="0">训练</option>
+								</select>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalOpType" class="col-sm-2 control-label">操作类型</label>
+							<label for="c_op_type" class="col-sm-2 control-label">操作类型</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalOpType" name="opType" placeholder="">
+								<select class="form-control c_op_type" id="c_op_type" name="op_type">
+									<option value="0">分配</option>
+									<option value="1">购买</option>
+								</select>
 							</div>
 						</div> 
 
 						<div class="form-group">
-							<label for="modalTrainTimes" class="col-sm-2 control-label">次数</label>
+							<label for="training_times" class="col-sm-2 control-label">次数</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalTrainTimes" name="trainTimes" placeholder="">
+							    <input type="text" class="form-control" id="training_times" name="training_times">
 							</div>
 						</div> 
 
 						<div class="form-group">
-							<label for="modalTrainAmt" class="col-sm-2 control-label">金额</label>
+							<label for="training_amt" class="col-sm-2 control-label">金额</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalTrainAmt" name="trainAmt" placeholder="">
+							    <input type="text" class="form-control" id="training_amt" name="training_amt">
 							</div>
 						</div> 
 					</form>
@@ -137,6 +142,10 @@
 </%block>
 
 <%block name="body_media">
-    <script src="/static/js/jquery.form.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.validate.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.validate.messages_cn.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.form.js" type="text/javascript"></script>
+	<script src="/static/js/bootstrap-typeahead.js" type="text/javascript"></script>
+	<script src="/static/js/uyu/base.js" type="text/javascript"></script>
     <script src="/static/js/uyu/buyer.js" type="text/javascript"></script>
 </%block>
