@@ -241,6 +241,7 @@ $(document).ready(function(){
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
+        post_data['login_name'] = phone_num;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
 		post_data['org_code'] = org_code;
@@ -347,7 +348,7 @@ $(document).ready(function(){
                     $('#e_contact_phone').val(p_data.contact_phone);
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
-                    $('#e_training_amt_per').val(ch_data.training_amt_per);
+                    $('#e_training_amt_per').val(ch_data.training_amt_per / 100);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
                     /*

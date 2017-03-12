@@ -93,7 +93,7 @@ class ChanHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
-        
+
         log.debug("get data: %s", uop.udata)
         udata = {}
         #ret_filed = ["login_name", "nick_name", "phone_num", "user_type", "email", "sex", "state"]
@@ -212,7 +212,7 @@ class ChannelInfoHandler(core.Handler):
 
 class CreateChanHandler(core.Handler):
     _post_handler_fields = [
-        # Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
+        Field('login_name', T_REG, False, match=r'^(1\d{10})$'),
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
         Field('email', T_STR, True, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
         Field('org_code',  T_STR, True),
@@ -274,9 +274,9 @@ class ChanNameList(core.Handler):
     def GET(self):
         sql = "select channel_name from channel"
         db_ret = self.db.query(sql)
-        
+
         ret_list = []
         for item in db_ret:
             ret_list.append(item.get("channel_name", ""))
-         
+
         self.write(success(ret_list))
