@@ -273,11 +273,14 @@ class ChanNameList(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_database('uyu_core')
     def GET(self):
-        sql = "select channel_name from channel"
+        sql = "select id, channel_name from channel"
         db_ret = self.db.query(sql)
 
         ret_list = []
         for item in db_ret:
-            ret_list.append(item.get("channel_name", ""))
+            tmp = {}
+            tmp['channel_name'] = item.get('channel_name', '')
+            tmp['channel_id' = item.get('id', None)
+            ret_list.append(tmp)
 
         self.write(success(ret_list))

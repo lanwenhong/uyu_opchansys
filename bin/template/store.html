@@ -75,16 +75,114 @@
 				<div class="modal-body">
 					<form class="form-horizontal" id="storeCreateForm" role="form">
 						<div class="form-group">
-							<label for="loginName" class="col-sm-2 control-label">登录名称</label>
+							<label for="channel_name" class="col-sm-2 control-label">渠道名称</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="login_name" name="login_name" placeholder="">
+								<!--
+								<input type="text" class="form-control" id="channel_name" name="channel_name" placeholder="">
+								-->
+								<select class="form-control c_channel_name" id="c_channel_name" name="channel_name">
+									<option value="1" selected>分成</option>
+									<option value="0">次卡</option>
+								</select>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="phoneNum" class="col-sm-2 control-label">手机号</label>
+							<label for="phone_num" class="col-sm-2 control-label">手机号</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="phone_num" name="phone_num" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="address" class="col-sm-2 control-label">地址</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="address" name="address" placeholder="">
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="contact_phone" name="contact_phone" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="bank_account" name="bank_account" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="account_name" name="account_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="store_name" class="col-sm-2 control-label">门店名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="store_name" name="store_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="store_contacter" class="col-sm-2 control-label">门店联系人</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="store_contacter" name="store_contacter" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="store_mobile" class="col-sm-2 control-label">门店手机号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="store_mobile" name="store_mobile" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="store_addr" class="col-sm-2 control-label">门店地址</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="store_addr" name="store_addr" placeholder="">
 							</div>
 						</div>
 
@@ -130,104 +228,6 @@
                             </div>
 						</div>
 
-                        <div class="form-group">
-                            <label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="account_name" name="account_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bank_name" class="col-sm-2 control-label">开户银行</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="bank_account" name="bank_account" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="contact_name" name="contact_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="contact_phone" name="contact_phone" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="address" class="col-sm-2 control-label">地址</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="address" name="address" placeholder="">
-                            </div>
-                        </div>
-
-						<div class="form-group">
-							<label for="modalStoreName" class="col-sm-2 control-label">门店名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="store_name" name="store_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreContacter" class="col-sm-2 control-label">门店联系人</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="store_contacter" name="store_contacter" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreContactMobile" class="col-sm-2 control-label">门店手机号</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="store_mobile" name="store_mobile" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreAddr" class="col-sm-2 control-label">门店地址</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="store_addr" name="store_addr" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreDividePercent" class="col-sm-2 control-label">分成比例</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="">
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="channel_id" class="col-sm-2 control-label">渠道ID</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="channel_id" name="channel_id" placeholder="">
-							</div>
-						</div> 
-
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -270,8 +270,6 @@
 		</div>
 	</div>
 
-
-
 	<div class="modal fade" tabindex="-1" role="dialog" id="storeEditModal">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -281,17 +279,105 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" id="storeEditForm" role="form">
+
 						<div class="form-group">
-							<label for="loginName" class="col-sm-2 control-label">登录名称</label>
+							<label for="e_phone_num" class="col-sm-2 control-label">手机号</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_login_name" name="login_name" placeholder="">
+								<input type="text" class="form-control" id="e_phone_num" name="phone_num" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="phoneNum" class="col-sm-2 control-label">手机号</label>
+							<label for="address" class="col-sm-2 control-label">地址</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_phone_num" name="phone_num" placeholder="">
+								<input type="text" class="form-control" id="e_address" name="address" placeholder="">
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_contact_name" name="contact_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_contact_phone" name="contact_phone" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_contact_email" name="contact_email" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+
+							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_training_amt_per" name="training_amt_per"  placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_divide_percent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_divide_percent" name="divide_percent" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_store_name" class="col-sm-2 control-label">门店名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_store_name" name="store_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_store_contacter" class="col-sm-2 control-label">门店联系人</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_store_contacter" name="store_contacter" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_store_mobile" class="col-sm-2 control-label">门店手机号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_store_mobile" name="store_mobile" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_store_addr" class="col-sm-2 control-label">门店地址</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_store_addr" name="store_addr" placeholder="">
+
 							</div>
 						</div>
 
@@ -336,101 +422,6 @@
                                 <input type="text" class="form-control" id="e_front_business" name="front_business">
                             </div>
 						</div>
-
-                        <div class="form-group">
-                            <label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-
-                            <label for="bank_name" class="col-sm-2 control-label">开户银行</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_contact_name" name="contact_name" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_contact_phone" name="contact_phone" placeholder="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_contact_email" name="contact_email" placeholder="">
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="address" class="col-sm-2 control-label">地址</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="e_address" name="address" placeholder="">
-                            </div>
-                        </div>
-
-						<div class="form-group">
-							<label for="modalStoreName" class="col-sm-2 control-label">门店名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_store_name" name="store_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreContacter" class="col-sm-2 control-label">门店联系人</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="e_store_contacter" name="store_contacter" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreContactMobile" class="col-sm-2 control-label">门店手机号</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="e_store_mobile" name="store_mobile" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreAddr" class="col-sm-2 control-label">门店地址</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="e_store_addr" name="store_addr" placeholder="">
-
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreTrainPricePer" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="e_training_amt_per" name="training_amt_per"  placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="modalStoreDividePercent" class="col-sm-2 control-label">分成比例</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="e_divide_percent" name="divide_percent" placeholder="">
-							</div>
-						</div> 
-
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -486,7 +477,6 @@
 			</div>
 		</div>
 	</div>
-
 
 </%block>
 

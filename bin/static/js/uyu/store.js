@@ -1,6 +1,18 @@
 $(document).ready(function(){
     search_source();
 
+    $.validator.addMethod("isMobile", function(value, element) {
+        var length = value.length;
+        var mobile = /^(1\d{10})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
+    }, "请正确填写您的手机号码");
+
+    $.validator.addMethod("isYuan", function(value, element) {
+        var length = value.length;
+        var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        return this.optional(element) || (length && yuan.test(value));
+    }, "请正确填写您的价格");
+
     $('#storeList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -29,7 +41,7 @@ $(document).ready(function(){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length,
-            }
+            };
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
             if(channel_name!=''&&channel_name!=undefined){
@@ -49,8 +61,8 @@ $(document).ready(function(){
                         $processing = $("#storeList_processing");
                         $processing.css('display', 'none');
                         var resperr = data.resperr;
-                        var respmsg = data.resmsg;
-                        var msg = resperr ? resperr : resmsg;
+                        var respmsg = data.respmsg;
+                        var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
                         return false;
                     }
@@ -63,7 +75,7 @@ $(document).ready(function(){
 	                });
 	            },
 	            error: function(data) {
-	            },
+	            }
 
             });
         },
@@ -97,7 +109,7 @@ $(document).ready(function(){
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },
 				{ data: 'is_valid' },
-				{ data: 'create_time' },
+				{ data: 'create_time' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -109,14 +121,15 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
+                'sLast': '尾页'
+            }
         }
 
     });
 
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
+        channel_name_select();
         $("#storeCreateModal").modal();
     });
 
@@ -125,11 +138,84 @@ $(document).ready(function(){
     });
 
     $("#storeCreateSubmit").click(function(){
-        var post_data = {}
+
+        var store_create_vt = $('#storeCreateForm').validate({
+            rules: {
+                channel_name: {
+                    required: true,
+                    maxlength: 256
+                },
+                phone_num: {
+                    required: true,
+                    isMobile: '#phone_num'
+                },
+                address: {
+                    required: true,
+                    maxlength: 256
+                },
+                contact_name: {
+                    required: true,
+                    maxlength: 128
+                },
+                contact_phone: {
+                    required: true,
+                    maxlength: 128
+                },
+                contact_email: {
+                    email: true
+                },
+                training_amt_per: {
+                    required: true,
+                    isYuan: '#training_amt_per'
+                },
+                store_name: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
+            messages: {
+                channel_name: {
+                    required: '请选择渠道名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                phone_num: {
+                    required: '请输入手机号'
+                },
+                address: {
+                    required: '请输入地址',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_name: {
+                    required: '请输入联系人姓名',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_phone: {
+                    required: '请输入联系人手机号',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_email: {
+                    email: "请输入正确格式的电子邮件"
+                },
+                training_amt_per: {
+                    required: '请输入单次训练价格',
+                    digits: "只能输入整数"
+                },
+                store_name: {
+                    required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                }
+            }
+        });
+        var ok = store_create_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
-		var login_name = $('#login_name').val();
-		var phone_num = $('#phone_num').val();
+        var phone_num = $('#phone_num').val();
+		var login_name = phone_num;
 		var email = $('#email').val();
 		var org_code = $('#org_code').val();
 		var license_id = $('#license_id').val();
@@ -145,11 +231,11 @@ $(document).ready(function(){
         var store_contacter = $('#store_contacter').val();
         var store_mobile = $('#store_mobile').val();
         var store_addr = $('#store_addr').val();
-		var training_amt_per= $('#training_amt_per').val();
+		var training_amt_per= $('#training_amt_per').val() * 100;
 		var divide_percent= $('#divide_percent').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
-		var channel_id = $('#channel_id').val();
+		var channel_id = $('.c_channel_name').val();
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
@@ -173,11 +259,7 @@ $(document).ready(function(){
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
 		post_data['channel_id'] = channel_id;
-        var flag = check_obj_val(post_data);
-        if(!flag){
-            toastr.warning('请核实输入字段内容');
-            return false;
-        }
+
         $.ajax({
 	        url: '/channel_op/v1/api/store_create',
 	        type: 'POST',
@@ -188,7 +270,7 @@ $(document).ready(function(){
                 if(respcd != '0000'){
                     var resperr = data.resperr;
                     var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
                 }
@@ -201,20 +283,20 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
          });
     });
 
     $(document).on('click', '.setStatus', function(){
         var uid = $(this).data('uid');
         var status = $(this).data('status');
-        var value = status ? 0 : 1
+        var value = status ? 0 : 1;
         var se_userid = window.localStorage.getItem('myid');
         var post_data = {
             'userid': uid,
             'state': value,
-            'se_userid': se_userid,
-        }
+            'se_userid': se_userid
+        };
         $.ajax({
 	        url: '/channel_op/v1/api/store_set_state',
 	        type: 'POST',
@@ -224,8 +306,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
                 }
@@ -236,7 +318,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
     });
 
@@ -246,8 +328,8 @@ $(document).ready(function(){
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
-            'se_userid': se_userid,
-        }
+            'se_userid': se_userid
+        };
         $.ajax({
 	        url: '/channel_op/v1/api/store',
 	        type: 'GET',
@@ -257,8 +339,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
@@ -270,7 +352,6 @@ $(document).ready(function(){
                     console.log(ch_data);
                     console.log(u_data);
                     $('#uid').text(uid);
-                    $('#e_login_name').val(u_data.phone_num);
                     $('#e_phone_num').val(u_data.phone_num);
                     $('#e_legal_person').val(p_data.legal_person);
                     $('#e_org_code').val(p_data.org_code);
@@ -285,7 +366,7 @@ $(document).ready(function(){
                     $('#e_contact_phone').val(p_data.contact_phone);
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
-                    $('#e_training_amt_per').val(ch_data.training_amt_per);
+                    $('#e_training_amt_per').val(ch_data.training_amt_per / 100.0);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
                     $('#e_store_name').val(ch_data.store_name);
@@ -297,11 +378,10 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求数据异常');
-	        },
-
+	        }
         });
 
-    })
+    });
 
     $(document).on('click', '.addEyesight', function(){
         $('#eye_phone_num').val('');
@@ -314,7 +394,7 @@ $(document).ready(function(){
         $('#span_channel_id').text(channel_id);
         $('#span_store_id').text(store_id);
         $('#addEyesight').modal();
-    })
+    });
 
     $(document).on('click', '.viewEyesight', function(){
         var uid = $(this).data('uid');
@@ -325,8 +405,8 @@ $(document).ready(function(){
             'userid': uid,
             'se_userid': se_userid,
             'store_id': store_id,
-            'channel_id': channel_id,
-        }
+            'channel_id': channel_id
+        };
         console.log('get_data');
         console.log(get_data);
         $.ajax({
@@ -338,8 +418,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
@@ -373,19 +453,83 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
         $("#viewEyeSightModal").modal();
     });
 
 
     $('#storeEditSubmit').click(function(){
-        var post_data = {}
+
+        var store_edit_vt = $('#storeEditForm').validate({
+            rules: {
+                phone_num: {
+                    required: true,
+                    isMobile: '#phone_num'
+                },
+                address: {
+                    required: true,
+                    maxlength: 256
+                },
+                contact_name: {
+                    required: true,
+                    maxlength: 128
+                },
+                contact_phone: {
+                    required: true,
+                    maxlength: 128
+                },
+                contact_email: {
+                    email: true
+                },
+                training_amt_per: {
+                    required: true,
+                    isYuan: '#e_training_amt_per'
+                },
+                store_name: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
+            messages: {
+                phone_num: {
+                    required: '请输入手机号'
+                },
+                address: {
+                    required: '请输入地址',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_name: {
+                    required: '请输入联系人姓名',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_phone: {
+                    required: '请输入联系人手机号',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                contact_email: {
+                    email: "请输入正确格式的电子邮件"
+                },
+                training_amt_per: {
+                    required: '请输入单次训练价格',
+                    digits: "只能输入整数"
+                },
+                store_name: {
+                    required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                }
+            }
+        });
+        var ok = store_edit_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var post_data = {};
         var uid = $('#uid').text();
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
-		var login_name = $('#e_login_name').val();
 		var phone_num = $('#e_phone_num').val();
 		var email = $('#e_email').val();
 		var org_code = $('#e_org_code').val();
@@ -402,12 +546,11 @@ $(document).ready(function(){
         var store_contacter = $('#e_store_contacter').val();
         var store_mobile = $('#e_store_mobile').val();
         var store_addr = $('#e_store_addr').val();
-		var training_amt_per= $('#e_training_amt_per').val();
+		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
 		var business = $('#e_business').val();
 		var front_business = $('#e_front_business').val();
         post_data['se_userid'] = se_userid;
-		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
 		post_data['org_code'] = org_code;
@@ -428,11 +571,7 @@ $(document).ready(function(){
 		post_data['divide_percent'] = divide_percent;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-        var flag = check_obj_val(post_data);
-        if(!flag){
-            toastr.warning('请核实输入字段内容');
-            return false;
-        }
+
         console.log('post data');
         console.log(post_data);
         $.ajax({
@@ -444,8 +583,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
@@ -457,8 +596,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.success('请求异常');
-	        },
-
+	        }
         });
     });
 
@@ -467,7 +605,7 @@ $(document).ready(function(){
         var eyesight_id = $(this).data('eyeid');
         var store_id = $(this).data('storeid');
         var channel_id = $(this).data('channel_id');
-        var post_data = {}
+        var post_data = {};
         post_data['se_userid'] = se_userid;
         post_data['userid'] = eyesight_id;
         post_data['store_id'] = store_id;
@@ -483,8 +621,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
@@ -494,7 +632,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.success('请求异常');
-	        },
+	        }
         });
     });
 
@@ -506,8 +644,8 @@ $(document).ready(function(){
         }
         var get_data = {
             'phone_num': phone_num,
-            'se_userid': se_userid,
-        }
+            'se_userid': se_userid
+        };
         $.ajax({
 	        url: '/channel_op/v1/api/store_eye',
 	        type: 'GET',
@@ -517,8 +655,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     $('#eyesight_id').text('');
                     $('#nick_name').val('');
                     $('#username').val('');
@@ -536,8 +674,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.success('请求异常');
-	        },
-
+	        }
         });
     });
 
@@ -551,7 +688,7 @@ $(document).ready(function(){
             'store_id': store_id,
             'userid': eyesight_id,
             'se_userid': se_userid
-        }
+        };
         var phone_num = $('#eye_phone_num').val();
         var nick_name = $('#nick_name').val();
         if(!phone_num || !nick_name){
@@ -567,8 +704,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
@@ -578,8 +715,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.success('请求异常');
-	        },
-
+	        }
         });
     })
 });
@@ -597,13 +733,17 @@ function search_source() {
             var respcd = data.respcd;
             if(respcd != '0000'){
                 var resperr = data.resperr;
-                var respmsg = data.resmsg;
-                var msg = resperr ? resperr : resmsg;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
                 toastr.warning(msg);
             }
             else {
                 console.log(data.data);
-                $('#channel_name').typeahead({source: data.data});
+                var subjects = new Array();
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].channel_name)
+                }
+                $('#channel_name').typeahead({source: subjects});
             }
         },
         error: function(data) {
@@ -619,13 +759,48 @@ function search_source() {
             var respcd = data.respcd;
             if(respcd != '0000'){
                 var resperr = data.resperr;
-                var respmsg = data.resmsg;
-                var msg = resperr ? resperr : resmsg;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
                 toastr.warning(msg);
             }
             else {
                 console.log(data.data);
                 $('#store_name').typeahead({source: data.data});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
+
+function channel_name_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var c_channel_name = $('.c_channel_name');
+                for(var i=0; i<data.data.length; i++){
+                    var channel_id = data.data[i].channel_id;
+                    var channel_name = data.data[i].channel_name;
+                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    option_str.appendTo(c_channel_name);
+                }
             }
         },
         error: function(data) {

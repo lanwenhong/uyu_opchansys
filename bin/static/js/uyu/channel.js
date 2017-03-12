@@ -128,15 +128,6 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
-        /*
-        var is_prepayment= $('.is_prepayment').val();
-        if(is_prepayment==1){
-            $('#create_divide_percent_div').hide();
-        }
-        else {
-            $('#create_divide_percent_div').show();
-        }
-        */
 		$("#channelCreateModal").modal();
 	});
 
@@ -220,7 +211,7 @@ $(document).ready(function(){
             return false;
         }
 
-        var post_data = {}
+        var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
 		var phone_num = $('#phone_num').val();
 		var email = $('#email').val();
@@ -617,7 +608,11 @@ function search_source() {
             }
             else {
                 console.log(data.data);
-                $('#channelName').typeahead({source: data.data});
+                var subjects = new Array();
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].channel_name)
+                }
+                $('#channelName').typeahead({source: subjects});
             }
         },
         error: function(data) {

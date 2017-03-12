@@ -102,6 +102,7 @@ class StoreInfoHandler(core.Handler):
             item['store_type'] = UYU_STORE_ROLE_MAP.get(item['store_type'], '')
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_STORE_STATUS_MAP.get(item['is_valid'], '')
+            item['training_amt_per'] = item['training_amt_per'] / 100.0 if item['training_amt_per'] else 0.00
 
         return ret
 
