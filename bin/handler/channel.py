@@ -280,7 +280,7 @@ class ChanNameList(core.Handler):
         for item in db_ret:
             tmp = {}
             tmp['channel_name'] = item.get('channel_name', '')
-            tmp['channel_id' = item.get('id', None)
+            tmp['channel_id'] = item.get('id', None)
             ret_list.append(tmp)
 
         self.write(success(ret_list))
