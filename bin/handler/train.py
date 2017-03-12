@@ -67,13 +67,13 @@ class TrainBuyInfoHandler(core.Handler):
         for item in ret:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
-            item['channel_name'] = channel_ret['nick_name']
-            item['store_name'] = store_ret['nick_name']
+            item['channel_name'] = channel_ret['channel_name']
+            item['store_name'] = store_ret['store_name']
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0
-            item['status'] = UYU_ORDER_STATUS_MAP.get(item['UYU_ORDER_STATUS_MAP'], '')
+            item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
 
         return ret
 
@@ -164,7 +164,7 @@ class ChanBuyTrainingsOrderHandler(core.Handler):
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
     ]
-    
+
     @with_validator_self
     def _post_handler(self):
         params = self.validator.data
