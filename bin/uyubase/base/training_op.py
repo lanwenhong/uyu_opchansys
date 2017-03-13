@@ -24,15 +24,15 @@ class TrainingOP:
         )
         self.db_data = {}
         self.cdata = cdata
-        self.suser = suser 
+        self.suser = suser
         self.respcd = None
-        
+
 
     def create_orderno(self):
         with dbpool.get_connection('uyu_core') as conn:
             myid = new_id64(conn=conn)
             return datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(myid)
-    
+
     def __gen_vsql(self, order_status):
         sql_value = {}
         order_no = self.create_orderno()
@@ -81,7 +81,9 @@ class TrainingOP:
         chan_id = self.cdata["channel_id"]
         store_id = self.cdata["store_id"]
         sql_value = self.__gen_vsql(UYU_ORDER_STATUS_SUCC)
-        
+        print 'sql_value'
+        print sql_value
+
         sql_value["op_type"] = define.UYU_ORDER_TYPE_ALLOT
         sql_value["op_name"] = self.suser.get("login_name", "")
 
@@ -112,14 +114,14 @@ class TrainingOP:
         sql_value["op_name"] = self.suser.get("login_name", "")
 
         try:
-            self.db.insert("training_operator_record", sql_value) 
+            self.db.insert("training_operator_record", sql_value)
             return UYU_OP_OK
         except:
             log.warn(traceback.format_exc())
             return UYU_OP_ERR
 
     #渠道分配训练点数给门店
-    @with_database('uyu_core') 
+    @with_database('uyu_core')
     def create_chan_allot_to_store_order(self):
         chan_id = self.cdata["channel_id"]
         store_id = self.cdata["store_id"]
@@ -137,7 +139,7 @@ class TrainingOP:
             ret = self.db.execute(sql)
             if ret == 0:
                 self.db.rollback()
-                self.respcd = response.UAURET.BALANCEERR 
+                self.respcd = response.UAURET.BALANCEERR
                 return UYU_OP_ERR
             sql = "update stores set remain_times=remain_times+%d where id=%d" % (training_times, store_id)
             ret = self.db.execute(sql)

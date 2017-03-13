@@ -185,24 +185,30 @@ $(document).ready(function(){
         post_data.se_userid = se_userid;
         var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
+        var ch_training_amt_per = $('.c_channel_name').val('value2');
         var store_id = $('.c_store_name').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
         var training_times = $('#training_times').val();
-        var training_amt = $('#training_amt').val();
-        post_data.channel_id = channel_id;
+        var training_amt = $('#training_amt').val() * 100;
+        post_data.channel_id = channel_id.split('|')[0];
         post_data.busicd = busicd;
         post_data.category = category;
         post_data.op_type = op_type;
         post_data.training_times = training_times;
-        post_data.training_amt = training_amt * 100;
+        post_data.training_amt = parseInt(training_amt.toFixed(2));
+        post_data.ch_training_amt_per = channel_id.split('|')[1];
 
+        console.log('post_data');
+        console.log(post_data);
         if(busicd=='000020'){
             if(!store_id){
                 toastr.warning('渠道分配训练点数给门店时请选择门店');
                 return false;
             }
-            post_data.store_id = store_id;
+            post_data.store_id = store_id.split('|')[0];
+            var store_training_amt_per = store_id.split('|')[1];
+            post_data.store_training_amt_per = store_training_amt_per;
             post_url = '/channel_op/v1/api/org_allot_to_store_order';
         } else {
             post_url = '/channel_op/v1/api/org_allot_to_chan_order';
@@ -238,7 +244,8 @@ $(document).ready(function(){
     $('.c_channel_name').change(function () {
         var get_data = {};
         $('.c_store_name').html('');
-        var channel_id = $('.c_channel_name').val();
+        var ch_val = $('.c_channel_name').val();
+        var channel_id = ch_val.split('|')[0];
         var se_userid = window.localStorage.getItem('myid');
         get_data['se_userid'] = se_userid;
         get_data['channel_id'] = channel_id;
@@ -261,6 +268,8 @@ $(document).ready(function(){
                     for(var i=0; i<data.data.length; i++){
                         var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
+                        var training_amt_per = data.data[i].training_amt_per;
+                        store_id = store_id+'|'+training_amt_per;
                         var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
                         option_str.appendTo(c_store_name);
                     }
@@ -356,6 +365,8 @@ function channel_name_select() {
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
+                    var training_amt_per = data.data[i].training_amt_per;
+                    channel_id = channel_id+'|'+training_amt_per;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
                 }
