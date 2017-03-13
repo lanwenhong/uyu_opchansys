@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    search_source();
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -267,7 +268,7 @@ $(document).ready(function(){
     $(document).on('click', '.order-cancel', function(){
         alert('准备提交撤销操作');
     });
-    
+
 });
 
 
