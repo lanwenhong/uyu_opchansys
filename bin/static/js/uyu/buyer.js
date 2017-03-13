@@ -34,7 +34,7 @@ $(document).ready(function(){
         "ajax": function(data, callback, settings){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length,
+	           'maxnum': data.length
             };
             var channel_name = $("#channel_name").val();
             if(channel_name){
@@ -128,15 +128,14 @@ $(document).ready(function(){
     $("#trainBuyerCreateSubmit").click(function(){
         var buyer_vt = $('#trainBuyerCreateForm').validate({
             rules: {
+                busicd: {
+                    required: true
+                },
                 channel_name: {
                     required: true
                 },
                 store_name : {
                     required: true
-                },
-                consumer: {
-                    required: true,
-                    maxlength: 128
                 },
                 category: {
                     required: true
@@ -155,15 +154,14 @@ $(document).ready(function(){
                 }
             },
             messages: {
+                busicd: {
+                    required: "请选择下单类型"
+                },
                 channel_name: {
                     required: "请选择渠道"
                 },
                 store_name : {
                     required: "请选择门店"
-                },
-                consumer: {
-                    required: "请输入消费者",
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 category: {
                     required: "请选择类别"
@@ -188,16 +186,16 @@ $(document).ready(function(){
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
         post_data.se_userid = se_userid;
+        var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
         var store_id = $('.c_store_name').val();
-        var consumer = $('#consumer').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
         var training_times = $('#training_times').val();
         var training_amt = $('#training_amt').val();
         post_data.channel_id = channel_id;
         post_data.store_id = store_id;
-        post_data.consumer = consumer;
+        post_data.busicd = busicd;
         post_data.category = category;
         post_data.op_type = op_type;
         post_data.training_times = training_times;
