@@ -36,6 +36,7 @@ class TrainBuyInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
+        Field('mobile', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -46,12 +47,15 @@ class TrainBuyInfoHandler(core.Handler):
         try:
             data = {}
             params = self.validator.data
+            print 'params'
+            print params
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
+            phone_num = params.get('phone_num', None)
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name)
+            info_data = self._query_handler(channel_name, store_name, phone_num)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -61,8 +65,25 @@ class TrainBuyInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None):
+    def _query_handler(self, channel_name=None, store_name=None, phone_num=None):
         where = {}
+        channel_list = []
+        store_list = []
+        consumer_list = []
+
+        if channel_name:
+            channel_list.extend(tools.channel_name_to_id(channel_name))
+            where.update({'channel_id': ('in', channel_list)})
+
+        if store_name:
+            store_list.extend(tools.store_name_to_id(store_name))
+            where.update({'store_id': ('in', store_list)})
+
+        if phone_num:
+            consumer_list.extend(tools.mobile_to_id(phone_num))
+            where.update({'consumer_id': ('in', consumer_list)})
+
+
         keep_fields = ['id', 'channel_id', 'store_id', 'consumer_id', 'category', 'op_type', 'training_times', 'training_amt', 'op_name', 'status', 'create_time']
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
         for item in ret:

@@ -36,16 +36,23 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length
             };
-            var channel_name = $("#channel_name").val();
+            var channel_name = $("#s_channel_name").val();
             if(channel_name){
                 get_data.channel_name = channel_name;
             }
 
-            var store_name = $("#store_name").val();
+            var store_name = $("#s_store_name").val();
             if(store_name){
                 get_data.store_name = store_name;
             }
 
+			var consumer_mobile = $('#s_consumer_mobile').val();
+			if(consumer_mobile){
+				get_data.mobile = consumer_mobile;
+			}
+
+            console.log('search data');
+            console.log(get_data);
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
 	            type: 'GET',
