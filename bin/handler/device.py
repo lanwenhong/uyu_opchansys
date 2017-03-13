@@ -65,12 +65,10 @@ class DeviceInfoHandler(core.Handler):
             where.update({'serial_number': serial_number})
         ret = self.db.select(table='device', fields=keep_fields, where=where)
         for item in ret:
-            channel_ret = self.db.select_one(table='channel', fields='userid', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='userid', where={'id': item['store_id']})
-            channel_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': channel_ret['userid']})
-            store_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': store_ret['userid']})
-            item['channel_name'] = channel_name['nick_name']
-            item['store_name'] = store_name['nick_name']
+            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
+            item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
 
         return ret
