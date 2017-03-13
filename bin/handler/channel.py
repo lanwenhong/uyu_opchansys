@@ -284,3 +284,42 @@ class ChanNameList(core.Handler):
             ret_list.append(tmp)
 
         self.write(success(ret_list))
+
+
+class ChanStoreMap(core.Handler):
+
+    _get_handler_fields = [
+        Field('channel_id', T_INT, False),
+    ]
+
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+
+    @with_validator_self
+    def _get_handler(self, *args):
+        try:
+            params = self.validator.data
+            channel_id = params.get('channel_id')
+            data = self._query_handler(channel_id)
+            return success(data)
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.DATAERR)
+
+    @with_database('uyu_core')
+    def _query_handler(self, channel_id):
+        ret = self.db.select(table='stores', fields=['id', 'store_name'], where={'channel_id': channel_id})
+        return ret
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_database('uyu_core')
+    def GET(self):
+        try:
+            data = self._get_handler()
+            return data
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)

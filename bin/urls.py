@@ -32,6 +32,8 @@ urls = (
     ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
     ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
     ('^/channel_op/v1/api/chan_name_list$', channel.ChanNameList),
+    ('^/channel_op/v1/api/chan_store_list$', channel.ChanStoreMap),
+
 
     #门店API
     ('^/channel_op/v1/api/store_set_state', store.StoreStateSetHandler),

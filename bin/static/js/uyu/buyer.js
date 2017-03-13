@@ -231,7 +231,8 @@ $(document).ready(function(){
 
     $('.c_channel_name').change(function () {
         var get_data = {};
-        var channel_id = $(this).val();
+        $('.c_store_name').html('');
+        var channel_id = $('.c_channel_name').val();
         var se_userid = window.localStorage.getItem('myid');
         get_data['se_userid'] = se_userid;
         get_data['channel_id'] = channel_id;
@@ -252,7 +253,7 @@ $(document).ready(function(){
                     console.log(data.data);
                     var c_store_name = $('.c_store_name');
                     for(var i=0; i<data.data.length; i++){
-                        var store_id = data.data[i].store_id;
+                        var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
                         var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
                         option_str.appendTo(c_store_name);
