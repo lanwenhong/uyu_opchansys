@@ -114,7 +114,7 @@ $(document).ready(function(){
     });
 
     $("#deviceCreateSubmit").click(function(){
-        var device_vt = $('#channelCreateForm').validate({
+        var device_vt = $('#deviceCreateForm').validate({
             rules: {
                 device_name: {
                     required: true,
