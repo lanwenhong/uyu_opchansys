@@ -1,6 +1,4 @@
 $(document).ready(function(){
-    date();
-
     $('#trainUseList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
