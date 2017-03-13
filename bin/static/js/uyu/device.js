@@ -26,17 +26,24 @@ $(document).ready(function(){
         "ajax": function(data, callback, settings){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length,
-            }
-            var device_name = $("#deviceName").val();
-            if(device_name!=''&&device_name!=undefined){
-                get_data.device_name = device_name;
-            }
+	           'maxnum': data.length
+            };
 
-            var serial_number = $("#deviceSerialNu").val();
-            if(serial_number!=''&&serial_number!=undefined){
+            var serial_number = $("#s_device_serial_nu").val();
+            if(serial_number){
                 get_data.serial_number = serial_number;
             }
+
+            var channel_name = $('#s_channel_name').val();
+            if(channel_name){
+                get_data.channel_name = channel_name;
+            }
+
+            var store_name = $('#s_store_name').val();
+            if(store_name){
+                get_data.store_name = store_name;
+            }
+
             $.ajax({
 	            url: '/channel_op/v1/api/devinfo_pagelist',
 	            type: 'GET',
@@ -48,8 +55,8 @@ $(document).ready(function(){
                         $processing = $("#deviceList_processing");
                         $processing.css('display', 'none');
                         var resperr = data.resperr;
-                        var respmsg = data.resmsg;
-                        var msg = resperr ? resperr : resmsg;
+                        var respmsg = data.respmsg;
+                        var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
                         return false;
                     }
@@ -64,7 +71,8 @@ $(document).ready(function(){
 	                });
 	            },
 	            error: function(data) {
-	            },
+	                toastr.warning('请求数据异常');
+	            }
 
             });
         },
@@ -79,7 +87,7 @@ $(document).ready(function(){
 				{ data: 'channel_name' },
 				{ data: 'store_name' },
 				{ data: 'training_nums' },
-				{ data: 'create_time' },
+				{ data: 'create_time' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -91,10 +99,9 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
+                'sLast': '尾页'
+            }
         }
-
     });
 
     $("#deviceCreate").click(function(){
@@ -107,8 +114,77 @@ $(document).ready(function(){
     });
 
     $("#deviceCreateSubmit").click(function(){
-       var queryString = $('#deviceCreateForm').formSerialize();
-       alert(queryString);
+        var device_vt = $('#channelCreateForm').validate({
+            rules: {
+                device_name: {
+                    required: true,
+                    maxlength: 256
+                },
+                hd_version: {
+                    required: true,
+                    maxlength: 128
+                },
+                blooth_tag: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
+            messages: {
+                device_name: {
+                    required: '请输入设备名称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                hd_version: {
+                    required: '请输入硬件版本',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                blooth_tag: {
+                    required: '请输入蓝牙版本s',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                }
+            }
+        });
+
+        var ok = device_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data.se_userid = se_userid;
+        post_data.device_name = $('#device_name').val();
+        post_data.hd_version = $('#hd_version').val();
+        post_data.blooth_tag = $('#blooth_tag').val();
+        post_data.scm_tag = $('#scm_tag').val();
+        post_data.status = $('#status').val();
+        post_data.channel_id = $('#channel_name').val();
+        post_data.store_id = $('#store_name').val();
+
+        $.ajax({
+            url: '',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('新建设备成功');
+                    $("#deviceCreateModal").modal('hide');
+                    $('#deviceList').DataTable().draw();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+
     });
 
 });
