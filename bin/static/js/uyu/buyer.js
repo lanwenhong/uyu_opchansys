@@ -231,6 +231,7 @@ $(document).ready(function(){
 
     $('.c_channel_name').change(function () {
         var get_data = {};
+        $('.c_store_name').html('');
         var channel_id = $('.c_channel_name').val();
         var se_userid = window.localStorage.getItem('myid');
         get_data['se_userid'] = se_userid;
