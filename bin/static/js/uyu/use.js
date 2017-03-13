@@ -1,4 +1,7 @@
 $(document).ready(function(){
+
+    search_source();
+
     $('#trainUseList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -27,29 +30,29 @@ $(document).ready(function(){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length,
-            }
-            var channel_name = $("#channelName").val();
-            if(channel_name!=''&&channel_name!=undefined){
+            };
+            var channel_name = $("#s_channel_name").val();
+            if(channel_name){
                 get_data.channel_name = channel_name;
             }
 
-            var store_name = $("#storeName").val();
-            if(store_name!=''&&store_name!=undefined){
+            var store_name = $("#s_store_name").val();
+            if(store_name){
                 get_data.store_name = store_name;
             }
 
-            var consumer_mobile = $("#consumerMobile").val();
-            if(consumer_mobile!=''&&consumer_mobile!=undefined){
+            var consumer_mobile = $("#s_consumer").val();
+            if(consumer_mobile){
                 get_data.consumer_mobile = consumer_mobile;
             }
 
-            var eyesight = $("#eyeSight").val();
-            if(eyesight!=''&&eyesight!=undefined){
+            var eyesight = $("#s_eyesight").val();
+            if(eyesight){
                 get_data.eyesight = eyesight;
             }
 
-            var create_time = $("#createTime").val();
-            if(create_time!=''&&create_time!=undefined){
+            var create_time = $("#start_time").val();
+            if(create_time){
                 get_data.create_time = create_time;
             }
 
@@ -64,23 +67,23 @@ $(document).ready(function(){
                         $processing = $("#trainBuyerList_processing");
                         $processing.css('display', 'none');
                         var resperr = data.resperr;
-                        var respmsg = data.resmsg;
-                        var msg = resperr ? resperr : resmsg;
+                        var respmsg = data.respmsg;
+                        var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
                         return false;
+                    } else {
+	                    detail_data = data.data;
+	                    num = detail_data.num;
+	                    callback({
+	                        recordsTotal: num,
+	                        recordsFiltered: num,
+	                        data: detail_data.info
+	                    });
                     }
-	                detail_data = data.data;
-	                num = detail_data.num;
-                    console.log('num:'+num);
-                    console.log('info:'+detail_data.info);
-	                callback({
-	                    recordsTotal: num,
-	                    recordsFiltered: num,
-	                    data: detail_data.info
-	                });
 	            },
 	            error: function(data) {
-	            },
+	                toastr.warning('请求数据异常');
+	            }
 
             });
         },
@@ -93,7 +96,7 @@ $(document).ready(function(){
 				{ data: 'eyesight_name' },
 				{ data: 'comsumer_nums' },
 				{ data: 'create_time' },
-				{ data: 'status' },
+				{ data: 'status' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -105,10 +108,9 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
+                'sLast': '尾页'
+            }
         }
-
     });
 
     $("#useSearch").click(function(){
@@ -116,62 +118,57 @@ $(document).ready(function(){
     });
 });
 
-var date = function() {
-    //日期初始化------------------------------------------------------------------------------------------
-    $('.form_date').datetimepicker({
-        icons: {
-            time: "fa fa-clock-o",
-            date: "fa fa-calendar",
-            up: "fa fa-arrow-up",
-            down: "fa fa-arrow-down"
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var subjects = new Array();
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].channel_name)
+                }
+                $('#s_channel_name').typeahead({source: subjects});
+            }
         },
-        format: 'YYYY-MM-DD HH:mm:ss',
-        //showClose: true,
-        sideBySide: true
-    });
-    $(".form_date input.sea_date").on({
-        'mouseenter': function() {
-            $(this).attr('readonly', 'readonly');
-        },
-        'mouseleave': function() {
-            $(this).removeAttr('readonly');
+        error: function(data) {
+            toastr.warning('请求异常');
         }
     });
-    $("#datetimepicker1").on("dp.change", function(e) {
-        $("#start_time").val(date_trans(e.date));
+    $.ajax({
+        url: '/channel_op/v1/api/store_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                $('#s_store_name').typeahead({source: data.data});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
     });
-    $("#start_time").val(get_date_str(-1));
-    $("#starttime").val(get_date_str(-1));
-}
-
-//获取日期
-function get_date_str(add_day) {
-    var dd = new Date();
-    dd.setDate(dd.getDate() + add_day);
-    var month_val0 = dd.getMonth() + 1;
-    var month_val = get_time2(month_val0);
-    var date_val = get_time2(dd.getDate());
-    var hours_val = get_time2(dd.getHours());
-    var minutes_val = get_time2(dd.getMinutes());
-    var seconds_val = get_time2(dd.getSeconds());
-    return dd.getFullYear() + "-" + month_val + "-" + date_val + ' ' + hours_val + ':' + minutes_val + ':' + seconds_val;
-}
-
-function date_trans(date) {
-    var dd = new Date(date);
-    var month_val0 = dd.getMonth() + 1;
-    var month_val = get_time2(month_val0);
-    var date_val = get_time2(dd.getDate());
-    var hours_val = get_time2(dd.getHours());
-    var minutes_val = get_time2(dd.getMinutes());
-    var seconds_val = get_time2(dd.getSeconds());
-    return dd.getFullYear() + "-" + month_val + "-" + date_val + ' ' + hours_val + ':' + minutes_val + ':' + seconds_val;
-}
-
-function get_time2(val) {
-    if (val < 10) {
-        return '0' + val;
-    } else {
-        return val;
-    }
 }
