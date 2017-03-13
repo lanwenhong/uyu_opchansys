@@ -117,6 +117,8 @@ $(document).ready(function(){
 
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
+        $('.c_channel_name').html('');
+        $('.c_store_name').html('');
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
@@ -126,15 +128,13 @@ $(document).ready(function(){
     });
 
     $("#trainBuyerCreateSubmit").click(function(){
+        var post_url = '';
         var buyer_vt = $('#trainBuyerCreateForm').validate({
             rules: {
                 busicd: {
                     required: true
                 },
                 channel_name: {
-                    required: true
-                },
-                store_name : {
                     required: true
                 },
                 category: {
@@ -159,9 +159,6 @@ $(document).ready(function(){
                 },
                 channel_name: {
                     required: "请选择渠道"
-                },
-                store_name : {
-                    required: "请选择门店"
                 },
                 category: {
                     required: "请选择类别"
@@ -194,15 +191,26 @@ $(document).ready(function(){
         var training_times = $('#training_times').val();
         var training_amt = $('#training_amt').val();
         post_data.channel_id = channel_id;
-        post_data.store_id = store_id;
         post_data.busicd = busicd;
         post_data.category = category;
         post_data.op_type = op_type;
         post_data.training_times = training_times;
         post_data.training_amt = training_amt * 100;
 
+        if(busicd=='000020'){
+            if(!store_id){
+                toastr.warning('渠道分配训练点数给门店时请选择门店');
+                return false;
+            }
+            post_data.store_id = store_id;
+            post_url = '/channel_op/v1/api/org_allot_to_store_order';
+        } else {
+            post_url = '/channel_op/v1/api/org_allot_to_chan_order';
+        }
+
+
         $.ajax({
-            url: '',
+            url: post_url,
             type: 'POST',
             data: post_data,
             dataType: 'json',
