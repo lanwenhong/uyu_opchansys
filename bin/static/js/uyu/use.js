@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    date();
+
     $('#trainUseList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -115,3 +117,63 @@ $(document).ready(function(){
         $('#trainUseList').DataTable().draw();
     });
 });
+
+var date = function() {
+    //日期初始化------------------------------------------------------------------------------------------
+    $('.form_date').datetimepicker({
+        icons: {
+            time: "fa fa-clock-o",
+            date: "fa fa-calendar",
+            up: "fa fa-arrow-up",
+            down: "fa fa-arrow-down"
+        },
+        format: 'YYYY-MM-DD HH:mm:ss',
+        //showClose: true,
+        sideBySide: true
+    });
+    $(".form_date input.sea_date").on({
+        'mouseenter': function() {
+            $(this).attr('readonly', 'readonly');
+        },
+        'mouseleave': function() {
+            $(this).removeAttr('readonly');
+        }
+    });
+    $("#datetimepicker1").on("dp.change", function(e) {
+        $("#start_time").val(date_trans(e.date));
+    });
+    $("#start_time").val(get_date_str(-1));
+    $("#starttime").val(get_date_str(-1));
+}
+
+//获取日期
+function get_date_str(add_day) {
+    var dd = new Date();
+    dd.setDate(dd.getDate() + add_day);
+    var month_val0 = dd.getMonth() + 1;
+    var month_val = get_time2(month_val0);
+    var date_val = get_time2(dd.getDate());
+    var hours_val = get_time2(dd.getHours());
+    var minutes_val = get_time2(dd.getMinutes());
+    var seconds_val = get_time2(dd.getSeconds());
+    return dd.getFullYear() + "-" + month_val + "-" + date_val + ' ' + hours_val + ':' + minutes_val + ':' + seconds_val;
+}
+
+function date_trans(date) {
+    var dd = new Date(date);
+    var month_val0 = dd.getMonth() + 1;
+    var month_val = get_time2(month_val0);
+    var date_val = get_time2(dd.getDate());
+    var hours_val = get_time2(dd.getHours());
+    var minutes_val = get_time2(dd.getMinutes());
+    var seconds_val = get_time2(dd.getSeconds());
+    return dd.getFullYear() + "-" + month_val + "-" + date_val + ' ' + hours_val + ':' + minutes_val + ':' + seconds_val;
+}
+
+function get_time2(val) {
+    if (val < 10) {
+        return '0' + val;
+    } else {
+        return val;
+    }
+}
