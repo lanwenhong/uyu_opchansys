@@ -195,6 +195,11 @@ class OrgAllotToChanOrderHandler(core.Handler):
         training_amt = params["training_amt"]
         training_times = params["training_times"]
         ch_training_amt_per = params["training_amt_per"]
+        
+        is_valid = channel_reocord["is_valid"]
+
+        if is_valid == define.UYU_CHAN_STATUS_CLOSE:
+            return UYU_OP_ERR
 
         if ch_training_amt_per != store_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
             return UYU_OP_ERR
@@ -235,13 +240,22 @@ class OrgAllotToStoreOrderHandler(core.Handler):
     @with_database('uyu_core')
     def _check_permission(self, params):
         store_id = params["store_id"]
+        chan_id = params["channel_id"]
         store_record = self.db.select_one("stores", {"id": store_id})
+        chan_record = self.db.select_one("channel", {"id", chan_id})
+
         training_amt = params["training_amt"]
         training_times = params["training_times"]
         store_training_amt_per = params["store_training_amt_per"]
+        s_is_valid = store_record["is_valid"]
+        c_is_valid = chan_record["is_valid"]
+
+        if s_is_valid == define.UYU_CHAN_STATUS_CLOSE or c_is_valid == define.UYU_STORE_STATUS_OPEN:
+            return UYU_OP_ERR
 
         if store_training_amt_per != store_record["training_amt_per"] or training_amt != training_times * store_training_amt_per:
             return UYU_OP_ERR
+
         return UYU_OP_OK
         
 
