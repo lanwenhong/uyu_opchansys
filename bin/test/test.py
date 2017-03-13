@@ -232,6 +232,32 @@ def test_store_name_list():
     log.debug(ret)
 
 
+def chan_buy_order():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000, "busicd": "000010", "channel_id": 37, "training_times": 19, "training_amt": 19, 'ch_training_amt_per': 1}
+
+
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.post("/channel_op/v1/api/chan_buy_order", send, headers=headers)
+
+
+def org_allot_to_chan_order():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000, "busicd": "000000", "channel_id": 82, "training_times": 19, "training_amt": 19 * 100, 'ch_training_amt_per': 100}
+
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.post("/channel_op/v1/api/org_allot_to_chan_order", send, headers=headers)
+
+def org_allot_to_store_order():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000, "busicd": "000020", "channel_id": 82, "store_id": 39, "training_times": 18, "training_amt": 18 * 12134, 'store_training_amt_per': 12134}
+
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.post("/channel_op/v1/api/org_allot_to_store_order", send, headers=headers)
+
 
 if __name__ == '__main__':
     #test_login()
@@ -246,4 +272,7 @@ if __name__ == '__main__':
     #test_store_change()
     #test_store_set_state()
     #test_channel_name_list()
-    test_store_name_list()
+    #test_store_name_list()
+    #chan_buy_order()
+    #org_allot_to_chan_order()
+    org_allot_to_store_order()

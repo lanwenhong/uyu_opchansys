@@ -42,13 +42,18 @@ urls = (
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
     ('^/channel_op/v1/api/store_eye$', store.StoreEyeHandler),
     ('^/channel_op/v1/api/store_name_list$', store.StoreNameListHandler),
+    ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
 
 
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),
     ('^/channel_op/v1/api/training_op_list$', train.TrainBuyInfoHandler),
     ('^/channel_op/v1/api/training_use_list$', train.TrainUseInfoHandler),
-    ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
 
     #视光师
     ('^/channel_op/v1/api/eyesight_info$', eyesight.EyeSightInfoHandler),
+
+    #训练订单
+    ('^/channel_op/v1/api/org_allot_to_chan_order$', train.OrgAllotToChanOrderHandler),
+    ('^/channel_op/v1/api/org_allot_to_store_order$', train.OrgAllotToStoreOrderHandler),
+
 )

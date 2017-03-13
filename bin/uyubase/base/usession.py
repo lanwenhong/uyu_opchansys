@@ -81,7 +81,7 @@ class SUser:
 
     @dbpool.with_database('uyu_core')
     def load_user(self):
-        sql = "select * from auth_user where userid=%d" % self.userid
+        sql = "select * from auth_user where id=%d" % self.userid
         ret = self.db.get(sql)
         self.udata = ret
 

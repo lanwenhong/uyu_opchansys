@@ -9,6 +9,7 @@ from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_OP_OK
 from uyubase.base.training_op import TrainingOP
 from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP
+from uyubase.uyu import define
 
 from runtime import g_rt
 from config import cookie_conf
@@ -155,21 +156,114 @@ class TrainUseInfoHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
 
+#渠道系统用
+#class ChanBuyTrainingsOrderHandler(core.Handler):
+#    _post_handler_fields = [
+#        Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
+#        Field('channel_id', T_STR, False),
+#        Field('training_times', T_INT, False),
+#        Field('training_amt', T_INT, False),
+#        Field('ch_training_amt_per', T_INT, False),
+#    ]
+#
+#    @with_validator_self
+#    def _post_handler(self):
+#        params = self.validator.data
+#        log.debug("client data: %s", params)
+#        top = TrainingOP(params)
+#        ret = top.create_chan_buy_trainings_order()
+#        if ret == UYU_OP_ERR:
+#            return error(UAURET.ORDERERR)
+#        return success({})
+#
+#    def POST(self):
+#        return self._post_handler()
 
-class ChanBuyTrainingsOrderHandler(core.Handler):
+class OrgAllotToChanOrderHandler(core.Handler):
     _post_handler_fields = [
         Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
-        Field('channel_id', T_STR, False),
+        Field('channel_id', T_INT, False),
         Field('training_times', T_INT, False),
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
     ]
+    
+    @with_database('uyu_core')
+    def _check_permission(self, params):
+        channel_id = params["channel_id"]
+        channel_reocord = self.db.select_one("channel", {"id": channel_id})
+        training_amt = params["training_amt"]
+        training_times = params["training_times"]
+        ch_training_amt_per = params["training_amt_per"]
 
+        if ch_training_amt_per != store_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
+            return UYU_OP_ERR
+
+        return UYU_OP_OK
+     
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
-        params = self.validator.data
-        top = TrainingOP(params)
-        ret = top.create_chan_buy_trainings_order()
+        params = self.validator.data 
+        log.debug("client data: %s", params)
+        if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
+            return error(UAURET.BUSICEERR)
+        
+        self.user.load_user()
+        top = TrainingOP(params, self.user.udata)
+
+        ret = top.create_org_allot_to_chan_order()
+        if ret == UYU_OP_ERR:
+            return error(UAURET.ORDERERR)
+        return success({})
+    
+    def POST(self):
+        return self._post_handler()
+
+#FIMME
+#是否是公司帮渠道分配
+class OrgAllotToStoreOrderHandler(core.Handler):
+    _post_handler_fields = [
+        Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
+        Field('channel_id', T_INT, False),
+        Field('store_id', T_INT, False),
+        Field('training_times', T_INT, False),
+        Field('training_amt', T_INT, False),
+        Field('store_training_amt_per', T_INT, False),
+    ]
+    
+    @with_database('uyu_core')
+    def _check_permission(self, params):
+        store_id = params["store_id"]
+        store_record = self.db.select_one("stores", {"id": store_id})
+        training_amt = params["training_amt"]
+        training_times = params["training_times"]
+        store_training_amt_per = params["store_training_amt_per"]
+
+        if store_training_amt_per != store_record["training_amt_per"] or training_amt != training_times * store_training_amt_per:
+            return UYU_OP_ERR
+        return UYU_OP_OK
+        
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        params = self.validator.data 
+        log.debug("client data: %s", params)
+        if params["busicd"] != define.BUSICD_CHAN_ALLOT_TO_STORE:
+            return error(UAURET.BUSICEERR)
+        
+        if self._check_permission(params) == UYU_OP_ERR:
+            return error(UAURET.ORDERERR)
+
+        self.user.load_user()
+        top = TrainingOP(params, self.user.udata)
+
+        ret = top.create_chan_allot_to_store_order()
+
+        if top.respcd:
+            return error(top.respcd)
+
         if ret == UYU_OP_ERR:
             return error(UAURET.ORDERERR)
         return success({})
