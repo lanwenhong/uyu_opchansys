@@ -254,6 +254,45 @@ function channel_name_select() {
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                    if(i==0){
+                        do_first_select(channel_id);
+                    }
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
+function do_first_select(channel_id) {
+    $('#store_name').html('');
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    get_data['channel_id'] = channel_id;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_store_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var c_store_name = $('#store_name');
+                for(var i=0; i<data.data.length; i++){
+                    var store_id = data.data[i].id;
+                    var store_name = data.data[i].store_name;
+                    var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                    option_str.appendTo(c_store_name);
                 }
             }
         },
