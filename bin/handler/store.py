@@ -92,7 +92,7 @@ class StoreInfoHandler(core.Handler):
         ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where)
         # ret = self.db.select(table='stores', fields=keep_fields, where=st_where)
         for item in ret:
-            ch_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            ch_ret = self.db.select_one(table='channel', fields='channel_name, is_prepayment', where={'id': item['channel_id']})
             item['channel_name'] = ch_ret.get('channel_name', '') if ch_ret else ''
             user_ret = self.db.select_one(table='auth_user', fields='nick_name', where={'id': item['userid']})
             item['nick_name'] = user_ret.get('nick_name') if user_ret else ''
@@ -103,6 +103,8 @@ class StoreInfoHandler(core.Handler):
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_STORE_STATUS_MAP.get(item['is_valid'], '')
             item['training_amt_per'] = item['training_amt_per'] / 100.0 if item['training_amt_per'] else 0.00
+            if ch_ret.get('is_prepayment') == 0:
+                item['divide_percent'] = '无'
 
         return ret
 
