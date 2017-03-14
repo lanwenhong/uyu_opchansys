@@ -300,7 +300,38 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.order-cancel', function(){
-        alert('准备提交撤销操作');
+        var orderno = $(this).orderno;
+        var se_userid = window.localStorage.getItem('myid');
+        if(!orderno){
+            toastr.warning('请确认订单号');
+            return false;
+        }
+        var post_data = {};
+        post_data.se_userid = se_userid;
+        post_data.orderno = orderno;
+        $.ajax({
+            url: '/channel_op/v1/api/order_cancel',
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    toastr.success('撤销成功');
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+
     });
 
     $(document).on('click', '.order-confirm', function(){
