@@ -243,6 +243,8 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.device-allocate', function(){
+        $('#a_channel_name').html('');
+        $('#a_store_name').html();
         var device_name = $(this).data('device_name');
         var serial_number = $(this).data('serial_number');
         console.log('device_name: '+ device_name + 'serial_number: '+serial_number);
