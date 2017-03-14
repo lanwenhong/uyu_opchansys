@@ -82,3 +82,45 @@ class DeviceInfoHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+
+
+class DeviceCreateHandler(core.Handler):
+    _post_handler_fields = [
+        Field("se_userid", T_INT, False),
+        Field('device_name',  T_STR, False),
+        Field('hd_version',  T_STR, False),
+        Field('blooth_tag',  T_STR, False),
+        Field('scm_tag',  T_STR, True),
+        Field('status',  T_INT, True),
+        Field('channel_id', T_INT, False),
+        Field('store_id', T_INT, True),
+        Field('training_nums', T_INT, True),
+        Field('op', T_INT, True),
+    ]
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
+        params = self.validator.data
+        device_name = params.get('device_name', None)
+        hd_version = params.get('hd_version', None)
+        blooth_tag = params.get('blooth_tag', None)
+        scm_tag = params.get('scm_tag', None)
+        status = params.get('status', None)
+        channel_id = params.get('channel_id', None)
+        store_id = params.get('store_id', None)
+        training_nums = params.get('training_nums', None)
+        op = params.get('op', None)
+        ret = uop.call("create_device", device_name, hd_version, blooth_tag, scm_tag, status, channel_id, store_id, training_nums, op)
+        log.debug('create_device params: %s ret: %s', params, ret)
+        if ret == UYU_OP_ERR:
+            return error(UAURET.REQERR)
+        return success({})
+
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)

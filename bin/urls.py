@@ -56,4 +56,7 @@ urls = (
     ('^/channel_op/v1/api/org_allot_to_chan_order$', train.OrgAllotToChanOrderHandler),
     ('^/channel_op/v1/api/org_allot_to_store_order$', train.OrgAllotToStoreOrderHandler),
 
+    #设备
+    ('^/channel_op/v1/api/create_device$', device.DeviceCreateHandler),
+
 )
