@@ -244,7 +244,7 @@ $(document).ready(function(){
 
     $(document).on('click', '.device-allocate', function(){
         $('#a_channel_name').html('');
-        $('#a_store_name').html();
+        $('#a_store_name').html('');
         var device_name = $(this).data('device_name');
         var serial_number = $(this).data('serial_number');
         console.log('device_name: '+ device_name + 'serial_number: '+serial_number);
@@ -290,7 +290,7 @@ $(document).ready(function(){
             }
         });
     });
-    
+
     $('#deviceAllocateSubmit').click(function () {
         var serial_number = $('#a_serial_number').val();
         var channel_id = $('#a_channel_name').val();
@@ -308,7 +308,7 @@ $(document).ready(function(){
             post_data.store_id = store_id;
         }
         $.ajax({
-            url: '',
+            url: '/channel_op/v1/api/allocate_device',
             type: 'POST',
             dataType: 'json',
             data: post_data,

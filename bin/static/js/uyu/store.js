@@ -129,6 +129,7 @@ $(document).ready(function(){
 
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
+        $("#c_channel_name").html('');
         channel_name_select();
         $("#storeCreateModal").modal();
     });

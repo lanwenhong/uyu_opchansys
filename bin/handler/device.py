@@ -138,3 +138,33 @@ class DeviceCreateHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler()
         self.write(ret)
+
+
+class DeviceAllocateHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field("se_userid", T_INT, False),
+        Field('serial_number', T_INT, False),
+        Field('channel_id', T_INT, False),
+        Field('store_id', T_INT, True),
+    ]
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        uop = UUser()
+        params = self.validator.data
+        serial_number = params.get('serial_number')
+        channel_id = params.get('channel_id')
+        store_id = params.get('store_id', None)
+        ret = uop.call("allocate_device", channel_id, store_id, serial_number)
+        log.debug('allocate_device params: %s ret: %s', params, ret)
+        if ret == UYU_OP_ERR:
+            return error(UAURET.REQERR)
+        return success({})
+
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)

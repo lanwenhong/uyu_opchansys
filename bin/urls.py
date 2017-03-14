@@ -58,5 +58,6 @@ urls = (
 
     #设备
     ('^/channel_op/v1/api/create_device$', device.DeviceCreateHandler),
+    ('^/channel_op/v1/api/allocate_device$', device.DeviceAllocateHandler),
 
 )
