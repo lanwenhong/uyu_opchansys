@@ -268,7 +268,7 @@ def org_allot_to_store_order():
 def order_cancel_test():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
-    send = {"se_userid": 1000, "order_no": "201703141606186247326800033197248"}
+    send = {"se_userid": 1000, "order_no": "201703141732116247348413348818118"}
 
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
     ret = client.post("/channel_op/v1/api/order_cancel", send, headers=headers)
