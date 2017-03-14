@@ -90,9 +90,10 @@ $(document).ready(function(){
                     var uid =full.userid;
                     var store_id =full.id;
                     var channel_id =full.channel_id;
+                    var is_prepayment = full.is_prepayment;
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
-                    var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+">";
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">";
                     var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+ " data-channel_id="+channel_id+ ">";
                     var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
                     return op+view+view_eye+add_eye;
@@ -352,6 +353,7 @@ $(document).ready(function(){
 
     $(document).on('click', '.viewStore', function(){
         var uid = $(this).data('uid');
+        var is_prepayment = $(this).data('is_prepayment');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
@@ -392,7 +394,12 @@ $(document).ready(function(){
                     $('#e_address').val(p_data.address);
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100.0);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
-                    $('#e_divide_percent').val(ch_data.divide_percent);
+                    if(is_prepayment == 0){
+                        $('#edit_store_divide_percent').hide();
+                    } else {
+                        $('#e_divide_percent').val(ch_data.divide_percent);
+                        $('#edit_store_divide_percent').show();
+                    }
                     $('#e_store_name').val(ch_data.store_name);
                     $('#e_store_contacter').val(ch_data.store_contacter);
                     $('#e_store_mobile').val(ch_data.store_mobile);
