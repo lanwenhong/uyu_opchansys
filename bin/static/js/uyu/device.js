@@ -86,7 +86,7 @@ $(document).ready(function(){
 				{ data: 'status' },
 				{ data: 'channel_name' },
 				{ data: 'store_name' },
-				{ data: 'training_nums' },
+				// { data: 'training_nums' },
 				{ data: 'create_time' }
 		],
         'oLanguage': {
@@ -161,7 +161,10 @@ $(document).ready(function(){
         post_data.scm_tag = $('#scm_tag').val();
         post_data.status = $('#status').val();
         post_data.channel_id = $('#channel_name').val();
-        post_data.store_id = $('#store_name').val();
+        var store_id = $('#store_name').val();
+        if(store_id){
+            post_data.store_id = store_id;
+        }
 
         $.ajax({
             url: '/channel_op/v1/api/create_device',
