@@ -4,6 +4,8 @@ from zbase.base import logger
 from zbase.base.http_client import RequestsClient
 from zbase.server.client import HttpClient
 
+import json
+
 log = logger.install('stdout')
 
 
@@ -245,19 +247,32 @@ def chan_buy_order():
 def org_allot_to_chan_order():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
-    send = {"se_userid": 1000, "busicd": "000000", "channel_id": 82, "training_times": 19, "training_amt": 19 * 100, 'ch_training_amt_per': 100}
+    send = {"se_userid": 1000, "busicd": "ORG_ALLOT_TO_CHAN", "channel_id": 83, "training_times": 19, "training_amt": 19 * 1000, 'ch_training_amt_per': 1000}
 
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
     ret = client.post("/channel_op/v1/api/org_allot_to_chan_order", send, headers=headers)
 
+    s = json.loads(ret)
+
+    log.debug(s["resperr"])
+
 def org_allot_to_store_order():
     SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
     client = HttpClient(SERVER, client_class = RequestsClient)
-    send = {"se_userid": 1000, "busicd": "000020", "channel_id": 82, "store_id": 39, "training_times": 18, "training_amt": 18 * 12134, 'store_training_amt_per': 12134}
+    send = {"se_userid": 1000, "busicd": "CHAN_ALLOT_TO_STORE", "channel_id": 83, "store_id": 40, "training_times": 18, "training_amt": 18 * 1230, 'store_training_amt_per': 1230}
 
     headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
     ret = client.post("/channel_op/v1/api/org_allot_to_store_order", send, headers=headers)
 
+
+def order_cancel_test():
+    SERVER   = [{'addr':('127.0.0.1', 8083), 'timeout':20},]
+    client = HttpClient(SERVER, client_class = RequestsClient)
+    send = {"se_userid": 1000, "order_no": "201703141606186247326800033197248"}
+
+    headers = {'cookie': 'sessionid=85aeb24b-04ba-47ed-975b-ba763fc1b2a4'}
+    ret = client.post("/channel_op/v1/api/order_cancel", send, headers=headers)
+    log.debug(ret)
 
 if __name__ == '__main__':
     #test_login()
@@ -275,4 +290,5 @@ if __name__ == '__main__':
     #test_store_name_list()
     #chan_buy_order()
     #org_allot_to_chan_order()
-    org_allot_to_store_order()
+    #org_allot_to_store_order()
+    order_cancel_test()

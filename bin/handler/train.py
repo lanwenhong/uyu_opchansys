@@ -201,7 +201,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         if is_valid == define.UYU_CHAN_STATUS_CLOSE:
             return UYU_OP_ERR
 
-        if ch_training_amt_per != store_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
+        if ch_training_amt_per != channel_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
             return UYU_OP_ERR
 
         return UYU_OP_OK
@@ -212,6 +212,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         params = self.validator.data 
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
+            log.warn('client busicd: %s real busicd: %s', params['busicd'], define.BUSICD_ORG_ALLOT_TO_CHAN)
             return error(UAURET.BUSICEERR)
         
         self.user.load_user()
@@ -242,7 +243,7 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         store_id = params["store_id"]
         chan_id = params["channel_id"]
         store_record = self.db.select_one("stores", {"id": store_id})
-        chan_record = self.db.select_one("channel", {"id", chan_id})
+        chan_record = self.db.select_one("channel", {"id": chan_id})
 
         training_amt = params["training_amt"]
         training_times = params["training_times"]
@@ -250,10 +251,12 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         s_is_valid = store_record["is_valid"]
         c_is_valid = chan_record["is_valid"]
 
-        if s_is_valid == define.UYU_CHAN_STATUS_CLOSE or c_is_valid == define.UYU_STORE_STATUS_OPEN:
+        if c_is_valid == define.UYU_CHAN_STATUS_CLOSE or s_is_valid == define.UYU_STROE_STATUS_CLOSE:
+            log.warn("s_is_valid: %d c_is_valid: %d", s_is_valid, c_is_valid)
             return UYU_OP_ERR
 
         if store_training_amt_per != store_record["training_amt_per"] or training_amt != training_times * store_training_amt_per:
+            log.warn("store_training_amt_per: %d in db: %d", store_training_amt_per, store_record["training_amt_per"])
             return UYU_OP_ERR
 
         return UYU_OP_OK
@@ -281,6 +284,29 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         if ret == UYU_OP_ERR:
             return error(UAURET.ORDERERR)
         return success({})
+
+    def POST(self):
+        return self._post_handler()
+
+
+class OrderCancelHandler(core.Handler):
+    _post_handler_fields = [
+        Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
+    ]
+    
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        params = self.validator.data
+        order_no = params["order_no"]
+        log.debug("order_no: %s", order_no)
+        top = TrainingOP(params, order_no=order_no)
+        ret = top.order_cancel()
+
+        if ret == UYU_OP_OK:
+            return success({}) 
+        
+        return error(UAURET.ORDERERR)
 
     def POST(self):
         return self._post_handler()
