@@ -230,7 +230,7 @@ class CreateChanHandler(core.Handler):
         Field('address',  T_STR, False),
         Field('training_amt_per', T_INT, False),
         Field('divide_percent', T_FLOAT, True),
-        Field('is_prepayment', T_INT, False),
+        Field('is_prepayment', T_INT, True),
         Field('channel_name', T_STR, False),
     ]
 
@@ -240,8 +240,11 @@ class CreateChanHandler(core.Handler):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data
-        uop = UUser()
 
+        if params.get["is_prepayment"] == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
+            return error(UAURET.REGISTERERR)
+
+        uop = UUser()
         udata = {}
         for key in uop.ukey:
             if params.get(key, None):
