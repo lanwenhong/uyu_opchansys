@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    search_source();
+
     $('#deviceList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -230,7 +232,6 @@ $(document).ready(function(){
 
 });
 
-
 function channel_name_select() {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
@@ -296,6 +297,60 @@ function do_first_select(channel_id) {
                     var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
                     option_str.appendTo(c_store_name);
                 }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var subjects = new Array();
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].channel_name)
+                }
+                $('#s_channel_name').typeahead({source: subjects});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+    $.ajax({
+        url: '/channel_op/v1/api/store_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                $('#s_store_name').typeahead({source: data.data});
             }
         },
         error: function(data) {

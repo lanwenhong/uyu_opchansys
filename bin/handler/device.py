@@ -27,7 +27,8 @@ class DeviceInfoHandler(core.Handler):
     _get_handler_fields = [
         Field('page', T_INT, False),
         Field('maxnum', T_INT, False),
-        Field('device_name', T_STR, True),
+        Field('channel_name', T_STR, True),
+        Field('store_name', T_STR, True),
         Field('serial_number', T_STR, True),
     ]
 
@@ -41,10 +42,11 @@ class DeviceInfoHandler(core.Handler):
             params = self.validator.data
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            device_name = params.get('device_name')
+            channel_name = params.get('channel_name')
+            store_name = params.get('store_name')
             serial_number = params.get('serial_number')
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(device_name, serial_number)
+            info_data = self._query_handler(channel_name, store_name, serial_number)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -54,16 +56,25 @@ class DeviceInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, device_name=None, serial_number=None):
+    def _query_handler(self, channel_name=None, store_name=None, serial_number=None):
         keep_fields = ['id', 'device_name', 'hd_version', 'blooth_tag', 'scm_tag',
                        'status', 'channel_id', 'store_id',
                        'training_nums', 'ctime'
                        ]
         where = {}
-        if device_name:
-            where.update({'device_name': device_name})
+        channel_list = []
+        store_list = []
+        if channel_name:
+            channel_list.extend(tools.channel_name_to_id(channel_name))
+            where.update({'channel_id': ('in', channel_list)})
+
+        if store_name:
+            store_list.extend(tools.store_name_to_id(store_name))
+            where.update({'store_id': ('in', store_list)})
+
         if serial_number:
             where.update({'id': serial_number})
+
         ret = self.db.select(table='device', fields=keep_fields, where=where)
         for item in ret:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
