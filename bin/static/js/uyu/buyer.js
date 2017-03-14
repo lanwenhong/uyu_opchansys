@@ -89,8 +89,20 @@ $(document).ready(function(){
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
-                    var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
-                    return cancel;
+                    var is_valid = full.is_valid;
+                    var busicd = full.busicd;
+                    if(is_valid==0){
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
+                    } else {
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel"  disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+                    }
+                    if(busicd == 'CHAN_BUY' && is_valid == 1){
+                        var confirm = '<input type="button" class="btn btn-primary btn-sm order-confirm" data-orderno='+orderno+' value=' + '确认' + '>';
+                    } else {
+                        var confirm = '';
+                    }
+
+                    return cancel + confirm;
                 }
             }
         ],
@@ -289,6 +301,10 @@ $(document).ready(function(){
 
     $(document).on('click', '.order-cancel', function(){
         alert('准备提交撤销操作');
+    });
+
+    $(document).on('click', '.order-confirm', function(){
+        alert('准备提交确认操作');
     });
 
 });

@@ -88,7 +88,7 @@ class TrainBuyInfoHandler(core.Handler):
             'id', 'channel_id', 'store_id',
             'consumer_id', 'category', 'op_type',
             'training_times', 'training_amt', 'op_name',
-            'status', 'create_time', 'busicd'
+            'status', 'create_time', 'busicd', 'orderno'
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
         for item in ret:
@@ -100,6 +100,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0
+            item['is_valid'] = item['status']
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
             item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
 
