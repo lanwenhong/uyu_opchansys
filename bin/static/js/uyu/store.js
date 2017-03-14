@@ -761,7 +761,7 @@ $(document).ready(function(){
 	        }
         });
     })
-    
+
     $('#c_channel_name').change(function () {
         var channel_val = $('#c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
