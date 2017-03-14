@@ -19,7 +19,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $trainBuyerList_length = $("#trainBuyerList_length");
@@ -192,7 +192,6 @@ $(document).ready(function(){
         post_data.se_userid = se_userid;
         var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
-        var ch_training_amt_per = $('.c_channel_name').val('value2');
         var store_id = $('.c_store_name').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
@@ -206,8 +205,7 @@ $(document).ready(function(){
         post_data.training_amt = parseInt(training_amt.toFixed(2));
         post_data.ch_training_amt_per = channel_id.split('|')[1];
 
-        console.log('post_data');
-        console.log(post_data);
+
         if(busicd=='000020'){
             if(!store_id){
                 toastr.warning('渠道分配训练点数给门店时请选择门店');

@@ -25,7 +25,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $channelList_length = $("#channelList_length");
@@ -66,8 +66,8 @@ $(document).ready(function(){
                         $processing = $("#channelList_processing");
                         $processing.css('display', 'none');
                         var resperr = data.resperr;
-                        var respmsg = data.resmsg;
-                        var msg = resperr ? resperr : resmsg;
+                        var respmsg = data.respmsg;
+                        var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
                         return false;
                     }
@@ -80,8 +80,9 @@ $(document).ready(function(){
 	                });
 	            },
 	            error: function(data) {
-	            },
-
+	                toastr.warning('获取数据异常');
+	                return false;
+	            }
             });
         },
         'columnDefs': [
@@ -108,7 +109,7 @@ $(document).ready(function(){
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },
 				{ data: 'is_valid' },
-				{ data: 'ctime' },
+				{ data: 'ctime' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
@@ -120,9 +121,9 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
-        },
+                'sLast': '尾页'
+            }
+        }
     });
 
 
@@ -141,30 +142,30 @@ $(document).ready(function(){
             rules: {
                 channel_name: {
                     required: true,
-                    maxlength: 256,
+                    maxlength: 256
                 },
                 phone_num: {
                     required: true,
-                    isMobile: '#phone_num',
+                    isMobile: '#phone_num'
                 },
                 address: {
                     required: true,
-                    maxlength: 256,
+                    maxlength: 256
                 },
                 contact_name: {
                     required: true,
-                    maxlength: 128,
+                    maxlength: 128
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128,
+                    maxlength: 128
                 },
                 contact_email: {
-                    email: true,
+                    email: true
                 },
                 training_amt_per: {
                     required: true,
-                    isYuan: '#training_amt_per',
+                    isYuan: '#training_amt_per'
                 },
                 is_prepayment: {
                     required: true,
@@ -174,35 +175,35 @@ $(document).ready(function(){
             messages: {
                 channel_name: {
                     required: '请输入渠道名称',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 phone_num: {
-                    required: '请输入手机号',
+                    required: '请输入手机号'
                 },
                 address: {
                     required: '请输入地址',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_name: {
                     required: '请输入联系人姓名',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
                     required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_email: {
-                    email: "请输入正确格式的电子邮件",
+                    email: "请输入正确格式的电子邮件"
                 },
                 training_amt_per: {
                     required: '请输入单次训练价格',
-                    digits: "只能输入整数",
+                    digits: "只能输入整数"
                 },
                 is_prepayment: {
                     required: '请选择结算模式',
-                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
                 }
-            },
+            }
         });
         console.log($('.is_prepayment').val());
         console.log($('#training_amt_per').val() * 100);
@@ -257,13 +258,7 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
-        /*
-        var flag = check_obj_val(post_data);
-        if(!flag){
-            toastr.warning('请核实输入字段内容');
-            return false;
-        }
-        */
+
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -273,8 +268,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
                 }
@@ -286,19 +281,18 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
     });
 
 
     $(document).on('click', '.viewEdit', function(){
         var uid = $(this).data('uid');
-        var channel_id = $(this).data('channelid');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
-            'se_userid': se_userid,
-        }
+            'se_userid': se_userid
+        };
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'GET',
@@ -308,18 +302,14 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                 }
                 else {
-                    toastr.success('get data ok');
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
                     var u_data = data.data.u_data;
-                    console.log(p_data);
-                    console.log(ch_data);
-                    console.log(u_data);
                     $('#uid').text(uid);
                     $('#e_channel_id').val(ch_data.chnid);
                     $('#e_login_name').val(u_data.phone_num);
@@ -355,7 +345,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
     });
 
@@ -363,13 +353,13 @@ $(document).ready(function(){
     $(document).on('click', '.setStatus', function(){
         var uid = $(this).data('channelid');
         var status = $(this).data('status');
-        var value = status ? 0 : 1
+        var value = status ? 0 : 1;
         var se_userid = window.localStorage.getItem('myid');
         var post_data = {
             'userid': uid,
             'state': value,
-            'se_userid': se_userid,
-        }
+            'se_userid': se_userid
+        };
         $.ajax({
 	        url: '/channel_op/v1/api/channel_set_state',
 	        type: 'POST',
@@ -379,21 +369,20 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
                 }
                 else {
                     $('#channelList').DataTable().draw();
-                    toastr.success('ok');
+                    toastr.success('操作成功');
                 }
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
-
     });
 
     $('#channelEditSubmit').click(function(){
@@ -402,30 +391,30 @@ $(document).ready(function(){
             rules: {
                 channel_name: {
                     required: true,
-                    maxlength: 256,
+                    maxlength: 256
                 },
                 phone_num: {
                     required: true,
-                    isMobile: '#phone_num',
+                    isMobile: '#phone_num'
                 },
                 address: {
                     required: true,
-                    maxlength: 256,
+                    maxlength: 256
                 },
                 contact_name: {
                     required: true,
-                    maxlength: 128,
+                    maxlength: 128
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128,
+                    maxlength: 128
                 },
                 contact_email: {
-                    email: true,
+                    email: true
                 },
                 training_amt_per: {
                     required: true,
-                    isYuan: '#training_amt_per',
+                    isYuan: '#training_amt_per'
                 },
                 is_prepayment: {
                     required: true,
@@ -435,35 +424,35 @@ $(document).ready(function(){
             messages: {
                 channel_name: {
                     required: '请输入渠道名称',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 phone_num: {
-                    required: '请输入手机号',
+                    required: '请输入手机号'
                 },
                 address: {
                     required: '请输入地址',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_name: {
                     required: '请输入联系人姓名',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
                     required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_email: {
-                    email: "请输入正确格式的电子邮件",
+                    email: "请输入正确格式的电子邮件"
                 },
                 training_amt_per: {
                     required: '请输入单次训练价格',
-                    digits: "只能输入整数",
+                    digits: "只能输入整数"
                 },
                 is_prepayment: {
                     required: '请选择结算模式',
-                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+                    range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
                 }
-            },
+            }
         });
         console.log($('.is_prepayment').val());
         console.log($('#training_amt_per').val() * 100);
@@ -520,8 +509,7 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
-        console.log('post data');
-        console.log(post_data);
+
         $.ajax({
 	        url: '/channel_op/v1/api/channel',
 	        type: 'POST',
@@ -531,8 +519,8 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
-                    var msg = resperr ? resperr : resmsg;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
                 }
@@ -545,7 +533,7 @@ $(document).ready(function(){
 	        },
 	        error: function(data) {
                 toastr.warning('请求异常');
-	        },
+	        }
         });
     });
 
@@ -571,7 +559,7 @@ $(document).ready(function(){
 
 
 function print_object(obj){
-    var temp = ""
+    var temp = "";
     for(var key in obj){
         temp += key + ":" + obj[key] + "\n";
     }
@@ -602,8 +590,8 @@ function search_source() {
             var respcd = data.respcd;
             if(respcd != '0000'){
                 var resperr = data.resperr;
-                var respmsg = data.resmsg;
-                var msg = resperr ? resperr : resmsg;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
                 toastr.warning(msg);
             }
             else {

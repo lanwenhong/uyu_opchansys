@@ -13,7 +13,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $deviceList_length = $("#deviceList_length");
@@ -64,8 +64,7 @@ $(document).ready(function(){
                     }
 	                var detail_data = data.data;
 	                var num = detail_data.num;
-                    console.log('num:'+num);
-                    console.log('info:'+detail_data.info);
+
 	                callback({
 	                    recordsTotal: num,
 	                    recordsFiltered: num,
@@ -247,7 +246,7 @@ $(document).ready(function(){
         $('#a_store_name').html('');
         var device_name = $(this).data('device_name');
         var serial_number = $(this).data('serial_number');
-        console.log('device_name: '+ device_name + 'serial_number: '+serial_number);
+
         $('#deviceAllocateForm').resetForm();
         $('#a_device_name').val(device_name);
         $('#a_serial_number').val(serial_number);
