@@ -300,15 +300,16 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.order-cancel', function(){
-        var orderno = $(this).orderno;
+        var orderno = $(this).data('orderno');
         var se_userid = window.localStorage.getItem('myid');
+        console.log('orderno: '+orderno);
         if(!orderno){
             toastr.warning('请确认订单号');
             return false;
         }
         var post_data = {};
         post_data.se_userid = se_userid;
-        post_data.orderno = orderno;
+        post_data.order_no = orderno;
         $.ajax({
             url: '/channel_op/v1/api/order_cancel',
             type: 'POST',
