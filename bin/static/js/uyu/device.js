@@ -190,7 +190,6 @@ $(document).ready(function(){
     });
 
     $('#channel_name').change(function () {
-        $('#store_name').html();
         var get_data = {};
         var channel_id = $('#channel_name').val();
         var se_userid = window.localStorage.getItem('myid');
@@ -210,8 +209,8 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
                     var c_store_name = $('#store_name');
+                    c_store_name.html('');
                     for(var i=0; i<data.data.length; i++){
                         var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
