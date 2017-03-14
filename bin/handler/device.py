@@ -7,7 +7,7 @@ from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
-from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR, UYU_CHAN_MAP
+from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR, UYU_CHAN_MAP, UYU_DEVICE_MAP
 from uyubase.base.uyu_user import UUser
 
 import logging, datetime, time
@@ -72,6 +72,7 @@ class DeviceInfoHandler(core.Handler):
             item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['serial_number'] = item['id']
+            item['status'] = UYU_DEVICE_MAP.get(item['status'], '')
 
         return ret
 
