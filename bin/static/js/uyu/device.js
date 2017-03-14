@@ -105,6 +105,7 @@ $(document).ready(function(){
     });
 
     $("#deviceCreate").click(function(){
+        $('#channel_name').html('');
         $("#deviceCreateForm").resetForm();
         channel_name_select();
         $("#deviceCreateModal").modal();
@@ -189,8 +190,8 @@ $(document).ready(function(){
     });
 
     $('#channel_name').change(function () {
+        $('#store_name').html();
         var get_data = {};
-        $('#store_name').html('');
         var channel_id = $('#channel_name').val();
         var se_userid = window.localStorage.getItem('myid');
         get_data['se_userid'] = se_userid;
