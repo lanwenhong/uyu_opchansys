@@ -284,7 +284,7 @@ class ChanNameList(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_database('uyu_core')
     def GET(self):
-        sql = "select id, channel_name, training_amt_per from channel where is_valid=0"
+        sql = "select id, channel_name, training_amt_per, is_prepayment from channel where is_valid=0"
         db_ret = self.db.query(sql)
 
         ret_list = []
@@ -293,6 +293,7 @@ class ChanNameList(core.Handler):
             tmp['channel_name'] = item.get('channel_name', '')
             tmp['channel_id'] = item.get('id', None)
             tmp['training_amt_per'] = item.get('training_amt_per', None)
+            tmp['is_prepayment'] = item.get('is_prepayment', None)
             ret_list.append(tmp)
 
         self.write(success(ret_list))

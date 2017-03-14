@@ -263,6 +263,7 @@ $(document).ready(function(){
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
 		var channel_id = $('.c_channel_name').val();
+		channel_id = channel_id.split('|')[0];
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
@@ -760,6 +761,16 @@ $(document).ready(function(){
 	        }
         });
     })
+    
+    $('#c_channel_name').change(function () {
+        var channel_val = $('#c_channel_name').val();
+        var is_prepayment = channel_val.split('|')[1];
+        if(is_prepayment == 0){
+            $('#create_store_divide_percent').hide();
+        } else {
+            $('#create_store_divide_percent').show();
+        }
+    })
 });
 
 function search_source() {
@@ -840,8 +851,17 @@ function channel_name_select() {
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
+                    var is_prepayment = data.data[i].is_prepayment;
+                    channel_id = channel_id + '|' + is_prepayment;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                    if(i==0){
+                        if(is_prepayment == 0){
+                            $('#create_store_divide_percent').hide();
+                        } else {
+                            $('#create_store_divide_percent').show();
+                        }
+                    }
                 }
             }
         },
