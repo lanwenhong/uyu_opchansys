@@ -4,6 +4,10 @@
 设备管理
 </%block>
 
+<%block name="head_media">
+<link href="/static/css/uyu/define_label_error.css" rel="stylesheet">
+</%block>
+
 <%block name="page">
     <div class="row">
         <div class="col-lg-12">
@@ -21,12 +25,16 @@
 					<div class="row">
 						<form class="form-inline">
 							<div class="form-group">
-							  <label for="devicelName">设备名称</label>
-							  <input type="text" class="form-control" id="deviceName" placeholder="">
+							  <label for="s_channel_name">渠道</label>
+							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
-							  <label for="deviceSerialNu">设备编号</label>
-							  <input type="text" class="form-control" id="deviceSerialNu" placeholder="">
+								<label for="s_store_name">门店</label>
+								<input type="text" class="form-control" id="s_store_name" placeholder="">
+							</div>
+							<div class="form-group">
+							  <label for="s_device_serial_nu">设备编号</label>
+							  <input type="text" class="form-control" id="s_device_serial_nu" placeholder="">
 							</div>
 							<button type="button" class="btn btn-primary" id="deviceSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="deviceCreate">新建</button>
@@ -46,11 +54,11 @@
 									<th>状态</th>
 									<th>分配渠道</th>
 									<th>分配门店</th>
-									<th>训练次数</th>
-									<th>创建时间</th>
 									<!--
-									<th>操作</th>
+									<th>训练次数</th>
 									-->
+									<th>创建时间</th>
+									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -74,67 +82,58 @@
 				<div class="modal-body">
 					<form class="form-horizontal" id="deviceCreateForm" role="form">
 						<div class="form-group">
-							<label for="modalDeviceName" class="col-sm-2 control-label">设备名称</label>
+							<label for="device_name" class="col-sm-2 control-label">设备名称</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="modalDeviceName" name="deviceName" placeholder="">
+								<input type="text" class="form-control" id="device_name" name="device_name" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalDeviceSearialNu" class="col-sm-2 control-label">设备编号</label>
+							<label for="hd_version" class="col-sm-2 control-label">硬件版本</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalDeviceSearialNu" name="deviceSerialNu" placeholder="">
+							    <input type="text" class="form-control" id="hd_version" name="hd_version" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalHdVersion" class="col-sm-2 control-label">硬件版本</label>
+							<label for="blooth_tag" class="col-sm-2 control-label">蓝牙标示</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalHdVersion" name="hdVersion" placeholder="">
+							    <input type="text" class="form-control" id="blooth_tag" name="blooth_tag"  placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="modalBloothTag" class="col-sm-2 control-label">蓝牙标示</label>
+							<label for="scm_tag" class="col-sm-2 control-label">单片机标示</label>
 							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalBloothTag" name="bloothTag"  placeholder="">
+							    <input type="text" class="form-control" id="scm_tag" name="scm_tag" placeholder="">
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="status" class="col-sm-2 control-label">状态</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="status" name="status">
+									<option value="0">启用</option>
+									<option value="1">关闭</option>
+								</select>
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="channel_name" class="col-sm-2 control-label">分配渠道</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="channel_name">
+								</select>
+							</div>
+						</div> 
+
+						<div class="form-group">
+							<label for="store_name" class="col-sm-2 control-label">分配门店</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="store_name">
+								</select>
 							</div>
 						</div>
-
-						<div class="form-group">
-							<label for="modalSCMTag" class="col-sm-2 control-label">单片机标示</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalSCMTag" name="scmTag" placeholder="">
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="modalStatus" class="col-sm-2 control-label">状态</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalStatus" name="status" placeholder="">
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="modalChannel" class="col-sm-2 control-label">分配渠道</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalChannel" name="channelID" placeholder="">
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="modalStore" class="col-sm-2 control-label">分配门店</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalStore" name="storeID" placeholder="">
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="modalTrainNum" class="col-sm-2 control-label">训练次数</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="modalTrainNum" name="trainNum" placeholder="">
-							</div>
-						</div> 
 
 					</form>
 				</div>
@@ -142,13 +141,64 @@
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-primary" id="deviceCreateSubmit">提交</button>
 				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			</div>
+		</div>
+	</div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="deviceAllocate">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">分配设备</h4>
+            </div>
+                <div class="modal-body">
+                <form class="form-horizontal" id="deviceAllocateForm" role="form">
+                    <div class="form-group">
+                        <label for="a_device_name" class="col-sm-2 control-label">设备名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="a_device_name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="a_serial_number" class="col-sm-2 control-label">设备编号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="a_serial_number">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="a_channel_name" class="col-sm-2 control-label">分配渠道</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="a_channel_name">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="a_store_name" class="col-sm-2 control-label">分配门店</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="a_store_name">
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="deviceAllocateSubmit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </%block>
 
 <%block name="body_media">
+    <script src="/static/js/jquery.validate.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.validate.messages_cn.js" type="text/javascript"></script>
+    <script src="/static/js/bootstrap-typeahead.js" type="text/javascript"></script>
     <script src="/static/js/jquery.form.js" type="text/javascript"></script>
     <script src="/static/js/uyu/device.js" type="text/javascript"></script>
 </%block>

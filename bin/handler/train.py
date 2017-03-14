@@ -2,7 +2,7 @@
 import traceback
 from zbase.web import core
 from zbase.web import template
-from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
+from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR, T_FLOAT
 from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
@@ -36,6 +36,7 @@ class TrainBuyInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
+        Field('mobile', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -46,12 +47,15 @@ class TrainBuyInfoHandler(core.Handler):
         try:
             data = {}
             params = self.validator.data
+            print 'params'
+            print params
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            channel_name = params.get('channel_name')
-            store_name = params.get('store_name')
+            channel_name = params.get('channel_name', None)
+            store_name = params.get('store_name', None)
+            phone_num = params.get('phone_num', None)
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name)
+            info_data = self._query_handler(channel_name, store_name, phone_num)
             data['info'] = info_data[start:end]
             data['num'] = len(info_data)
             return success(data)
@@ -61,15 +65,32 @@ class TrainBuyInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None):
+    def _query_handler(self, channel_name=None, store_name=None, phone_num=None):
         where = {}
+        channel_list = []
+        store_list = []
+        consumer_list = []
+
+        if channel_name:
+            channel_list.extend(tools.channel_name_to_id(channel_name))
+            where.update({'channel_id': ('in', channel_list)})
+
+        if store_name:
+            store_list.extend(tools.store_name_to_id(store_name))
+            where.update({'store_id': ('in', store_list)})
+
+        if phone_num:
+            consumer_list.extend(tools.mobile_to_id(phone_num))
+            where.update({'consumer_id': ('in', consumer_list)})
+
+
         keep_fields = ['id', 'channel_id', 'store_id', 'consumer_id', 'category', 'op_type', 'training_times', 'training_amt', 'op_name', 'status', 'create_time']
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
         for item in ret:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
-            item['channel_name'] = channel_ret['channel_name']
-            item['store_name'] = store_ret['store_name']
+            item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
+            item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
@@ -187,7 +208,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
     ]
-    
+
     @with_database('uyu_core')
     def _check_permission(self, params):
         channel_id = params["channel_id"]
@@ -205,16 +226,16 @@ class OrgAllotToChanOrderHandler(core.Handler):
             return UYU_OP_ERR
 
         return UYU_OP_OK
-     
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
-        params = self.validator.data 
+        params = self.validator.data
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
             log.warn('client busicd: %s real busicd: %s', params['busicd'], define.BUSICD_ORG_ALLOT_TO_CHAN)
             return error(UAURET.BUSICEERR)
-        
+
         self.user.load_user()
         top = TrainingOP(params, self.user.udata)
 
@@ -222,7 +243,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         if ret == UYU_OP_ERR:
             return error(UAURET.ORDERERR)
         return success({})
-    
+
     def POST(self):
         return self._post_handler()
 
@@ -234,10 +255,11 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         Field('channel_id', T_INT, False),
         Field('store_id', T_INT, False),
         Field('training_times', T_INT, False),
-        Field('training_amt', T_INT, False),
+        # Field('training_amt', T_INT, False),
+        Field('training_amt', T_FLOAT, False),
         Field('store_training_amt_per', T_INT, False),
     ]
-    
+
     @with_database('uyu_core')
     def _check_permission(self, params):
         store_id = params["store_id"]
@@ -260,16 +282,16 @@ class OrgAllotToStoreOrderHandler(core.Handler):
             return UYU_OP_ERR
 
         return UYU_OP_OK
-        
+
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
-        params = self.validator.data 
+        params = self.validator.data
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_CHAN_ALLOT_TO_STORE:
             return error(UAURET.BUSICEERR)
-        
+
         if self._check_permission(params) == UYU_OP_ERR:
             return error(UAURET.ORDERERR)
 

@@ -19,7 +19,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $trainBuyerList_length = $("#trainBuyerList_length");
@@ -34,18 +34,25 @@ $(document).ready(function(){
         "ajax": function(data, callback, settings){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length,
+	           'maxnum': data.length
             };
-            var channel_name = $("#channel_name").val();
+            var channel_name = $("#s_channel_name").val();
             if(channel_name){
                 get_data.channel_name = channel_name;
             }
 
-            var store_name = $("#store_name").val();
+            var store_name = $("#s_store_name").val();
             if(store_name){
                 get_data.store_name = store_name;
             }
 
+			var consumer_mobile = $('#s_consumer_mobile').val();
+			if(consumer_mobile){
+				get_data.mobile = consumer_mobile;
+			}
+
+            console.log('search data');
+            console.log(get_data);
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
 	            type: 'GET',
@@ -117,6 +124,8 @@ $(document).ready(function(){
 
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
+        $('.c_channel_name').html('');
+        $('.c_store_name').html('');
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
@@ -126,17 +135,14 @@ $(document).ready(function(){
     });
 
     $("#trainBuyerCreateSubmit").click(function(){
+        var post_url = '';
         var buyer_vt = $('#trainBuyerCreateForm').validate({
             rules: {
+                busicd: {
+                    required: true
+                },
                 channel_name: {
                     required: true
-                },
-                store_name : {
-                    required: true
-                },
-                consumer: {
-                    required: true,
-                    maxlength: 128
                 },
                 category: {
                     required: true
@@ -155,15 +161,11 @@ $(document).ready(function(){
                 }
             },
             messages: {
+                busicd: {
+                    required: "请选择下单类型"
+                },
                 channel_name: {
                     required: "请选择渠道"
-                },
-                store_name : {
-                    required: "请选择门店"
-                },
-                consumer: {
-                    required: "请输入消费者",
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 category: {
                     required: "请选择类别"
@@ -188,23 +190,38 @@ $(document).ready(function(){
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
         post_data.se_userid = se_userid;
+        var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
         var store_id = $('.c_store_name').val();
-        var consumer = $('#consumer').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
         var training_times = $('#training_times').val();
-        var training_amt = $('#training_amt').val();
-        post_data.channel_id = channel_id;
-        post_data.store_id = store_id;
-        post_data.consumer = consumer;
+        var training_amt = $('#training_amt').val() * 100;
+        post_data.channel_id = channel_id.split('|')[0];
+        post_data.busicd = busicd;
         post_data.category = category;
         post_data.op_type = op_type;
         post_data.training_times = training_times;
-        post_data.training_amt = training_amt * 100;
+        post_data.training_amt = parseInt(training_amt.toFixed(2));
+        post_data.ch_training_amt_per = channel_id.split('|')[1];
+
+
+        if(busicd=='000020'){
+            if(!store_id){
+                toastr.warning('渠道分配训练点数给门店时请选择门店');
+                return false;
+            }
+            post_data.store_id = store_id.split('|')[0];
+            var store_training_amt_per = store_id.split('|')[1];
+            post_data.store_training_amt_per = store_training_amt_per;
+            post_url = '/channel_op/v1/api/org_allot_to_store_order';
+        } else {
+            post_url = '/channel_op/v1/api/org_allot_to_chan_order';
+        }
+
 
         $.ajax({
-            url: '',
+            url: post_url,
             type: 'POST',
             data: post_data,
             dataType: 'json',
@@ -232,7 +249,8 @@ $(document).ready(function(){
     $('.c_channel_name').change(function () {
         var get_data = {};
         $('.c_store_name').html('');
-        var channel_id = $('.c_channel_name').val();
+        var ch_val = $('.c_channel_name').val();
+        var channel_id = ch_val.split('|')[0];
         var se_userid = window.localStorage.getItem('myid');
         get_data['se_userid'] = se_userid;
         get_data['channel_id'] = channel_id;
@@ -255,6 +273,8 @@ $(document).ready(function(){
                     for(var i=0; i<data.data.length; i++){
                         var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
+                        var training_amt_per = data.data[i].training_amt_per;
+                        store_id = store_id+'|'+training_amt_per;
                         var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
                         option_str.appendTo(c_store_name);
                     }
@@ -350,6 +370,8 @@ function channel_name_select() {
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
+                    var training_amt_per = data.data[i].training_amt_per;
+                    channel_id = channel_id+'|'+training_amt_per;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
                 }

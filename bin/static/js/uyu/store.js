@@ -25,7 +25,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $storeList_length = $("#storeList_length");
@@ -40,7 +40,7 @@ $(document).ready(function(){
         "ajax": function(data, callback, settings){
             var get_data = {
 	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length,
+	           'maxnum': data.length
             };
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
@@ -75,6 +75,8 @@ $(document).ready(function(){
 	                });
 	            },
 	            error: function(data) {
+	                toastr.warning('获取数据异常');
+	                return false;
 	            }
 
             });
@@ -129,6 +131,7 @@ $(document).ready(function(){
 
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
+        $("#c_channel_name").html('');
         channel_name_select();
         $("#storeCreateModal").modal();
     });
@@ -293,7 +296,7 @@ $(document).ready(function(){
                 var respcd = data.respcd;
                 if(respcd != '0000'){
                     var resperr = data.resperr;
-                    var respmsg = data.resmsg;
+                    var respmsg = data.respmsg;
                     var msg = resperr ? resperr : respmsg;
                     toastr.warning(msg);
                     return false;
@@ -348,7 +351,6 @@ $(document).ready(function(){
 
     $(document).on('click', '.viewStore', function(){
         var uid = $(this).data('uid');
-        var store_id = $(this).data('storeid');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
@@ -368,13 +370,10 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
                     var u_data = data.data.u_data;
-                    console.log(p_data);
-                    console.log(ch_data);
-                    console.log(u_data);
+
                     $('#uid').text(uid);
                     $('#e_phone_num').val(u_data.phone_num);
                     $('#e_legal_person').val(p_data.legal_person);
@@ -431,8 +430,7 @@ $(document).ready(function(){
             'store_id': store_id,
             'channel_id': channel_id
         };
-        console.log('get_data');
-        console.log(get_data);
+
         $.ajax({
 	        url: '/channel_op/v1/api/eyesight_info',
 	        type: 'GET',
@@ -464,12 +462,11 @@ $(document).ready(function(){
                         row += '<td>'+phone_num+'</td>';
                         row += '<td>'+ctime+'</td>';
                         row += '<td>'+is_valid+'</td>';
-                        // var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight">删除</button>';
-                        // var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'">删除</button>'
+
                         var btn = '<button type="button" class="btn btn-primary btn-sm" id="deleteEyesight" data-eyeid="'+eyeid+'" data-storeid="'+storeid+'" data-channel_id="'+channel_id+'" >删除</button>'
                         row += '<td>'+btn+'</td>';
                         var tr = $('<tr>'+row+'</tr>');
-                        console.log(tr);
+
                         tr.appendTo(table);
                         row = '';
                     }
@@ -620,8 +617,6 @@ $(document).ready(function(){
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
 
-        console.log('post data');
-        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/store',
 	        type: 'POST',
@@ -658,8 +653,7 @@ $(document).ready(function(){
         post_data['userid'] = eyesight_id;
         post_data['store_id'] = store_id;
         post_data['channel_id'] = channel_id;
-        console.log('delete ...');
-        console.log(post_data);
+
         $.ajax({
 	        url: '/channel_op/v1/api/eyesight_info',
 	        type: 'POST',
@@ -721,7 +715,7 @@ $(document).ready(function(){
                 }
 	        },
 	        error: function(data) {
-                toastr.success('请求异常');
+                toastr.warning('请求异常');
 	        }
         });
     });

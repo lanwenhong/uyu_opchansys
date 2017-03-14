@@ -11,7 +11,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 20, 40, 80, 100, -1],[10, 20, 40, 80, 100, '所有']],
+        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $settleList_length = $("#settleList_length");
@@ -31,8 +31,8 @@ $(document).ready(function(){
                 'sFirst': '首页',
                 'sPrevious': '前一页',
                 'sNext': '后一页',
-                'sLast': '尾页',
-            },
+                'sLast': '尾页'
+            }
         }
 
     });
