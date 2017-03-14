@@ -78,6 +78,18 @@ $(document).ready(function(){
 
             });
         },
+        'columnDefs': [
+            {
+                targets: 10,
+                data: '操作',
+                render: function(data, type, full) {
+                    var device_name = full.device_name;
+                    var serial_number = full.serial_number;
+                    var allocate = '<input type="button" class="btn btn-primary btn-sm device-allocate" data-serial_number='+serial_number+' data-device_name='+device_name+' value=' + '分配' + '>';
+                    return allocate;
+                }
+            }
+        ],
 		'columns': [
 				{ data: 'id' },
 				{ data: 'device_name' },
@@ -109,7 +121,7 @@ $(document).ready(function(){
     $("#deviceCreate").click(function(){
         $('#channel_name').html('');
         $("#deviceCreateForm").resetForm();
-        channel_name_select();
+        channel_name_select('#channel_name', '#store_name');
         $("#deviceCreateModal").modal();
     });
 
@@ -230,9 +242,98 @@ $(document).ready(function(){
         });
     });
 
+    $(document).on('click', '.device-allocate', function(){
+        var device_name = $(this).data('device_name');
+        var serial_number = $(this).data('serial_number');
+        console.log('device_name: '+ device_name + 'serial_number: '+serial_number);
+        $('#deviceAllocateForm').resetForm();
+        $('#a_device_name').val(device_name);
+        $('#a_serial_number').val(serial_number);
+        channel_name_select('#a_channel_name', '#a_store_name');
+        $('#deviceAllocate').modal();
+    });
+
+    $('#a_channel_name').change(function () {
+        var get_data = {};
+        var channel_id = $('#a_channel_name').val();
+        var se_userid = window.localStorage.getItem('myid');
+        get_data['se_userid'] = se_userid;
+        get_data['channel_id'] = channel_id;
+        $.ajax({
+            url: '/channel_op/v1/api/chan_store_list',
+            type: 'GET',
+            data: get_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    var c_store_name = $('#a_store_name');
+                    c_store_name.html('');
+                    for(var i=0; i<data.data.length; i++){
+                        var store_id = data.data[i].id;
+                        var store_name = data.data[i].store_name;
+                        var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                        option_str.appendTo(c_store_name);
+                    }
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+    });
+    
+    $('#deviceAllocateSubmit').click(function () {
+        var serial_number = $('#a_serial_number').val();
+        var channel_id = $('#a_channel_name').val();
+        var store_id = $('#a_store_name').val();
+        if(!channel_id){
+            toastr.warning('请选择分配的渠道');
+            return false;
+        }
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data.se_userid = se_userid;
+        post_data.serial_number = serial_number;
+        post_data.channel_id = channel_id;
+        if(store_id){
+            post_data.store_id = store_id;
+        }
+        $.ajax({
+            url: '',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('新建设备成功');
+                    $("#deviceAllocate").modal('hide');
+                    $('#deviceList').DataTable().draw();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+    })
+
+
 });
 
-function channel_name_select() {
+function channel_name_select(channel_name_tag_id, store_name_tag_id) {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
@@ -251,14 +352,14 @@ function channel_name_select() {
             }
             else {
                 console.log(data.data);
-                var c_channel_name = $('#channel_name');
+                var c_channel_name = $(channel_name_tag_id);
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
                     if(i==0){
-                        do_first_select(channel_id);
+                        do_first_select(channel_id, store_name_tag_id);
                     }
                 }
             }
@@ -269,7 +370,7 @@ function channel_name_select() {
     });
 }
 
-function do_first_select(channel_id) {
+function do_first_select(channel_id, store_name_tag_id) {
     $('#store_name').html('');
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
@@ -290,7 +391,7 @@ function do_first_select(channel_id) {
             }
             else {
                 console.log(data.data);
-                var c_store_name = $('#store_name');
+                var c_store_name = $(store_name_tag_id);
                 for(var i=0; i<data.data.length; i++){
                     var store_id = data.data[i].id;
                     var store_name = data.data[i].store_name;
