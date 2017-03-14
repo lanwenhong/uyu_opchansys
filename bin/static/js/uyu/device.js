@@ -106,6 +106,7 @@ $(document).ready(function(){
 
     $("#deviceCreate").click(function(){
         $("#deviceCreateForm").resetForm();
+        channel_name_select();
         $("#deviceCreateModal").modal();
     });
 
@@ -187,4 +188,76 @@ $(document).ready(function(){
 
     });
 
+    $('#channel_name').change(function () {
+        var get_data = {};
+        $('#store_name').html('');
+        var channel_id = $('#channel_name').val();
+        var se_userid = window.localStorage.getItem('myid');
+        get_data['se_userid'] = se_userid;
+        get_data['channel_id'] = channel_id;
+        $.ajax({
+            url: '/channel_op/v1/api/chan_store_list',
+            type: 'GET',
+            data: get_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    var c_store_name = $('#store_name');
+                    for(var i=0; i<data.data.length; i++){
+                        var store_id = data.data[i].id;
+                        var store_name = data.data[i].store_name;
+                        var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                        option_str.appendTo(c_store_name);
+                    }
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+    });
+
 });
+
+
+function channel_name_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                console.log(data.data);
+                var c_channel_name = $('#channel_name');
+                for(var i=0; i<data.data.length; i++){
+                    var channel_id = data.data[i].channel_id;
+                    var channel_name = data.data[i].channel_name;
+                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    option_str.appendTo(c_channel_name);
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
