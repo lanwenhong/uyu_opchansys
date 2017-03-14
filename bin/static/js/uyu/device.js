@@ -164,7 +164,7 @@ $(document).ready(function(){
         post_data.store_id = $('#store_name').val();
 
         $.ajax({
-            url: '',
+            url: '/channel_op/v1/api/create_device',
             type: 'POST',
             dataType: 'json',
             data: post_data,
