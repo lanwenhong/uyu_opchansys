@@ -85,7 +85,7 @@ $(document).ready(function(){
         },
         'columnDefs': [
             {
-                targets: 11,
+                targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
@@ -100,6 +100,7 @@ $(document).ready(function(){
 				{ data: 'store_name' },
 				{ data: 'consumer_id' },
 				{ data: 'category' },
+				{ data: 'busicd_name' },
 				{ data: 'op_type' },
 				{ data: 'training_times' },
 				{ data: 'training_amt' },

@@ -8,7 +8,7 @@ from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_OP_OK
 from uyubase.base.training_op import TrainingOP
-from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP
+from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP, UYU_BUSICD_MAP
 from uyubase.uyu import define
 
 from runtime import g_rt
@@ -84,7 +84,12 @@ class TrainBuyInfoHandler(core.Handler):
             where.update({'consumer_id': ('in', consumer_list)})
 
 
-        keep_fields = ['id', 'channel_id', 'store_id', 'consumer_id', 'category', 'op_type', 'training_times', 'training_amt', 'op_name', 'status', 'create_time']
+        keep_fields = [
+            'id', 'channel_id', 'store_id',
+            'consumer_id', 'category', 'op_type',
+            'training_times', 'training_amt', 'op_name',
+            'status', 'create_time', 'busicd'
+        ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
         for item in ret:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
@@ -96,6 +101,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
+            item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
 
         return ret
 
