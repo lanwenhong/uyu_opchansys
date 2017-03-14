@@ -51,8 +51,10 @@ $(document).ready(function(){
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
-
-            get_data.is_prepayment = is_prepayment;
+            console.log('is_prepayment: '+is_prepayment);
+            if(is_prepayment!=-1){
+                get_data.is_prepayment = is_prepayment;
+            }
 
 
             $.ajax({
@@ -250,14 +252,17 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-		if(is_prepayment == 1){
+        console.log('is_prepayment: '+is_prepayment +'divide_percent: '+ divide_percent);
+        console.log(is_prepayment == 1);
+		if(is_prepayment != 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
 		        return false;
             }
             post_data['divide_percent'] = divide_percent;
         }
-
+        console.log('post_data');
+        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',

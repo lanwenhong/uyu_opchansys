@@ -12,6 +12,7 @@ from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.response import success, error, UAURET
 from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_OK, UYU_OP_ERR, UYU_CHAN_MAP
 from uyubase.base.uyu_user import UUser
+from uyubase.uyu import define
 
 from runtime import g_rt
 from config import cookie_conf
@@ -149,7 +150,7 @@ class ChannelInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('phone_num', T_STR, True),
-        Field('is_prepayment', T_STR, True),
+        Field('is_prepayment', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -165,6 +166,7 @@ class ChannelInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             phone_num = params.get('phone_num', None)
             is_prepayment = params.get('is_prepayment', None)
+            log.debug('is_prepayment: %s', is_prepayment)
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, phone_num, is_prepayment)
             data['info'] = info_data[start:end]
@@ -181,12 +183,14 @@ class ChannelInfoHandler(core.Handler):
         keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
                        'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
                        'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
-                       'channel.channel_name',
+                       'channel.channel_name', 'channel.is_prepayment',
                        ]
         where = {'channel.channel_name': channel_name} if channel_name else {}
         if phone_num:
             where.update({'auth_user.phone_num': phone_num})
-        where.update({'channel.is_prepayment': is_prepayment})
+        if is_prepayment in (0, 1):
+            where.update({'channel.is_prepayment': is_prepayment})
+        log.debug('where: %s', where)
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
         for item in ret:
             userid = item['userid']
@@ -197,6 +201,9 @@ class ChannelInfoHandler(core.Handler):
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_CHAN_MAP.get(item['is_valid'], '')
             item['training_amt_per'] = item['training_amt_per'] / 100.0 if item['training_amt_per'] else 0.00
+            if item['is_prepayment'] == 0:
+                item['divide_percent'] = '无'
+
 
         return ret
 
@@ -241,7 +248,8 @@ class CreateChanHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         params = self.validator.data
 
-        if params.get["is_prepayment"] == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
+        log.debug('params: %s', params)
+        if params.get("is_prepayment") == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
             return error(UAURET.REGISTERERR)
 
         uop = UUser()
