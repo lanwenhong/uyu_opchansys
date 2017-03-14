@@ -205,8 +205,7 @@ $(document).ready(function(){
                 }
             }
         });
-        console.log($('.is_prepayment').val());
-        console.log($('#training_amt_per').val() * 100);
+
         var ok = channel_create_vt.form();
         if(!ok){
             return false;
@@ -251,7 +250,7 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-		if(is_prepayment == 0){
+		if(is_prepayment == 1){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
 		        return false;
