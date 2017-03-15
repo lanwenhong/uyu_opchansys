@@ -25,7 +25,6 @@ $(document).ready(function(){
 
     search_source();
 
-
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
         var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
@@ -329,6 +328,15 @@ $(document).ready(function(){
                 else {
                     console.log(data.data);
                     var c_store_name = $('.c_store_name');
+                    if(data.data.length==0){
+                        $('#training_times').val('');
+                        $('#training_times').attr('readonly', true);
+                        $('#trainBuyerCreateSubmit').attr('disabled', true);
+                        return false;
+                    } else {
+                        $('#training_times').attr('readonly', false);
+                        $('#trainBuyerCreateSubmit').attr('disabled', false);
+                    }
                     for(var i=0; i<data.data.length; i++){
                         var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
