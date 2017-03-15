@@ -20,7 +20,7 @@ $(document).ready(function(){
             amount_per = (amount_per / 100).toFixed(2);
         }
         console.log('value : '+$(this).val());
-        $('#training_amt').val($(this).val() * amount_per);
+        $('#training_amt').val(($(this).val() * amount_per).toFixed(2));
     });
 
     search_source();
@@ -295,6 +295,8 @@ $(document).ready(function(){
         var order_type = $('.c_busicd').val();
         if(order_type == 'ORG_ALLOT_TO_CHAN') {
             $('.create_order_store_name').hide();
+            $('#training_times').attr('readonly', false);
+            $('#trainBuyerCreateSubmit').attr('disabled', false);
         } else {
             $('.create_order_store_name').show();
         }
