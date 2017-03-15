@@ -163,7 +163,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#contact_phone'
                 },
                 contact_email: {
 				    required: false,
@@ -188,6 +188,10 @@ $(document).ready(function(){
                 store_addr: {
                     required: true,
                     maxlength: 128
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -207,8 +211,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -232,6 +235,9 @@ $(document).ready(function(){
                 store_addr: {
                     required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
@@ -519,9 +525,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#e_contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -543,6 +550,10 @@ $(document).ready(function(){
                 store_addr: {
                     required: true,
                     maxlength: 128
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -558,8 +569,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -583,6 +593,9 @@ $(document).ready(function(){
                 store_addr: {
                     required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });

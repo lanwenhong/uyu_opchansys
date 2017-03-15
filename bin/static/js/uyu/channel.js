@@ -160,9 +160,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -172,6 +173,10 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: true,
                     range:[0, 2]
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -191,8 +196,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -204,6 +208,9 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: '请选择结算模式',
                     range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
@@ -411,9 +418,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#e_contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -423,6 +431,10 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: true,
                     range:[0, 2]
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -443,7 +455,6 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -455,6 +466,9 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: '请选择结算模式',
                     range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
