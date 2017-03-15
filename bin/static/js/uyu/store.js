@@ -166,6 +166,7 @@ $(document).ready(function(){
                     maxlength: 128
                 },
                 contact_email: {
+				    required: false,
                     email: true
                 },
                 training_amt_per: {
