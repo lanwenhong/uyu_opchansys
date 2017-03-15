@@ -14,7 +14,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 40, 80, -1],[10, 40, 100, '所有']],
+        "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $trainUseList_length = $("#trainUseList_length");
