@@ -208,6 +208,7 @@ class ChannelInfoHandler(core.Handler):
         if not data:
             return []
 
+        profile_fields = ['contact_name', 'contact_phone']
         for item in data:
             userid = item['userid']
             profile_ret = self.db.select_one(table='profile', fields=profile_fields, where={'userid': userid})
