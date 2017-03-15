@@ -298,6 +298,9 @@ $(document).ready(function(){
             $('#training_times').attr('readonly', false);
             $('#trainBuyerCreateSubmit').attr('disabled', false);
         } else {
+            var channel_val = $('.c_channel_name').val();
+            var channel_id = channel_val.split('|').[1];
+            do_first_select(channel_id, '#c_store_name');
             $('.create_order_store_name').show();
         }
     });
@@ -478,6 +481,53 @@ function channel_name_select() {
                     channel_id = channel_id+'|'+training_amt_per;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
+
+function do_first_select(channel_id, store_name_tag_id) {
+    $(store_name_tag_id).html('');
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    get_data['channel_id'] = channel_id;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_store_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                if(data.data.length=0){
+                    $('#training_times').val('');
+                    $('#training_times').attr('readonly', true);
+                    $('#trainBuyerCreateSubmit').attr('disabled', true);
+                    return false;
+                }  else {
+                    $('#training_times').attr('readonly', false);
+                    $('#trainBuyerCreateSubmit').attr('disabled', false);
+                }
+                var c_store_name = $(store_name_tag_id);
+                for(var i=0; i<data.data.length; i++){
+                    var store_id = data.data[i].id;
+                    var store_name = data.data[i].store_name;
+                    var training_amt_per = data.data[i].training_amt_per;
+                    store_id = store_id+'|'+training_amt_per;
+                    var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                    option_str.appendTo(c_store_name);
                 }
             }
         },
