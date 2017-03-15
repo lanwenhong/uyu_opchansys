@@ -1,5 +1,17 @@
 $(document).ready(function(){
+    $.validator.addMethod("PositiveNumber", function(value, element) {
+        if(value <=0){
+            return false;
+        }
+    }, "请正确填写您的次数");
+
+    $("#training_times").bind('input propertychange', function () {
+        console.log('value : '+$(this).val);
+        $('#training_amt').val($(this).val * 100.0);
+    });
+
     search_source();
+
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -173,7 +185,8 @@ $(document).ready(function(){
                 },
                 training_times: {
                     required: true,
-                    digits: true
+                    digits: true,
+                    PositiveNumber: '#training_times'
                 },
                 training_amt: {
                     required: true,
@@ -361,7 +374,6 @@ $(document).ready(function(){
 
 });
 
-
 function search_source() {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
@@ -451,4 +463,3 @@ function channel_name_select() {
         }
     });
 }
-
