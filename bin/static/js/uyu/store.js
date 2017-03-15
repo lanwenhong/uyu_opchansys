@@ -133,6 +133,7 @@ $(document).ready(function(){
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
         $("#c_channel_name").html('');
+        $("label.error").remove();
         channel_name_select();
         $("#storeCreateModal").modal();
     });
@@ -370,6 +371,7 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.viewStore', function(){
+        $("label.error").remove();
         var uid = $(this).data('uid');
         var is_prepayment = $(this).data('is_prepayment');
         $('#prepayment').text(is_prepayment);

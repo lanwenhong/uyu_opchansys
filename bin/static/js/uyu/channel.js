@@ -131,6 +131,7 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
+        $("label.error").remove();
 		$("#channelCreateModal").modal();
 	});
 
@@ -298,6 +299,7 @@ $(document).ready(function(){
 
 
     $(document).on('click', '.viewEdit', function(){
+        $("label.error").remove();
         var uid = $(this).data('uid');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {

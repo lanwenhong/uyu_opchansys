@@ -120,6 +120,7 @@ $(document).ready(function(){
     $("#deviceCreate").click(function(){
         $('#channel_name').html('');
         $("#deviceCreateForm").resetForm();
+        $("label.error").remove();
         channel_name_select('#channel_name', '#store_name');
         $("#deviceCreateModal").modal();
     });

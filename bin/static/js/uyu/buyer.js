@@ -139,6 +139,7 @@ $(document).ready(function(){
         $("#trainBuyerCreateForm").resetForm();
         $('.c_channel_name').html('');
         $('.c_store_name').html('');
+        $("label.error").remove();
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
