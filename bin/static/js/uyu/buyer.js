@@ -269,7 +269,7 @@ $(document).ready(function(){
     $(".c_busicd").change(function () {
         var order_type = $('.c_busicd').val();
         if(order_type == 'ORG_ALLOT_TO_CHAN') {
-            return false;
+            $('.create_order_store_name').hide();
         } else {
             $('.create_order_store_name').show();
         }
