@@ -140,7 +140,7 @@ class StoreHandler(core.Handler):
 
         #门店信息
         Field('training_amt_per', T_INT, False),
-        # Field('divide_percent', T_FLOAT, False),
+        Field('divide_percent', T_FLOAT, True),
         # Field('is_prepayment', T_INT, False),
         # Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
@@ -283,7 +283,7 @@ class CreateStoreHandler(core.Handler):
         Field('address',  T_STR, False),
         #门店信息
         Field('training_amt_per', T_INT, False),
-        Field('divide_percent', T_FLOAT, False),
+        Field('divide_percent', T_FLOAT, True),
         # Field('is_prepayment', T_INT, False),
         Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
