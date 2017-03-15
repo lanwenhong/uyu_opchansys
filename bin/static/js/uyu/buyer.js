@@ -266,7 +266,16 @@ $(document).ready(function(){
         });
     });
 
-    $('.c_channel_name').change(function () {
+    $(".c_busicd").change(function () {
+        var order_type = $('.c_busicd').val();
+        if(order_type == 'ORG_ALLOT_TO_CHAN') {
+            return false;
+        } else {
+            $('.create_order_store_name').show();
+        }
+    });
+
+    $(".c_channel_name").change(function () {
         var order_type = $("#c_busicd").val();
         if(order_type == 'ORG_ALLOT_TO_CHAN'){
             return false;
