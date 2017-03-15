@@ -19,7 +19,6 @@ $(document).ready(function(){
             amount_per = $('.c_store_name').val().split('|')[1];
             amount_per = (amount_per / 100).toFixed(2);
         }
-        console.log('value : '+$(this).val());
         $('#training_amt').val(($(this).val() * amount_per).toFixed(2));
     });
 
@@ -75,8 +74,6 @@ $(document).ready(function(){
 				get_data.mobile = consumer_mobile;
 			}
 
-            console.log('search data');
-            console.log(get_data);
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
 	            type: 'GET',
@@ -95,8 +92,6 @@ $(document).ready(function(){
                     }
 	                detail_data = data.data;
 	                num = detail_data.num;
-                    console.log('num:'+num);
-                    console.log('info:'+detail_data.info);
 	                callback({
 	                    recordsTotal: num,
 	                    recordsFiltered: num,
@@ -279,7 +274,6 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
                     $('#trainBuyerCreateForm').resetForm();
                     $('#trainBuyerCreateModal').modal('hide');
                     toastr.success('新增成功');
@@ -299,7 +293,7 @@ $(document).ready(function(){
             $('#trainBuyerCreateSubmit').attr('disabled', false);
         } else {
             var channel_val = $('.c_channel_name').val();
-            var channel_id = channel_val.split('|').[1];
+            var channel_id = channel_val.split('|')[0];
             do_first_select(channel_id, '#c_store_name');
             $('.create_order_store_name').show();
         }
@@ -331,7 +325,6 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
                     var c_store_name = $('.c_store_name');
                     if(data.data.length==0){
                         $('#training_times').val('');
@@ -361,7 +354,6 @@ $(document).ready(function(){
     $(document).on('click', '.order-cancel', function(){
         var orderno = $(this).data('orderno');
         var se_userid = window.localStorage.getItem('myid');
-        console.log('orderno: '+orderno);
         if(!orderno){
             toastr.warning('请确认订单号');
             return false;
@@ -383,7 +375,6 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    console.log(data.data);
                     toastr.success('撤销成功');
                 }
             },
@@ -418,7 +409,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
@@ -444,7 +434,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 $('#s_store_name').typeahead({source: data.data});
             }
         },
@@ -472,7 +461,6 @@ function channel_name_select() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var c_channel_name = $('.c_channel_name');
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
@@ -511,7 +499,7 @@ function do_first_select(channel_id, store_name_tag_id) {
                 toastr.warning(msg);
             }
             else {
-                if(data.data.length=0){
+                if(data.data.length==0){
                     $('#training_times').val('');
                     $('#training_times').attr('readonly', true);
                     $('#trainBuyerCreateSubmit').attr('disabled', true);
@@ -519,15 +507,16 @@ function do_first_select(channel_id, store_name_tag_id) {
                 }  else {
                     $('#training_times').attr('readonly', false);
                     $('#trainBuyerCreateSubmit').attr('disabled', false);
-                }
-                var c_store_name = $(store_name_tag_id);
-                for(var i=0; i<data.data.length; i++){
-                    var store_id = data.data[i].id;
-                    var store_name = data.data[i].store_name;
-                    var training_amt_per = data.data[i].training_amt_per;
-                    store_id = store_id+'|'+training_amt_per;
-                    var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
-                    option_str.appendTo(c_store_name);
+
+                    var c_store_name = $(store_name_tag_id);
+                    for(var i=0; i<data.data.length; i++){
+                        var store_id = data.data[i].id;
+                        var store_name = data.data[i].store_name;
+                        var training_amt_per = data.data[i].training_amt_per;
+                        store_id = store_id+'|'+training_amt_per;
+                        var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
+                        option_str.appendTo(c_store_name);
+                    }
                 }
             }
         },
