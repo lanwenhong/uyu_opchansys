@@ -140,6 +140,12 @@ $(document).ready(function(){
         $('.c_channel_name').html('');
         $('.c_store_name').html('');
         $("label.error").remove();
+        var order_type = $("#c_busicd").val();
+        if(order_type == 'ORG_ALLOT_TO_CHAN'){
+            $('.create_order_store_name').hide();
+        } else {
+            $('.create_order_store_name').show();
+        }
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
@@ -261,6 +267,10 @@ $(document).ready(function(){
     });
 
     $('.c_channel_name').change(function () {
+        var order_type = $("#c_busicd").val();
+        if(order_type == 'ORG_ALLOT_TO_CHAN'){
+            return false;
+        }
         var get_data = {};
         $('.c_store_name').html('');
         var ch_val = $('.c_channel_name').val();
