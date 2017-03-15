@@ -343,7 +343,6 @@ class ChanStoreMap(core.Handler):
         return ret
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
-    @with_database('uyu_core')
     def GET(self):
         try:
             data = self._get_handler()
