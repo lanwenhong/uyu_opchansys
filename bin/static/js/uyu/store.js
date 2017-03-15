@@ -263,8 +263,11 @@ $(document).ready(function(){
 		var divide_percent= $('#divide_percent').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
-		var channel_id = $('.c_channel_name').val();
-		channel_id = channel_id.split('|')[0];
+		var channel_val = $('.c_channel_name').val();
+
+		channel_id = channel_val.split('|')[0];
+		is_prepayment = channel_val.split('|')[1];
+
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
@@ -284,10 +287,18 @@ $(document).ready(function(){
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
 		post_data['channel_id'] = channel_id;
+
+        if(is_prepayment == 1){
+            if(!divide_percent){
+                toastr.warning('分成模式分成比例必填');
+                return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
+
 
         $.ajax({
 	        url: '/channel_op/v1/api/store_create',
@@ -354,6 +365,7 @@ $(document).ready(function(){
     $(document).on('click', '.viewStore', function(){
         var uid = $(this).data('uid');
         var is_prepayment = $(this).data('is_prepayment');
+        $('#prepayment').text(is_prepayment);
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
@@ -580,6 +592,7 @@ $(document).ready(function(){
 
         var post_data = {};
         var uid = $('#uid').text();
+        var is_prepayment = $('#prepayment').text();
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
@@ -603,6 +616,8 @@ $(document).ready(function(){
 		var divide_percent= $('#e_divide_percent').val();
 		var business = $('#e_business').val();
 		var front_business = $('#e_front_business').val();
+
+
         post_data['se_userid'] = se_userid;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
@@ -621,9 +636,17 @@ $(document).ready(function(){
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
+
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
+
+		if(is_prepayment==1){
+		    if(!divide_percent){
+                toastr.warning('分成模式分成比例必填');
+                return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
 
         $.ajax({
 	        url: '/channel_op/v1/api/store',
@@ -833,7 +856,6 @@ function search_source() {
         }
     });
 }
-
 
 function channel_name_select() {
     var get_data = {};
