@@ -2,12 +2,14 @@ $(document).ready(function(){
     $.validator.addMethod("PositiveNumber", function(value, element) {
         if(value <=0){
             return false;
+        } else {
+            return true;
         }
     }, "请正确填写您的次数");
 
     $("#training_times").bind('input propertychange', function () {
-        console.log('value : '+$(this).val);
-        $('#training_amt').val($(this).val * 100.0);
+        console.log('value : '+$(this).val());
+        $('#training_amt').val($(this).val() * 100.0);
     });
 
     search_source();
