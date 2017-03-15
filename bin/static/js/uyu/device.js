@@ -13,7 +13,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
+        "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $deviceList_length = $("#deviceList_length");
@@ -120,6 +120,7 @@ $(document).ready(function(){
     $("#deviceCreate").click(function(){
         $('#channel_name').html('');
         $("#deviceCreateForm").resetForm();
+        $("label.error").remove();
         channel_name_select('#channel_name', '#store_name');
         $("#deviceCreateModal").modal();
     });

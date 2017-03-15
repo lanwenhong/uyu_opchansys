@@ -25,7 +25,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
+        "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $channelList_length = $("#channelList_length");
@@ -51,8 +51,10 @@ $(document).ready(function(){
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
-
-            get_data.is_prepayment = is_prepayment;
+            console.log('is_prepayment: '+is_prepayment);
+            if(is_prepayment!=-1){
+                get_data.is_prepayment = is_prepayment;
+            }
 
 
             $.ajax({
@@ -129,6 +131,7 @@ $(document).ready(function(){
 
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
+        $("label.error").remove();
 		$("#channelCreateModal").modal();
 	});
 
@@ -158,9 +161,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -170,6 +174,10 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: true,
                     range:[0, 2]
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -189,8 +197,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -202,6 +209,9 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: '请选择结算模式',
                     range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
@@ -250,14 +260,17 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-		if(is_prepayment == 1){
+        console.log('is_prepayment: '+is_prepayment +'divide_percent: '+ divide_percent);
+        console.log(is_prepayment == 1);
+		if(is_prepayment != 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
 		        return false;
             }
             post_data['divide_percent'] = divide_percent;
         }
-
+        console.log('post_data');
+        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -286,6 +299,7 @@ $(document).ready(function(){
 
 
     $(document).on('click', '.viewEdit', function(){
+        $("label.error").remove();
         var uid = $(this).data('uid');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
@@ -406,9 +420,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#e_contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -418,6 +433,10 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: true,
                     range:[0, 2]
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -438,7 +457,6 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -450,6 +468,9 @@ $(document).ready(function(){
                 is_prepayment: {
                     required: '请选择结算模式',
                     range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });

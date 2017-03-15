@@ -45,9 +45,11 @@ class DeviceInfoHandler(core.Handler):
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
             serial_number = params.get('serial_number')
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name, serial_number)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -57,26 +59,41 @@ class DeviceInfoHandler(core.Handler):
 
     @with_database('uyu_core')
     def _query_handler(self, channel_name=None, store_name=None, serial_number=None):
-        keep_fields = ['id', 'device_name', 'hd_version', 'blooth_tag', 'scm_tag',
-                       'status', 'channel_id', 'store_id',
-                       'training_nums', 'ctime'
-                       ]
         where = {}
-        channel_list = []
-        store_list = []
+
+        keep_fields = [
+            'id', 'device_name', 'hd_version', 'blooth_tag',
+            'scm_tag', 'status', 'channel_id', 'store_id',
+            'training_nums', 'ctime'
+        ]
+
         if channel_name:
-            channel_list.extend(tools.channel_name_to_id(channel_name))
-            where.update({'channel_id': ('in', channel_list)})
+            channel_list = tools.channel_name_to_id(channel_name)
+            if channel_list:
+                where.update({'channel_id': ('in', channel_list)})
+            else:
+                return []
 
         if store_name:
-            store_list.extend(tools.store_name_to_id(store_name))
-            where.update({'store_id': ('in', store_list)})
+            store_list = tools.store_name_to_id(store_name)
+            if store_list:
+                where.update({'store_id': ('in', store_list)})
+            else:
+                return []
 
         if serial_number:
             where.update({'id': serial_number})
 
         ret = self.db.select(table='device', fields=keep_fields, where=where)
-        for item in ret:
+
+        return ret
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
             item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
@@ -85,7 +102,7 @@ class DeviceInfoHandler(core.Handler):
             item['serial_number'] = item['id']
             item['status'] = UYU_DEVICE_MAP.get(item['status'], '')
 
-        return ret
+        return data
 
 
     def GET(self):
@@ -96,7 +113,6 @@ class DeviceInfoHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
-
 
 
 class DeviceCreateHandler(core.Handler):

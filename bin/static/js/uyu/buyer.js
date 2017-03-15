@@ -19,7 +19,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
+        "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $trainBuyerList_length = $("#trainBuyerList_length");
@@ -85,12 +85,24 @@ $(document).ready(function(){
         },
         'columnDefs': [
             {
-                targets: 11,
+                targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
-                    var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
-                    return cancel;
+                    var is_valid = full.is_valid;
+                    var busicd = full.busicd;
+                    if(is_valid==0){
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
+                    } else {
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel"  disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+                    }
+                    if(busicd == 'CHAN_BUY' && is_valid == 1){
+                        var confirm = '<input type="button" class="btn btn-primary btn-sm order-confirm" data-orderno='+orderno+' value=' + '确认' + '>';
+                    } else {
+                        var confirm = '';
+                    }
+
+                    return cancel + confirm;
                 }
             }
         ],
@@ -100,6 +112,7 @@ $(document).ready(function(){
 				{ data: 'store_name' },
 				{ data: 'consumer_id' },
 				{ data: 'category' },
+				{ data: 'busicd_name' },
 				{ data: 'op_type' },
 				{ data: 'training_times' },
 				{ data: 'training_amt' },
@@ -126,6 +139,7 @@ $(document).ready(function(){
         $("#trainBuyerCreateForm").resetForm();
         $('.c_channel_name').html('');
         $('.c_store_name').html('');
+        $("label.error").remove();
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
@@ -287,7 +301,43 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.order-cancel', function(){
-        alert('准备提交撤销操作');
+        var orderno = $(this).data('orderno');
+        var se_userid = window.localStorage.getItem('myid');
+        console.log('orderno: '+orderno);
+        if(!orderno){
+            toastr.warning('请确认订单号');
+            return false;
+        }
+        var post_data = {};
+        post_data.se_userid = se_userid;
+        post_data.order_no = orderno;
+        $.ajax({
+            url: '/channel_op/v1/api/order_cancel',
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    console.log(data.data);
+                    toastr.success('撤销成功');
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+
+    });
+
+    $(document).on('click', '.order-confirm', function(){
+        alert('准备提交确认操作');
     });
 
 });

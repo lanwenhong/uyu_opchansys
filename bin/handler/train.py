@@ -8,7 +8,7 @@ from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_ROLE_OP, UYU_OP_ERR, UYU_OP_OK
 from uyubase.base.training_op import TrainingOP
-from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP
+from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP, UYU_BUSICD_MAP, UYU_TRAIN_USE_MAP
 from uyubase.uyu import define
 
 from runtime import g_rt
@@ -39,24 +39,26 @@ class TrainBuyInfoHandler(core.Handler):
         Field('mobile', T_STR, True),
     ]
 
+
     def _get_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
+
 
     @with_validator_self
     def _get_handler(self, *args):
         try:
             data = {}
             params = self.validator.data
-            print 'params'
-            print params
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
             phone_num = params.get('phone_num', None)
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name, phone_num)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -64,29 +66,50 @@ class TrainBuyInfoHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
 
+
     @with_database('uyu_core')
     def _query_handler(self, channel_name=None, store_name=None, phone_num=None):
         where = {}
-        channel_list = []
-        store_list = []
-        consumer_list = []
 
         if channel_name:
-            channel_list.extend(tools.channel_name_to_id(channel_name))
-            where.update({'channel_id': ('in', channel_list)})
+            channel_list = tools.channel_name_to_id(channel_name)
+            if channel_list:
+                where.update({'channel_id': ('in', channel_list)})
+            else:
+                return []
 
         if store_name:
-            store_list.extend(tools.store_name_to_id(store_name))
-            where.update({'store_id': ('in', store_list)})
+            store_list = tools.store_name_to_id(store_name)
+            if store_list:
+                where.update({'store_id': ('in', store_list)})
+            else:
+                return []
 
         if phone_num:
-            consumer_list.extend(tools.mobile_to_id(phone_num))
-            where.update({'consumer_id': ('in', consumer_list)})
+            consumer_list = tools.mobile_to_id(phone_num)
+            if consumer_list:
+                where.update({'consumer_id': ('in', consumer_list)})
+            else:
+                return []
 
 
-        keep_fields = ['id', 'channel_id', 'store_id', 'consumer_id', 'category', 'op_type', 'training_times', 'training_amt', 'op_name', 'status', 'create_time']
+        keep_fields = [
+            'id', 'channel_id', 'store_id',
+            'consumer_id', 'category', 'op_type',
+            'training_times', 'training_amt', 'op_name',
+            'status', 'create_time', 'busicd', 'orderno'
+        ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
-        for item in ret:
+
+        return ret
+
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
             item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
@@ -95,9 +118,11 @@ class TrainBuyInfoHandler(core.Handler):
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0
+            item['is_valid'] = item['status']
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
+            item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
 
-        return ret
+        return data
 
 
     def GET(self):
@@ -139,7 +164,8 @@ class TrainUseInfoHandler(core.Handler):
             create_time = params.get('create_time')
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name, consumer_mobile, eyesight, create_time)
-            data['info'] = info_data[start:end]
+            # data['info'] = info_data[start:end]
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -150,22 +176,75 @@ class TrainUseInfoHandler(core.Handler):
     @with_database('uyu_core')
     def _query_handler(self, channel_name=None, store_name=None, consumer_mobile=None, eyesight=None, create_time=None):
         where = {}
-        keep_fields = ['id', 'channel_id', 'store_id', 'device_id', 'consumer_id', 'eyesight_id', 'comsumer_nums', 'status', 'create_time']
-        ret = self.db.select(table='training_use_record', fields=keep_fields, where=where)
-        for item in ret:
-            channel_ret = self.db.select_one(table='channel', fields='userid', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='userid', where={'id': item['store_id']})
-            device_name = self.db.select_one(table='device', fields='device_name', where={'id': item['device_id']})
-            channel_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': channel_ret['userid']})
-            store_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': store_ret['userid']})
-            eyesight_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': item['eyesight_id']})
-            item['channel_name'] = channel_name['nick_name']
-            item['store_name'] = store_name['nick_name']
-            item['device_name'] = device_name['device_name']
-            item['eyesight_name'] = eyesight_name['nick_name']
-            item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+        if channel_name:
+            channel_list = tools.channel_name_to_id(channel_name)
+            if channel_list:
+                where.update({'channel_id': ('in', channel_list)})
+            else:
+                return []
 
+        if store_name:
+            store_list = tools.store_name_to_id(store_name)
+            if store_list:
+                where.update({'store_id': ('in', store_list)})
+            else:
+                return []
+
+        if consumer_mobile:
+            consumer_list = tools.mobile_to_id(consumer_mobile)
+            if consumer_list:
+                where.update({'consumer_id': ('in', consumer_list)})
+            else:
+                return []
+
+        if eyesight:
+            eyesight_list = tools.mobile_to_id(eyesight)
+            if eyesight_list:
+                where.update({'eyesight_id': ('in', eyesight_list)})
+            else:
+                return []
+
+        if create_time:
+            create_time = datetime.datetime.strptime(create_time, '%Y-%m-%d')
+            start_time = create_time.replace(hour=0, minute=0, second=0)
+            end_time = create_time.replace(hour=23, minute=59, second=59)
+            where.update({'ctime': ('between', (start_time, end_time))})
+
+        keep_fields = ['id', 'channel_id', 'store_id', 'device_id', 'consumer_id', 'eyesight_id', 'comsumer_nums', 'status', 'ctime']
+        ret = self.db.select(table='training_use_record', fields=keep_fields, where=where)
+        '''
+        for item in ret:
+            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            device_name = self.db.select_one(table='device', fields='device_name', where={'id': item['device_id']})
+            eyesight_name = self.db.select_one(table='auth_user', fields='username', where={'id': item['eyesight_id']})
+            item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
+            item['store_name'] = store_ret.get('store_name') if store_ret else ''
+            item['device_name'] = device_name.get('device_name') if device_name else ''
+            item['eyesight_name'] = eyesight_name.get('username') if eyesight_name else ''
+            item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
+            item['status'] = UYU_TRAIN_USE_MAP.get(item['status'], '')
+        '''
         return ret
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
+            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            device_name = self.db.select_one(table='device', fields='device_name', where={'id': item['device_id']})
+            eyesight_name = self.db.select_one(table='auth_user', fields='username', where={'id': item['eyesight_id']})
+            item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
+            item['store_name'] = store_ret.get('store_name') if store_ret else ''
+            item['device_name'] = device_name.get('device_name') if device_name else ''
+            item['eyesight_name'] = eyesight_name.get('username') if eyesight_name else ''
+            item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
+            item['status'] = UYU_TRAIN_USE_MAP.get(item['status'], '')
+
+        return data
 
 
     def GET(self):
@@ -216,7 +295,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         training_amt = params["training_amt"]
         training_times = params["training_times"]
         ch_training_amt_per = params["training_amt_per"]
-        
+
         is_valid = channel_reocord["is_valid"]
 
         if is_valid == define.UYU_CHAN_STATUS_CLOSE:
@@ -315,7 +394,7 @@ class OrderCancelHandler(core.Handler):
     _post_handler_fields = [
         Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
     ]
-    
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -326,8 +405,8 @@ class OrderCancelHandler(core.Handler):
         ret = top.order_cancel()
 
         if ret == UYU_OP_OK:
-            return success({}) 
-        
+            return success({})
+
         return error(UAURET.ORDERERR)
 
     def POST(self):

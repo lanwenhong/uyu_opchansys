@@ -25,7 +25,7 @@ $(document).ready(function(){
         "deferRender": true,
         "iDisplayLength": 10,
         "sPaginationType": "full_numbers",
-        "lengthMenu": [[10, 40, 100, -1],[10, 40, 100, '所有']],
+        "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
         "fnInitComplete": function(){
             var $storeList_length = $("#storeList_length");
@@ -90,9 +90,10 @@ $(document).ready(function(){
                     var uid =full.userid;
                     var store_id =full.id;
                     var channel_id =full.channel_id;
+                    var is_prepayment = full.is_prepayment;
                     var msg = status ? '打开' : '关闭';
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
-                    var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+">";
+                    var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">";
                     var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+ " data-channel_id="+channel_id+ ">";
                     var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
                     return op+view+view_eye+add_eye;
@@ -132,6 +133,7 @@ $(document).ready(function(){
     $("#storeCreate").click(function(){
         $("#storeCreateForm").resetForm();
         $("#c_channel_name").html('');
+        $("label.error").remove();
         channel_name_select();
         $("#storeCreateModal").modal();
     });
@@ -162,9 +164,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#contact_phone'
                 },
                 contact_email: {
+				    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -186,6 +189,10 @@ $(document).ready(function(){
                 store_addr: {
                     required: true,
                     maxlength: 128
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -205,8 +212,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -230,6 +236,9 @@ $(document).ready(function(){
                 store_addr: {
                     required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
@@ -262,7 +271,11 @@ $(document).ready(function(){
 		var divide_percent= $('#divide_percent').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
-		var channel_id = $('.c_channel_name').val();
+		var channel_val = $('.c_channel_name').val();
+
+		channel_id = channel_val.split('|')[0];
+		is_prepayment = channel_val.split('|')[1];
+
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
@@ -282,10 +295,18 @@ $(document).ready(function(){
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
 		post_data['channel_id'] = channel_id;
+
+        if(is_prepayment == 1){
+            if(!divide_percent){
+                toastr.warning('分成模式分成比例必填');
+                return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
+
 
         $.ajax({
 	        url: '/channel_op/v1/api/store_create',
@@ -350,7 +371,10 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.viewStore', function(){
+        $("label.error").remove();
         var uid = $(this).data('uid');
+        var is_prepayment = $(this).data('is_prepayment');
+        $('#prepayment').text(is_prepayment);
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
@@ -391,7 +415,12 @@ $(document).ready(function(){
                     $('#e_address').val(p_data.address);
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100.0);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
-                    $('#e_divide_percent').val(ch_data.divide_percent);
+                    if(is_prepayment == 0){
+                        $('#edit_store_divide_percent').hide();
+                    } else {
+                        $('#e_divide_percent').val(ch_data.divide_percent);
+                        $('#edit_store_divide_percent').show();
+                    }
                     $('#e_store_name').val(ch_data.store_name);
                     $('#e_store_contacter').val(ch_data.store_contacter);
                     $('#e_store_mobile').val(ch_data.store_mobile);
@@ -498,9 +527,10 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    maxlength: 128
+                    isMobile: '#e_contact_phone'
                 },
                 contact_email: {
+                    required: false,
                     email: true
                 },
                 training_amt_per: {
@@ -522,6 +552,10 @@ $(document).ready(function(){
                 store_addr: {
                     required: true,
                     maxlength: 128
+                },
+                email: {
+                    required: false,
+                    email: true
                 }
             },
             messages: {
@@ -537,8 +571,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 contact_phone: {
-                    required: '请输入联系人手机号',
-                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                    required: '请输入联系人手机号'
                 },
                 contact_email: {
                     email: "请输入正确格式的电子邮件"
@@ -562,6 +595,9 @@ $(document).ready(function(){
                 store_addr: {
                     required: '请输入门店地址',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                email: {
+                    email: "请输入正确格式的电子邮件"
                 }
             }
         });
@@ -572,6 +608,7 @@ $(document).ready(function(){
 
         var post_data = {};
         var uid = $('#uid').text();
+        var is_prepayment = $('#prepayment').text();
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
@@ -595,6 +632,8 @@ $(document).ready(function(){
 		var divide_percent= $('#e_divide_percent').val();
 		var business = $('#e_business').val();
 		var front_business = $('#e_front_business').val();
+
+
         post_data['se_userid'] = se_userid;
 		post_data['phone_num'] = phone_num;
 		post_data['email'] = email;
@@ -613,9 +652,17 @@ $(document).ready(function(){
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['divide_percent'] = divide_percent;
+
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
+
+		if(is_prepayment==1){
+		    if(!divide_percent){
+                toastr.warning('分成模式分成比例必填');
+                return false;
+            }
+            post_data['divide_percent'] = divide_percent;
+        }
 
         $.ajax({
 	        url: '/channel_op/v1/api/store',
@@ -760,6 +807,16 @@ $(document).ready(function(){
 	        }
         });
     })
+
+    $('#c_channel_name').change(function () {
+        var channel_val = $('#c_channel_name').val();
+        var is_prepayment = channel_val.split('|')[1];
+        if(is_prepayment == 0){
+            $('#create_store_divide_percent').hide();
+        } else {
+            $('#create_store_divide_percent').show();
+        }
+    })
 });
 
 function search_source() {
@@ -816,7 +873,6 @@ function search_source() {
     });
 }
 
-
 function channel_name_select() {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
@@ -840,8 +896,17 @@ function channel_name_select() {
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
+                    var is_prepayment = data.data[i].is_prepayment;
+                    channel_id = channel_id + '|' + is_prepayment;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                    if(i==0){
+                        if(is_prepayment == 0){
+                            $('#create_store_divide_percent').hide();
+                        } else {
+                            $('#create_store_divide_percent').show();
+                        }
+                    }
                 }
             }
         },

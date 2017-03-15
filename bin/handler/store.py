@@ -23,6 +23,7 @@ class StoreManage(core.Handler):
     def GET(self):
         self.write(template.render('store.html'))
 
+
 class StoreStateSetHandler(core.Handler):
     _post_handler_fields = [
         Field('userid', T_INT, False),
@@ -46,6 +47,7 @@ class StoreStateSetHandler(core.Handler):
         ret = self._post_handler()
         self.write(ret)
 
+
 class StoreInfoHandler(core.Handler):
 
 
@@ -68,9 +70,11 @@ class StoreInfoHandler(core.Handler):
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -88,14 +92,19 @@ class StoreInfoHandler(core.Handler):
 
         keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
                        'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',
-                       'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name']
+                       'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name', 'channel.is_prepayment', 'channel.channel_name']
+
         ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where)
-        # ret = self.db.select(table='stores', fields=keep_fields, where=st_where)
-        for item in ret:
-            ch_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
-            item['channel_name'] = ch_ret.get('channel_name', '') if ch_ret else ''
-            user_ret = self.db.select_one(table='auth_user', fields='nick_name', where={'id': item['userid']})
-            item['nick_name'] = user_ret.get('nick_name') if user_ret else ''
+
+        return ret
+
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
             item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
@@ -103,8 +112,11 @@ class StoreInfoHandler(core.Handler):
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_STORE_STATUS_MAP.get(item['is_valid'], '')
             item['training_amt_per'] = item['training_amt_per'] / 100.0 if item['training_amt_per'] else 0.00
+            if item.get('is_prepayment') == 0:
+                item['divide_percent'] = '无'
 
-        return ret
+        return data
+
 
     def GET(self):
         try:
@@ -143,7 +155,7 @@ class StoreHandler(core.Handler):
 
         #门店信息
         Field('training_amt_per', T_INT, False),
-        Field('divide_percent', T_FLOAT, False),
+        Field('divide_percent', T_FLOAT, True),
         # Field('is_prepayment', T_INT, False),
         # Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
@@ -218,6 +230,7 @@ class StoreHandler(core.Handler):
     def GET(self, *args):
         return self._get_handler()
 
+
 class StoreEyeHandler(core.Handler):
     _get_handler_fields = [
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
@@ -265,6 +278,7 @@ class StoreEyeHandler(core.Handler):
     def POST(self, *arg):
         return self._post_handler()
 
+
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
         #用户基本信息
@@ -286,7 +300,7 @@ class CreateStoreHandler(core.Handler):
         Field('address',  T_STR, False),
         #门店信息
         Field('training_amt_per', T_INT, False),
-        Field('divide_percent', T_FLOAT, False),
+        Field('divide_percent', T_FLOAT, True),
         # Field('is_prepayment', T_INT, False),
         Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),

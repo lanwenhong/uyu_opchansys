@@ -40,8 +40,9 @@
 								<input type="text" class="form-control" id="s_is_prepayment" placeholder="">
 								-->
 								<select class="form-control" id="s_is_prepayment" name="is_prepayment">
-									<option value="1">分成</option>
+									<option value="-1" selected>请选择</option>
 									<option value="0">次卡</option>
+									<option value="1">分成</option>
 								</select>
 							</div>
 							<button type="button" class="btn btn-primary" id="channelNameSearch">搜索</button>
@@ -160,9 +161,6 @@
 						<div class="form-group">
 							<label for="is_prepayment" class="col-sm-2 control-label">结算模式</label>
 							<div class="col-sm-10">
-								<!--
-								<input type="text" class="form-control" id="is_prepayment" name="is_prepayment" placeholder="">
-								-->
 								<select class="form-control is_prepayment" id="is_prepayment" name="is_prepayment">
 									<option value="1" selected>分成</option>
 									<option value="0">次卡</option>
