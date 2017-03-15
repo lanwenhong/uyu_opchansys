@@ -56,6 +56,8 @@ $(document).ready(function(){
                 get_data.create_time = create_time;
             }
 
+            console.log('create_time: '+create_time);
+
             $.ajax({
 	            url: '/channel_op/v1/api/training_use_list',
 	            type: 'GET',
