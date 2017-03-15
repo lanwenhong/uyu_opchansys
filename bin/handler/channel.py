@@ -143,6 +143,7 @@ class ChanHandler(core.Handler):
         ret = self._post_handler()
         self.write(ret)
 
+
 class ChannelInfoHandler(core.Handler):
 
     _get_handler_fields = [
@@ -167,9 +168,11 @@ class ChannelInfoHandler(core.Handler):
             phone_num = params.get('phone_num', None)
             is_prepayment = params.get('is_prepayment', None)
             log.debug('is_prepayment: %s', is_prepayment)
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, phone_num, is_prepayment)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -179,20 +182,33 @@ class ChannelInfoHandler(core.Handler):
 
     @with_database('uyu_core')
     def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None):
-        profile_fields = ['contact_name', 'contact_phone']
-        keep_fields = ['channel.id', 'channel.remain_times', 'channel.training_amt_per',
-                       'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
-                       'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
-                       'channel.channel_name', 'channel.is_prepayment',
-                       ]
+        keep_fields = [
+            'channel.id', 'channel.remain_times', 'channel.training_amt_per',
+            'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
+            'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
+            'channel.channel_name', 'channel.is_prepayment',
+        ]
+
         where = {'channel.channel_name': channel_name} if channel_name else {}
+
         if phone_num:
             where.update({'auth_user.phone_num': phone_num})
+
         if is_prepayment in (0, 1):
             where.update({'channel.is_prepayment': is_prepayment})
+
         log.debug('where: %s', where)
+
         ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
-        for item in ret:
+
+        return ret
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             userid = item['userid']
             profile_ret = self.db.select_one(table='profile', fields=profile_fields, where={'userid': userid})
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
@@ -204,8 +220,7 @@ class ChannelInfoHandler(core.Handler):
             if item['is_prepayment'] == 0:
                 item['divide_percent'] = '无'
 
-
-        return ret
+        return data
 
 
     def GET(self):

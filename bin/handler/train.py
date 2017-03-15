@@ -39,24 +39,26 @@ class TrainBuyInfoHandler(core.Handler):
         Field('mobile', T_STR, True),
     ]
 
+
     def _get_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
+
 
     @with_validator_self
     def _get_handler(self, *args):
         try:
             data = {}
             params = self.validator.data
-            print 'params'
-            print params
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
             phone_num = params.get('phone_num', None)
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name, phone_num)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -64,24 +66,31 @@ class TrainBuyInfoHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
 
+
     @with_database('uyu_core')
     def _query_handler(self, channel_name=None, store_name=None, phone_num=None):
         where = {}
-        channel_list = []
-        store_list = []
-        consumer_list = []
 
         if channel_name:
-            channel_list.extend(tools.channel_name_to_id(channel_name))
-            where.update({'channel_id': ('in', channel_list)})
+            channel_list = tools.channel_name_to_id(channel_name)
+            if channel_list:
+                where.update({'channel_id': ('in', channel_list)})
+            else:
+                return []
 
         if store_name:
-            store_list.extend(tools.store_name_to_id(store_name))
-            where.update({'store_id': ('in', store_list)})
+            store_list = tools.store_name_to_id(store_name)
+            if store_list:
+                where.update({'store_id': ('in', store_list)})
+            else:
+                return []
 
         if phone_num:
-            consumer_list.extend(tools.mobile_to_id(phone_num))
-            where.update({'consumer_id': ('in', consumer_list)})
+            consumer_list = tools.mobile_to_id(phone_num)
+            if consumer_list:
+                where.update({'consumer_id': ('in', consumer_list)})
+            else:
+                return []
 
 
         keep_fields = [
@@ -91,7 +100,16 @@ class TrainBuyInfoHandler(core.Handler):
             'status', 'create_time', 'busicd', 'orderno'
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
-        for item in ret:
+
+        return ret
+
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
             item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
@@ -104,7 +122,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
             item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
 
-        return ret
+        return data
 
 
     def GET(self):

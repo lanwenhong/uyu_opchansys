@@ -23,6 +23,7 @@ class StoreManage(core.Handler):
     def GET(self):
         self.write(template.render('store.html'))
 
+
 class StoreStateSetHandler(core.Handler):
     _post_handler_fields = [
         Field('userid', T_INT, False),
@@ -46,6 +47,7 @@ class StoreStateSetHandler(core.Handler):
         ret = self._post_handler()
         self.write(ret)
 
+
 class StoreInfoHandler(core.Handler):
 
 
@@ -68,9 +70,11 @@ class StoreInfoHandler(core.Handler):
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
+
             start, end = tools.gen_ret_range(curr_page, max_page_num)
             info_data = self._query_handler(channel_name, store_name)
-            data['info'] = info_data[start:end]
+
+            data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
             return success(data)
         except Exception as e:
@@ -89,8 +93,18 @@ class StoreInfoHandler(core.Handler):
         keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
                        'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',
                        'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name', 'channel.is_prepayment', 'channel.channel_name']
+
         ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where)
-        for item in ret:
+
+        return ret
+
+
+    @with_database('uyu_core')
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
             profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
             item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
@@ -101,7 +115,8 @@ class StoreInfoHandler(core.Handler):
             if item.get('is_prepayment') == 0:
                 item['divide_percent'] = '无'
 
-        return ret
+        return data
+
 
     def GET(self):
         try:
@@ -215,6 +230,7 @@ class StoreHandler(core.Handler):
     def GET(self, *args):
         return self._get_handler()
 
+
 class StoreEyeHandler(core.Handler):
     _get_handler_fields = [
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
@@ -261,6 +277,7 @@ class StoreEyeHandler(core.Handler):
 
     def POST(self, *arg):
         return self._post_handler()
+
 
 class CreateStoreHandler(core.Handler):
     _post_handler_fields = [
