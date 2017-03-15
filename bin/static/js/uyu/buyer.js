@@ -2,14 +2,25 @@ $(document).ready(function(){
     $.validator.addMethod("PositiveNumber", function(value, element) {
         if(value <=0){
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }, "请正确填写您的次数");
 
     $("#training_times").bind('input propertychange', function () {
+        var amount_per = 0;
+        var order_type = $('.c_busicd').val();
+        if(order_type == 'ORG_ALLOT_TO_CHAN') {
+            amount_per = $('.c_channel_name').val().split('|')[1];
+            amount_per = (amount_per / 100).toFixed(2);
+        }
+        else {
+            amount_per = $('.c_store_name').val().split('|')[1];
+            amount_per = (amount_per / 100).toFixed(2);
+        }
         console.log('value : '+$(this).val());
-        $('#training_amt').val($(this).val() * 100.0);
+        $('#training_amt').val($(this).val() * amount_per);
     });
 
     search_source();
