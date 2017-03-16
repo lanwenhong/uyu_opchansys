@@ -44,6 +44,7 @@ $(document).ready(function(){
         "sPaginationType": "full_numbers",
         "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
+        // "bAutoWidth": true,
         "fnInitComplete": function(){
             var $trainBuyerList_length = $("#trainBuyerList_length");
             var $trainBuyerList_paginate = $("#trainBuyerList_paginate");
@@ -103,6 +104,18 @@ $(document).ready(function(){
             });
         },
         'columnDefs': [
+            {
+                targets: 5,
+                render: function(data, type, full) {
+                    var tmp = '';
+                    var len = data.length;
+                    if(len==33){
+                        tmp += data.slice(0,14) + '<br>'+ data.slice(14, len);
+                        return tmp;
+                    }
+                    return data;
+                }
+            },
             {
                 targets: 12,
                 data: '操作',
