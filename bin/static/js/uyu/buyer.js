@@ -44,6 +44,7 @@ $(document).ready(function(){
         "sPaginationType": "full_numbers",
         "lengthMenu": [[10, 40, 100],[10, 40, 100]],
         "dom": 'l<"top"p>rt',
+        // "bAutoWidth": true,
         "fnInitComplete": function(){
             var $trainBuyerList_length = $("#trainBuyerList_length");
             var $trainBuyerList_paginate = $("#trainBuyerList_paginate");
@@ -104,13 +105,29 @@ $(document).ready(function(){
         },
         'columnDefs': [
             {
+                targets: 5,
+                render: function(data, type, full) {
+                    var tmp = '';
+                    var len = data.length;
+                    if(len==33){
+                        tmp += data.slice(0,14) + '<br>'+ data.slice(14, len);
+                        return tmp;
+                    }
+                    return data;
+                }
+            },
+            {
                 targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
                     var is_valid = full.is_valid;
                     var busicd = full.busicd;
-                    if(is_valid==0){
+                    var create_time = full.create_time;
+                    create_time = Date.parse(create_time.replace(/-/g,"/"));
+                    var now = new Date();
+                    var compare_time = new Date(Year=now.getFullYear(), Months=now.getMonth(), Day=now.getDate(), Hours=0, Minutes=0, senconds=0);
+                    if(is_valid==0 && create_time >= compare_time){
                         var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
                     } else {
                         var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel"  disabled data-orderno='+orderno+' value=' + '撤销' + '>';
@@ -126,12 +143,12 @@ $(document).ready(function(){
             }
         ],
 		'columns': [
-				{ data: 'id' },
+				{ data: 'busicd_name' },
 				{ data: 'channel_name' },
 				{ data: 'store_name' },
 				{ data: 'consumer_id' },
 				{ data: 'category' },
-				{ data: 'busicd_name' },
+				{ data: 'orderno' },
 				{ data: 'op_type' },
 				{ data: 'training_times' },
 				{ data: 'training_amt' },

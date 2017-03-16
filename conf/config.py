@@ -17,7 +17,7 @@ LOGFILE = None
 database = {
     'uyu_core': {
         'token': 'server_core_uyu',
-        'conn': 10,
+        'conn': 5,
         'engine': 'pymysql'
     },
 }

@@ -290,5 +290,5 @@ if __name__ == '__main__':
     #test_store_name_list()
     #chan_buy_order()
     #org_allot_to_chan_order()
-    #org_allot_to_store_order()
-    order_cancel_test()
+    org_allot_to_store_order()
+    #order_cancel_test()

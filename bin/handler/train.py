@@ -121,7 +121,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['training_amt'] = item['training_amt'] / 100.0
             item['is_valid'] = item['status']
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
-            item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
+            item['busicd_name'] = item['busicd']
 
         return data
 
