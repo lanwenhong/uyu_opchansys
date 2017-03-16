@@ -615,6 +615,8 @@ function search_source() {
             }
             else {
                 var subjects = new Array();
+                console.log('subjects: ');
+                console.log(data.data);
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
                 }
