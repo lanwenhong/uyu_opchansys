@@ -105,8 +105,8 @@ $(document).ready(function(){
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
+                { data: 'phone_num' },
 				{ data: 'contact_name' },
-				{ data: 'contact_phone' },
 				{ data: 'training_amt_per' },
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },

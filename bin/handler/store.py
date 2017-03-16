@@ -105,8 +105,8 @@ class StoreInfoHandler(core.Handler):
             return []
 
         for item in data:
-            profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
-            item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
+            user_ret = self.db.select_ont(table='auth_user', fields='phone_num', where={'id': item['userid']})
+            item['phone_num'] = user_ret.get('phone_num') if user_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['store_type'] = UYU_STORE_ROLE_MAP.get(item['store_type'], '')
             item['status'] = item['is_valid']

@@ -103,10 +103,10 @@ $(document).ready(function(){
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
+                { data: 'phone_num' },
 				{ data: 'store_name' },
 				{ data: 'store_type' },
-				{ data: 'contact_name' },
-				{ data: 'store_mobile' },
+				{ data: 'store_contacter' },
 				{ data: 'store_addr' },
 				{ data: 'training_amt_per' },
 				{ data: 'divide_percent' },

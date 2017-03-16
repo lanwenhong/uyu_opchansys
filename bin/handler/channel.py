@@ -185,8 +185,8 @@ class ChannelInfoHandler(core.Handler):
         keep_fields = [
             'channel.id', 'channel.remain_times', 'channel.training_amt_per',
             'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
-            'channel.userid', 'auth_user.login_name', 'auth_user.nick_name',
-            'channel.channel_name', 'channel.is_prepayment',
+            'channel.userid', 'auth_user.phone_num', 'channel.channel_name',
+            'channel.is_prepayment',
         ]
 
         where = {'channel.channel_name': channel_name} if channel_name else {}
@@ -213,7 +213,6 @@ class ChannelInfoHandler(core.Handler):
             userid = item['userid']
             profile_ret = self.db.select_one(table='profile', fields=profile_fields, where={'userid': userid})
             item['contact_name'] = profile_ret.get('contact_name', '') if profile_ret else ''
-            item['contact_phone'] = profile_ret.get('contact_phone', '') if profile_ret else ''
             item['ctime'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S') if item['ctime'] else ''
             item['status'] = item['is_valid']
             item['is_valid'] = UYU_CHAN_MAP.get(item['is_valid'], '')

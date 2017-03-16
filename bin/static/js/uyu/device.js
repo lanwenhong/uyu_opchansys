@@ -155,7 +155,7 @@ $(document).ready(function(){
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
                 blooth_tag: {
-                    required: '请输入蓝牙版本s',
+                    required: '请输入蓝牙版本',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 }
             }
