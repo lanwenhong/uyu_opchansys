@@ -295,6 +295,7 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('新建渠道成功');
+                    search_source();
 		            $("#channelCreateModal").modal('hide');
                     $('#channelList').DataTable().draw();
                 }
@@ -594,25 +595,6 @@ $(document).ready(function(){
     });
 
 });
-
-
-function print_object(obj){
-    var temp = "";
-    for(var key in obj){
-        temp += key + ":" + obj[key] + "\n";
-    }
-}
-
-
-function query_to_obj(queryString){
-    var arr = queryString.split('&');
-    var post_data = new Object();
-    for(var i=0; i<arr.length; i++){
-        var tmp = arr[i].split('=');
-        post_data[tmp[0]] = tmp[1];
-    }
-    return post_data;
-}
 
 function search_source() {
     var get_data = {};

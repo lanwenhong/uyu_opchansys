@@ -336,6 +336,7 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('新建成功');
+                    search_source();
                     $("#storeCreateForm").resetForm();
                     $("#storeCreateModal").modal('hide');
                     $('#storeList').DataTable().draw();
