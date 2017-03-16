@@ -452,7 +452,7 @@ $(document).ready(function(){
                     email: true
                 },
                 divide_percent: {
-                    required: false,
+                    required: true,
                     isLessOne: '#e_divide_percent'
                 }
             },
@@ -488,6 +488,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入争取的比例'
                 }
             }
         });
