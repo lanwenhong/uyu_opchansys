@@ -197,9 +197,10 @@ class ChannelInfoHandler(core.Handler):
         if is_prepayment in (0, 1):
             where.update({'channel.is_prepayment': is_prepayment})
 
+        other = ' order by ctime desc'
         log.debug('where: %s', where)
 
-        ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where)
+        ret = self.db.select_join(table1='channel', table2='auth_user', on={'channel.userid': 'auth_user.id'}, fields=keep_fields, where=where, other=other)
 
         return ret
 

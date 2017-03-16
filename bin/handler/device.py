@@ -67,6 +67,8 @@ class DeviceInfoHandler(core.Handler):
             'training_nums', 'ctime'
         ]
 
+        other = ' order by ctime desc'
+
         if channel_name:
             channel_list = tools.channel_name_to_id(channel_name)
             if channel_list:
@@ -84,7 +86,7 @@ class DeviceInfoHandler(core.Handler):
         if serial_number:
             where.update({'id': serial_number})
 
-        ret = self.db.select(table='device', fields=keep_fields, where=where)
+        ret = self.db.select(table='device', fields=keep_fields, where=where, other=other)
 
         return ret
 
