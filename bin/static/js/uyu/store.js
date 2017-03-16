@@ -829,7 +829,7 @@ $(document).ready(function(){
             $('#divide_percent').next('label').remove();
             $('#create_store_divide_percent').hide();
         } else {
-            $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
+            //$('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_store_divide_percent').show();
         }
     });
