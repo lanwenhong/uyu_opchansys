@@ -13,6 +13,12 @@ $(document).ready(function(){
         return this.optional(element) || (length && yuan.test(value));
     }, "请正确填写您的价格");
 
+    $.validator.addMethod("isLessOne", function(value, element) {
+        var length = value.length;
+        var less_one  = /^(0)\.([0-9]{1,2})$/;
+        return this.optional(element) || (length && less_one.test(value));
+    }, "请正确填写您的比例");
+
     $('#storeList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -193,6 +199,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: false,
+                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -556,6 +566,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: false,
+                    isLessOne: '#e_divide_percent'
                 }
             },
             messages: {
