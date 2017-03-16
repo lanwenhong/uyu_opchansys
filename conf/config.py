@@ -17,7 +17,7 @@ LOGFILE = None
 database = {
     'uyu_core': {
         'token': 'server_core_uyu',
-        'conn': 10,
+        'conn': 5,
         'engine': 'pymysql'
     },
 }
@@ -51,7 +51,7 @@ template = os.path.join(HOME, 'template')
 # 服务地址
 HOST = '0.0.0.0'
 # 服务端口
-PORT = 8084
+PORT = 8083
 #redis
 redis_url = 'redis://127.0.0.1:4600/0'
 #cookie 配置
