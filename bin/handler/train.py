@@ -386,6 +386,9 @@ class OrderCancelHandler(core.Handler):
     _post_handler_fields = [
         Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
     ]
+    
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
