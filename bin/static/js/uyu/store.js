@@ -825,7 +825,8 @@ $(document).ready(function(){
         var channel_val = $('#c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
         if(is_prepayment == 0){
-            $('#divide_percent').rules('remove').next('label').remove();
+            $('#divide_percent').rules('remove');
+            $('#divide_percent').next('label').remove();
             $('#create_store_divide_percent').hide();
         } else {
             $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
