@@ -327,8 +327,9 @@ $(document).ready(function(){
                 else {
                     var c_store_name = $('.c_store_name');
                     if(data.data.length==0){
-                        $('#training_times').val('');
-                        $('#training_times').attr('readonly', true);
+                        $('#training_amt').val('');
+                        //$('#training_times').val('');
+                        $('#training_times').val('').attr('readonly', true);
                         $('#trainBuyerCreateSubmit').attr('disabled', true);
                         return false;
                     } else {
@@ -500,8 +501,9 @@ function do_first_select(channel_id, store_name_tag_id) {
             }
             else {
                 if(data.data.length==0){
-                    $('#training_times').val('');
-                    $('#training_times').attr('readonly', true);
+                    //$('#training_times').val('');
+                    $('#training_amt').val('');
+                    $('#training_times').val('').attr('readonly', true);
                     $('#trainBuyerCreateSubmit').attr('disabled', true);
                     return false;
                 }  else {
