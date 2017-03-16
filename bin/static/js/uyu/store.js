@@ -453,8 +453,6 @@ $(document).ready(function(){
         $('#username').val('');
         var channel_id = $(this).data('channelid');
         var store_id = $(this).data('storeid');
-        console.log('channelid: '+channel_id);
-        console.log('storeid: '+store_id);
         $('#span_channel_id').text(channel_id);
         $('#span_store_id').text(store_id);
         $('#addEyesight').modal();
@@ -859,7 +857,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
@@ -885,7 +882,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 $('#store_name').typeahead({source: data.data});
             }
         },
@@ -913,7 +909,6 @@ function channel_name_select() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var c_channel_name = $('.c_channel_name');
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;

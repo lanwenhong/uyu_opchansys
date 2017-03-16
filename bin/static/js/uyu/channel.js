@@ -57,7 +57,6 @@ $(document).ready(function(){
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
-            console.log('is_prepayment: '+is_prepayment);
             if(is_prepayment!=-1){
                 get_data.is_prepayment = is_prepayment;
             }
@@ -273,8 +272,6 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-        console.log('is_prepayment: '+is_prepayment +'divide_percent: '+ divide_percent);
-        console.log(is_prepayment == 1);
 		if(is_prepayment != 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
@@ -282,8 +279,6 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
-        console.log('post_data');
-        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -359,7 +354,6 @@ $(document).ready(function(){
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
                     var is_prepayment = ch_data.is_prepayment;
-                    console.log('is_prepayment: '+is_prepayment);
                     if(is_prepayment==0){
                         $('#edit_divide_percent_div').hide();
                     }
@@ -494,8 +488,6 @@ $(document).ready(function(){
                 }
             }
         });
-        console.log($('.is_prepayment').val());
-        console.log($('#training_amt_per').val() * 100);
         var ok = channel_edit_vt.form();
         if(!ok){
             return false;
@@ -619,7 +611,6 @@ function query_to_obj(queryString){
         var tmp = arr[i].split('=');
         post_data[tmp[0]] = tmp[1];
     }
-    console.log('-----');
     return post_data;
 }
 
@@ -641,7 +632,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)

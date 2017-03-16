@@ -353,7 +353,6 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id) {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var c_channel_name = $(channel_name_tag_id);
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
@@ -392,7 +391,6 @@ function do_first_select(channel_id, store_name_tag_id) {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var c_store_name = $(store_name_tag_id);
                 for(var i=0; i<data.data.length; i++){
                     var store_id = data.data[i].id;
@@ -426,7 +424,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
@@ -452,7 +449,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 $('#s_store_name').typeahead({source: data.data});
             }
         },
