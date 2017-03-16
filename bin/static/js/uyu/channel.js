@@ -184,6 +184,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#divide_percent',
                 }
             },
             messages: {
@@ -218,14 +222,12 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请正确填写比例',
                 }
             }
         });
-
-        var is_prepayment= $('.is_prepayment').val();
-        if(is_prepayment == 0){
-
-        }
 
         var ok = channel_create_vt.form();
         if(!ok){
@@ -248,6 +250,7 @@ $(document).ready(function(){
 		var contact_email= $('#contact_email').val();
 		var address= $('#address').val();
 		var training_amt_per= $('#training_amt_per').val() * 100;
+        var is_prepayment= $('.is_prepayment').val();
 		var divide_percent= $('#divide_percent').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
