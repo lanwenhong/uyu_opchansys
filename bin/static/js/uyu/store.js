@@ -562,6 +562,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#e_divide_percent'
                 }
             },
             messages: {
@@ -604,6 +608,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入正确的比例'
                 }
             }
         });
@@ -818,7 +825,7 @@ $(document).ready(function(){
         var channel_val = $('#c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
         if(is_prepayment == 0){
-            $('#divide_percent').rules('remove');
+            $('#divide_percent').rules('remove').next('label').remove();
             $('#create_store_divide_percent').hide();
         } else {
             $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
