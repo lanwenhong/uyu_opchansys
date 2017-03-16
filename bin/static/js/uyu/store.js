@@ -199,6 +199,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -237,7 +241,6 @@ $(document).ready(function(){
                 },
                 store_mobile: {
                     required: '请输入门店手机号',
-                    isMobile: '#store_mobile'
                 },
                 store_addr: {
                     required: '请输入门店地址',
@@ -245,6 +248,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入分成比例',
                 }
             }
         });
@@ -600,7 +606,6 @@ $(document).ready(function(){
                 },
                 store_mobile: {
                     required: '请输入门店手机号',
-                    isMobile: '#store_mobile'
                 },
                 store_addr: {
                     required: '请输入门店地址',
@@ -821,15 +826,14 @@ $(document).ready(function(){
         });
     });
 
-    $('#c_channel_name').change(function () {
-        var channel_val = $('#c_channel_name').val();
+    $('.c_channel_name').change(function () {
+        $("label.error").remove();
+        var channel_val = $('.c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
         if(is_prepayment == 0){
-            $('#divide_percent').rules('remove');
             $('#divide_percent').next('label').remove();
             $('#create_store_divide_percent').hide();
         } else {
-            //$('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_store_divide_percent').show();
         }
     });

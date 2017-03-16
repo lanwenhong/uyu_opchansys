@@ -246,7 +246,7 @@ $(document).ready(function(){
         post_data.ch_training_amt_per = channel_id.split('|')[1];
 
 
-        if(busicd=='000020'){
+        if(busicd=='CHAN_ALLOT_TO_STORE'){
             if(!store_id){
                 toastr.warning('渠道分配训练点数给门店时请选择门店');
                 return false;
@@ -277,6 +277,7 @@ $(document).ready(function(){
                     $('#trainBuyerCreateForm').resetForm();
                     $('#trainBuyerCreateModal').modal('hide');
                     toastr.success('新增成功');
+                    $('#trainBuyerList').DataTable().draw();
                 }
             },
             error: function(data) {
@@ -377,6 +378,7 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('撤销成功');
+                    $('#trainBuyerList').DataTable().draw();
                 }
             },
             error: function(data) {
