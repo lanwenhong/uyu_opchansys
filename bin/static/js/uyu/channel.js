@@ -184,10 +184,6 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
-                },
-                divide_percent: {
-                    required: false,
-                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -226,6 +222,11 @@ $(document).ready(function(){
             }
         });
 
+        var is_prepayment= $('.is_prepayment').val();
+        if(is_prepayment == 0){
+
+        }
+
         var ok = channel_create_vt.form();
         if(!ok){
             return false;
@@ -248,7 +249,6 @@ $(document).ready(function(){
 		var address= $('#address').val();
 		var training_amt_per= $('#training_amt_per').val() * 100;
 		var divide_percent= $('#divide_percent').val();
-		var is_prepayment= $('.is_prepayment').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
@@ -574,8 +574,10 @@ $(document).ready(function(){
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
         if(is_prepayment==0){
+            $('#divide_percent').rules('remove');
             $('#create_divide_percent_div').hide();
         }else{
+            $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_divide_percent_div').show();
         }
     });
@@ -583,8 +585,10 @@ $(document).ready(function(){
     $('#e_is_prepayment').change(function(){
 		var is_prepayment= $('#e_is_prepayment').val();
         if(is_prepayment==0){
+            $('#e_divide_percent').rules('remove');
             $('#edit_divide_percent_div').hide();
         }else{
+            $('#e_divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#edit_divide_percent_div').show();
         }
     });

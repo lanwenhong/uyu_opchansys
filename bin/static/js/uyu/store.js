@@ -199,10 +199,6 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
-                },
-                divide_percent: {
-                    required: false,
-                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -566,10 +562,6 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
-                },
-                divide_percent: {
-                    required: false,
-                    isLessOne: '#e_divide_percent'
                 }
             },
             messages: {
@@ -820,17 +812,21 @@ $(document).ready(function(){
                 toastr.success('请求异常');
 	        }
         });
-    })
+    });
 
     $('#c_channel_name').change(function () {
         var channel_val = $('#c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
         if(is_prepayment == 0){
+            $('#divide_percent').rules('remove');
             $('#create_store_divide_percent').hide();
         } else {
+            $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_store_divide_percent').show();
         }
-    })
+    });
+
+
 });
 
 function search_source() {
