@@ -366,6 +366,8 @@ class OrgAllotToStoreOrderHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         params = self.validator.data
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_CHAN_ALLOT_TO_STORE:
