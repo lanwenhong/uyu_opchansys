@@ -785,6 +785,24 @@ $(document).ready(function(){
     });
 
     $('#addEyesightSubmit').click(function(){
+        var add_eye_vt = $('#addEyesightForm').validate({
+            rules: {
+                phone_num: {
+                    required: true,
+                    isMobile: '#eye_phone_num'
+                },
+			},
+			messages: {
+                phone_num: {
+                    required: '请正确填写手机号'
+                },
+			}
+		})
+        var ok = add_edit_vt.form();
+        if(!ok){
+            return false;
+        }
+
         var se_userid = window.localStorage.getItem('myid');
         var channel_id = $('#span_channel_id').text();
         var store_id = $('#span_store_id').text();
