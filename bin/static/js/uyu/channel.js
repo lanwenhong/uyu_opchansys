@@ -48,6 +48,10 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length
             };
+
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var channel_name = $("#channelName").val();
             var phone_num = $("#s_phone_num").val();
             var is_prepayment = $("#s_is_prepayment").val();
