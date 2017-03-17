@@ -101,10 +101,16 @@ $(document).ready(function(){
                     var channel_id =full.channel_id;
                     var is_prepayment = full.is_prepayment;
                     var msg = status ? '打开' : '关闭';
+                    var op = "<button type='button' class='btn btn-primary btn-sm setStatus' data-uid="+uid+" data-status="+status+">"+msg+"</button>";
+                    var view ="<button type='button' class='btn btn-info btn-sm viewStore' data-uid="+uid+" data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">"+'查看门店'+"</button>";
+                    var view_eye ="<button type='button' class='btn btn-success btn-sm viewEyesight' data-uid="+uid+" data-storeid="+store_id+ " data-channel_id="+channel_id+ ">"+'查看视光师'+"</button>";
+                    var add_eye ="<button type='button' class='btn btn-warning btn-sm addEyesight' data-channelid="+channel_id+" data-storeid="+store_id+">"+'添加视光师'+"</button>";
+                    /*
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
                     var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">";
                     var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+ " data-channel_id="+channel_id+ ">";
                     var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
+                    */
                     return op+view+view_eye+add_eye;
                 }
             }
