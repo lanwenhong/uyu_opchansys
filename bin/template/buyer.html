@@ -45,17 +45,19 @@
 						<table id="trainBuyerList" class="display table table-striped table-bordered table-hover dataTable no-footer dtr-inline" cellspacing="0" width="100%">
 							<thead>
 								<tr>
-									<th>id</th>
+									<th>订单类型</th>
 									<th>渠道</th>
 									<th>门店</th>
 									<th>用户</th>
 									<th>类别</th>
-									<th>下单类型</th>
+									<th>订单号</th>
 									<th>操作类型</th>
 									<th>次数</th>
 									<th>金额</th>
 									<th>操作人</th>
+									<!--
 									<th>创建时间</th>
+									-->
 									<th>状态</th>
 									<th>操作</th>
 								</tr>
@@ -84,7 +86,7 @@
 							<label for="c_busicd" class="col-sm-2 control-label">下单类型</label>
 							<div class="col-sm-10">
 								<select class="form-control c_busicd" id="c_busicd" name="busicd">
-									<option value="ORG_ALLOT_TO_CHAN">公司送训练点数给渠道</option>
+									<option value="ORG_ALLOT_TO_CHAN" selected>公司送训练点数给渠道</option>
 									<option value="CHAN_ALLOT_TO_STORE">渠道分配训练点数给门店</option>
 								</select>
 							</div>
@@ -98,7 +100,7 @@
 							</div>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group create_order_store_name">
 							<label for="c_store_name" class="col-sm-2 control-label">门店</label>
 							<div class="col-sm-10">
 								<select class="form-control c_store_name" id="c_store_name" name="store_name">

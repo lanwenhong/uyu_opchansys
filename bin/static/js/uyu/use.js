@@ -56,7 +56,6 @@ $(document).ready(function(){
                 get_data.create_time = create_time;
             }
 
-            console.log('create_time: '+create_time);
 
             $.ajax({
 	            url: '/channel_op/v1/api/training_use_list',
@@ -139,7 +138,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
@@ -165,7 +163,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 $('#s_store_name').typeahead({source: data.data});
             }
         },

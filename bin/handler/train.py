@@ -92,6 +92,7 @@ class TrainBuyInfoHandler(core.Handler):
             else:
                 return []
 
+        other = ' order by create_time desc'
 
         keep_fields = [
             'id', 'channel_id', 'store_id',
@@ -99,7 +100,7 @@ class TrainBuyInfoHandler(core.Handler):
             'training_times', 'training_amt', 'op_name',
             'status', 'create_time', 'busicd', 'orderno'
         ]
-        ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where)
+        ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where, other=other)
 
         return ret
 
@@ -120,7 +121,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['training_amt'] = item['training_amt'] / 100.0
             item['is_valid'] = item['status']
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
-            item['busicd_name'] = UYU_BUSICD_MAP.get(item['busicd'], '')
+            item['busicd_name'] = item['busicd']
 
         return data
 
@@ -210,21 +211,12 @@ class TrainUseInfoHandler(core.Handler):
             end_time = create_time.replace(hour=23, minute=59, second=59)
             where.update({'ctime': ('between', (start_time, end_time))})
 
+        other = ' order by ctime desc'
+
         keep_fields = ['id', 'channel_id', 'store_id', 'device_id', 'consumer_id', 'eyesight_id', 'comsumer_nums', 'status', 'ctime']
-        ret = self.db.select(table='training_use_record', fields=keep_fields, where=where)
-        '''
-        for item in ret:
-            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
-            device_name = self.db.select_one(table='device', fields='device_name', where={'id': item['device_id']})
-            eyesight_name = self.db.select_one(table='auth_user', fields='username', where={'id': item['eyesight_id']})
-            item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
-            item['store_name'] = store_ret.get('store_name') if store_ret else ''
-            item['device_name'] = device_name.get('device_name') if device_name else ''
-            item['eyesight_name'] = eyesight_name.get('username') if eyesight_name else ''
-            item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
-            item['status'] = UYU_TRAIN_USE_MAP.get(item['status'], '')
-        '''
+
+        ret = self.db.select(table='training_use_record', fields=keep_fields, where=where, other=other)
+
         return ret
 
     @with_database('uyu_core')
@@ -396,6 +388,9 @@ class OrderCancelHandler(core.Handler):
     _post_handler_fields = [
         Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
     ]
+    
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self

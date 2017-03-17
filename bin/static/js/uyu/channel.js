@@ -13,6 +13,12 @@ $(document).ready(function(){
         return this.optional(element) || (length && yuan.test(value));
     }, "请正确填写您的价格");
 
+    $.validator.addMethod("isLessOne", function(value, element) {
+        var length = value.length;
+        var less_one  = /^(0)\.([0-9]{1,2})$/;
+        return this.optional(element) || (length && less_one.test(value));
+    }, "请正确填写您的比例");
+
     var table = $('#channelList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -51,7 +57,6 @@ $(document).ready(function(){
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
-            console.log('is_prepayment: '+is_prepayment);
             if(is_prepayment!=-1){
                 get_data.is_prepayment = is_prepayment;
             }
@@ -105,8 +110,8 @@ $(document).ready(function(){
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
+                { data: 'phone_num' },
 				{ data: 'contact_name' },
-				{ data: 'contact_phone' },
 				{ data: 'training_amt_per' },
 				{ data: 'divide_percent' },
 				{ data: 'remain_times' },
@@ -178,6 +183,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#divide_percent',
                 }
             },
             messages: {
@@ -212,6 +221,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请正确填写比例',
                 }
             }
         });
@@ -237,8 +249,8 @@ $(document).ready(function(){
 		var contact_email= $('#contact_email').val();
 		var address= $('#address').val();
 		var training_amt_per= $('#training_amt_per').val() * 100;
+        var is_prepayment= $('.is_prepayment').val();
 		var divide_percent= $('#divide_percent').val();
-		var is_prepayment= $('.is_prepayment').val();
 		var business = $('#business').val();
 		var front_business = $('#front_business').val();
         post_data['se_userid'] = se_userid;
@@ -260,8 +272,6 @@ $(document).ready(function(){
 		post_data['is_prepayment'] = is_prepayment;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
-        console.log('is_prepayment: '+is_prepayment +'divide_percent: '+ divide_percent);
-        console.log(is_prepayment == 1);
 		if(is_prepayment != 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
@@ -269,8 +279,6 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
-        console.log('post_data');
-        console.log(post_data);
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -287,6 +295,7 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('新建渠道成功');
+                    search_source();
 		            $("#channelCreateModal").modal('hide');
                     $('#channelList').DataTable().draw();
                 }
@@ -346,7 +355,6 @@ $(document).ready(function(){
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
                     var is_prepayment = ch_data.is_prepayment;
-                    console.log('is_prepayment: '+is_prepayment);
                     if(is_prepayment==0){
                         $('#edit_divide_percent_div').hide();
                     }
@@ -437,6 +445,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#e_divide_percent'
                 }
             },
             messages: {
@@ -471,11 +483,12 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入争取的比例'
                 }
             }
         });
-        console.log($('.is_prepayment').val());
-        console.log($('#training_amt_per').val() * 100);
         var ok = channel_edit_vt.form();
         if(!ok){
             return false;
@@ -560,8 +573,11 @@ $(document).ready(function(){
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
         if(is_prepayment==0){
+            $('#divide_percent').rules('remove');
+            $('#divide_percent').next('label').remove();
             $('#create_divide_percent_div').hide();
         }else{
+            $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_divide_percent_div').show();
         }
     });
@@ -569,33 +585,16 @@ $(document).ready(function(){
     $('#e_is_prepayment').change(function(){
 		var is_prepayment= $('#e_is_prepayment').val();
         if(is_prepayment==0){
+            $('#e_divide_percent').rules('remove');
+            $('#e_divide_percent').next('label').remove();
             $('#edit_divide_percent_div').hide();
         }else{
+            $('#e_divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#edit_divide_percent_div').show();
         }
     });
 
 });
-
-
-function print_object(obj){
-    var temp = "";
-    for(var key in obj){
-        temp += key + ":" + obj[key] + "\n";
-    }
-}
-
-
-function query_to_obj(queryString){
-    var arr = queryString.split('&');
-    var post_data = new Object();
-    for(var i=0; i<arr.length; i++){
-        var tmp = arr[i].split('=');
-        post_data[tmp[0]] = tmp[1];
-    }
-    console.log('-----');
-    return post_data;
-}
 
 function search_source() {
     var get_data = {};
@@ -615,8 +614,9 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
+                console.log('subjects: ');
+                console.log(data.data);
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
                 }

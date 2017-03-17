@@ -13,6 +13,12 @@ $(document).ready(function(){
         return this.optional(element) || (length && yuan.test(value));
     }, "请正确填写您的价格");
 
+    $.validator.addMethod("isLessOne", function(value, element) {
+        var length = value.length;
+        var less_one  = /^(0)\.([0-9]{1,2})$/;
+        return this.optional(element) || (length && less_one.test(value));
+    }, "请正确填写您的比例");
+
     $('#storeList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -103,10 +109,10 @@ $(document).ready(function(){
 		'columns': [
 				{ data: 'id' },
 				{ data: 'channel_name' },
+                { data: 'phone_num' },
 				{ data: 'store_name' },
 				{ data: 'store_type' },
-				{ data: 'contact_name' },
-				{ data: 'store_mobile' },
+				{ data: 'store_contacter' },
 				{ data: 'store_addr' },
 				{ data: 'training_amt_per' },
 				{ data: 'divide_percent' },
@@ -193,6 +199,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -231,7 +241,6 @@ $(document).ready(function(){
                 },
                 store_mobile: {
                     required: '请输入门店手机号',
-                    isMobile: '#store_mobile'
                 },
                 store_addr: {
                     required: '请输入门店地址',
@@ -239,6 +248,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入分成比例',
                 }
             }
         });
@@ -324,6 +336,7 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('新建成功');
+                    search_source();
                     $("#storeCreateForm").resetForm();
                     $("#storeCreateModal").modal('hide');
                     $('#storeList').DataTable().draw();
@@ -441,8 +454,6 @@ $(document).ready(function(){
         $('#username').val('');
         var channel_id = $(this).data('channelid');
         var store_id = $(this).data('storeid');
-        console.log('channelid: '+channel_id);
-        console.log('storeid: '+store_id);
         $('#span_channel_id').text(channel_id);
         $('#span_store_id').text(store_id);
         $('#addEyesight').modal();
@@ -556,6 +567,10 @@ $(document).ready(function(){
                 email: {
                     required: false,
                     email: true
+                },
+                divide_percent: {
+                    required: true,
+                    isLessOne: '#e_divide_percent'
                 }
             },
             messages: {
@@ -590,7 +605,6 @@ $(document).ready(function(){
                 },
                 store_mobile: {
                     required: '请输入门店手机号',
-                    isMobile: '#store_mobile'
                 },
                 store_addr: {
                     required: '请输入门店地址',
@@ -598,6 +612,9 @@ $(document).ready(function(){
                 },
                 email: {
                     email: "请输入正确格式的电子邮件"
+                },
+                divide_percent: {
+                    required: '请输入正确的比例'
                 }
             }
         });
@@ -806,17 +823,21 @@ $(document).ready(function(){
                 toastr.success('请求异常');
 	        }
         });
-    })
+    });
 
-    $('#c_channel_name').change(function () {
-        var channel_val = $('#c_channel_name').val();
+    $('.c_channel_name').change(function () {
+        $("label.error").remove();
+        var channel_val = $('.c_channel_name').val();
         var is_prepayment = channel_val.split('|')[1];
         if(is_prepayment == 0){
+            $('#divide_percent').next('label').remove();
             $('#create_store_divide_percent').hide();
         } else {
             $('#create_store_divide_percent').show();
         }
-    })
+    });
+
+
 });
 
 function search_source() {
@@ -837,7 +858,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var subjects = new Array();
                 for(var i=0; i<data.data.length; i++){
                     subjects.push(data.data[i].channel_name)
@@ -863,7 +883,6 @@ function search_source() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 $('#store_name').typeahead({source: data.data});
             }
         },
@@ -891,7 +910,6 @@ function channel_name_select() {
                 toastr.warning(msg);
             }
             else {
-                console.log(data.data);
                 var c_channel_name = $('.c_channel_name');
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;

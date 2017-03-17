@@ -90,11 +90,13 @@ class StoreInfoHandler(core.Handler):
         if store_name:
             where.update({'store_name': store_name})
 
+        other = ' order by ctime desc'
+
         keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
                        'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',
                        'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name', 'channel.is_prepayment', 'channel.channel_name']
 
-        ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where)
+        ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where, other=other)
 
         return ret
 
@@ -105,8 +107,8 @@ class StoreInfoHandler(core.Handler):
             return []
 
         for item in data:
-            profile_ret = self.db.select_one(table='profile', fields='contact_name', where={'userid': item['userid']})
-            item['contact_name'] = profile_ret.get('contact_name') if profile_ret else ''
+            user_ret = self.db.select_one(table='auth_user', fields='phone_num', where={'id': item['userid']})
+            item['phone_num'] = user_ret.get('phone_num') if user_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['store_type'] = UYU_STORE_ROLE_MAP.get(item['store_type'], '')
             item['status'] = item['is_valid']
