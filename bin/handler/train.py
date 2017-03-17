@@ -298,6 +298,9 @@ class OrgAllotToChanOrderHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+
         params = self.validator.data
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
@@ -355,6 +358,8 @@ class OrgAllotToStoreOrderHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         params = self.validator.data
         log.debug("client data: %s", params)
         if params["busicd"] != define.BUSICD_CHAN_ALLOT_TO_STORE:
@@ -383,10 +388,15 @@ class OrderCancelHandler(core.Handler):
     _post_handler_fields = [
         Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
     ]
+    
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         params = self.validator.data
         order_no = params["order_no"]
         log.debug("order_no: %s", order_no)

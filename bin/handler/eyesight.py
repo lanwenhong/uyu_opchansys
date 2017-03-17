@@ -40,6 +40,8 @@ class EyeSightInfoHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         try:
             data = {}
             params = self.validator.data
@@ -84,8 +86,11 @@ class EyeSightInfoHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
 
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         try:
             params = self.validator.data
             uop = UUser()

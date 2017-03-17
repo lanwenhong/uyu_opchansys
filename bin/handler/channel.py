@@ -300,6 +300,9 @@ class ChanNameList(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_database('uyu_core')
     def GET(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+
         sql = "select id, channel_name, training_amt_per, is_prepayment from channel where is_valid=0"
         db_ret = self.db.query(sql)
 
@@ -344,6 +347,9 @@ class ChanStoreMap(core.Handler):
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+
         try:
             data = self._get_handler()
             return data
