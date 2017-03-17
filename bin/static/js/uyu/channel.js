@@ -105,8 +105,10 @@ $(document).ready(function(){
                     var uid =full.userid;
                     var channel_id =full.id;
                     var msg = status ? '打开' : '关闭';
-                    var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
-                    var view ="<input type='button' class='btn btn-primary btn-sm viewEdit' data-uid="+uid+" value="+'查看'+ " data-channelid="+channel_id+">";
+                    // var op = "<input type='button' class='btn btn-primary btn-sm setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
+                    var op = "<button type='button' class='btn btn-success btn-sm setStatus' data-channelid="+uid+" data-status="+status+">"+msg+"</button>";
+                    // var view ="<input type='button' class='btn btn-info btn-sm viewEdit' data-uid="+uid+" value="+'查看'+ " data-channelid="+channel_id+">";
+                    var view ="<button type='button' class='btn btn-warning btn-sm viewEdit' data-uid="+uid+" data-channelid="+channel_id+">"+'查看'+"</button>";
                     return op+view;
                 }
             }
