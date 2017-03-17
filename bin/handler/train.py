@@ -36,7 +36,7 @@ class TrainBuyInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
-        Field('mobile', T_STR, True),
+        Field('consumer_id', T_INT, True),
     ]
 
 
@@ -53,10 +53,10 @@ class TrainBuyInfoHandler(core.Handler):
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
-            phone_num = params.get('phone_num', None)
+            consumer_id = params.get('consumer_id', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, phone_num)
+            info_data = self._query_handler(channel_name, store_name, consumer_id)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -68,7 +68,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, phone_num=None):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None):
         where = {}
 
         if channel_name:
@@ -85,12 +85,9 @@ class TrainBuyInfoHandler(core.Handler):
             else:
                 return []
 
-        if phone_num:
-            consumer_list = tools.mobile_to_id(phone_num)
-            if consumer_list:
-                where.update({'consumer_id': ('in', consumer_list)})
-            else:
-                return []
+        if consumer_id:
+            where.update({'consumer_id': consumer_id})
+
 
         other = ' order by create_time desc'
 

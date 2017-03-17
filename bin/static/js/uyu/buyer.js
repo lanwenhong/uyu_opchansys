@@ -70,9 +70,9 @@ $(document).ready(function(){
                 get_data.store_name = store_name;
             }
 
-			var consumer_mobile = $('#s_consumer_mobile').val();
-			if(consumer_mobile){
-				get_data.mobile = consumer_mobile;
+			var consumer_id = $('#s_consumer_id').val();
+			if(consumer_id){
+				get_data.consumer_id = consumer_id;
 			}
 
             $.ajax({
