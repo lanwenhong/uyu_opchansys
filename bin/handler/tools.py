@@ -40,3 +40,15 @@ def mobile_to_id(phone_num):
             data.append(item['id'])
 
         return data
+
+
+def nickname_to_id(name):
+    data = []
+    with get_connection_exception('uyu_core') as conn:
+        ret = conn.select(table='auth_user', fields='id', where={'nick_name': name})
+        if not ret:
+            return data
+        for item in ret:
+            data.append(item['id'])
+
+        return data

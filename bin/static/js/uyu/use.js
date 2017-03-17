@@ -45,9 +45,9 @@ $(document).ready(function(){
                 get_data.store_name = store_name;
             }
 
-            var consumer_mobile = $("#s_consumer").val();
-            if(consumer_mobile){
-                get_data.consumer_mobile = consumer_mobile;
+            var consumer_id = $("#s_consumer").val();
+            if(consumer_id){
+                get_data.consumer_id = consumer_id;
             }
 
             var eyesight = $("#s_eyesight").val();
