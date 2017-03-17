@@ -104,6 +104,7 @@ $(document).ready(function(){
             });
         },
         'columnDefs': [
+            /*
             {
                 targets: 5,
                 render: function(data, type, full) {
@@ -116,8 +117,9 @@ $(document).ready(function(){
                     return data;
                 }
             },
+            */
             {
-                targets: 12,
+                targets: 11,
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
@@ -153,7 +155,7 @@ $(document).ready(function(){
 				{ data: 'training_times' },
 				{ data: 'training_amt' },
 				{ data: 'op_name' },
-				{ data: 'create_time' },
+				// { data: 'create_time' },
 				{ data: 'status' }
 		],
         'oLanguage': {
