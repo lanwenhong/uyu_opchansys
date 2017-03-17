@@ -60,6 +60,10 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length
             };
+
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var channel_name = $("#s_channel_name").val();
             if(channel_name){
                 get_data.channel_name = channel_name;

@@ -48,6 +48,9 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length
             };
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
             if(channel_name!=''&&channel_name!=undefined){
@@ -798,7 +801,7 @@ $(document).ready(function(){
                 },
 			}
 		})
-        var ok = add_edit_vt.form();
+        var ok = add_eye_vt.form();
         if(!ok){
             return false;
         }

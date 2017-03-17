@@ -61,8 +61,11 @@ class StoreInfoHandler(core.Handler):
     def _get_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
 
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         try:
             data = {}
             params = self.validator.data
@@ -272,8 +275,11 @@ class StoreEyeHandler(core.Handler):
         try:
             params = self.validator.data
             uop = UUser()
-            uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
-            return success({})
+            flag, err_code = uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+            if flag:
+                return success({})
+            else:
+                return error(err_code)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
