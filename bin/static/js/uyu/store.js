@@ -801,7 +801,7 @@ $(document).ready(function(){
                 },
 			}
 		})
-        var ok = add_edit_vt.form();
+        var ok = add_eye_vt.form();
         if(!ok){
             return false;
         }

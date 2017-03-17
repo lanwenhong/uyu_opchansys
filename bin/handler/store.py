@@ -275,8 +275,11 @@ class StoreEyeHandler(core.Handler):
         try:
             params = self.validator.data
             uop = UUser()
-            uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
-            return success({})
+            flag, err_code = uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+            if flag:
+                return success({})
+            else:
+                return error(err_code)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
