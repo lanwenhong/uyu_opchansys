@@ -311,6 +311,8 @@ $(document).ready(function(){
 
     $(".c_busicd").change(function () {
         var order_type = $('.c_busicd').val();
+        $('#training_times').val('');
+        $('#training_amt').val('');
         if(order_type == 'ORG_ALLOT_TO_CHAN') {
             $('.create_order_store_name').hide();
             $('#training_times').attr('readonly', false);
@@ -325,6 +327,8 @@ $(document).ready(function(){
 
     $(".c_channel_name").change(function () {
         var order_type = $("#c_busicd").val();
+        $('#training_times').val('');
+        $('#training_amt').val('');
         if(order_type == 'ORG_ALLOT_TO_CHAN'){
             return false;
         }
