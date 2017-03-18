@@ -352,9 +352,6 @@ class ChanStoreMap(core.Handler):
         return ret
 
     def GET(self):
-        if not self.user.sauth:
-            return error(UAURET.SESSIONERR)
-
         try:
             data = self._get_handler()
             return data

@@ -167,7 +167,7 @@ class StoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
-        # Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
+        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -317,6 +317,7 @@ class CreateStoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
+        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
