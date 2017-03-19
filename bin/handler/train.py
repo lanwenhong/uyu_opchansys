@@ -76,7 +76,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time, end_time):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None):
         where = {}
 
         if channel_name:
