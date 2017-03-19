@@ -23,6 +23,7 @@ class TrainBuyerManage(core.Handler):
     def GET(self):
         self.write(template.render('buyer.html'))
 
+
 class TrainUseManage(core.Handler):
     @uyu_check_session_for_page(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
@@ -37,6 +38,8 @@ class TrainBuyInfoHandler(core.Handler):
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
         Field('consumer_id', T_INT, True),
+        Field('start_time', T_STR, True),
+        Field('end_time', T_STR, True),
     ]
 
 
@@ -57,9 +60,11 @@ class TrainBuyInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
             consumer_id = params.get('consumer_id', None)
+            start_time = params.get('start_time', None)
+            end_time = params.get('end_time', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id)
+            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -71,7 +76,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time, end_time):
         where = {}
 
         if channel_name:
@@ -90,6 +95,9 @@ class TrainBuyInfoHandler(core.Handler):
 
         if consumer_id:
             where.update({'consumer_id': consumer_id})
+
+        if start_time and end_time:
+            where.update({'create_time': ('between', [start_time, end_time])})
 
 
         other = ' order by create_time desc'

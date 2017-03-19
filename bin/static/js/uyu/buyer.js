@@ -84,6 +84,13 @@ $(document).ready(function(){
 				get_data.consumer_id = consumer_id;
 			}
 
+           var start_time = $("#start_time").val();
+           var end_time = $("#end_time").val();
+           if(start_time && end_time){
+               get_data.start_time = start_time;
+               get_data.end_time = end_time;
+           }
+
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
 	            type: 'GET',
