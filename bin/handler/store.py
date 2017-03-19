@@ -61,8 +61,11 @@ class StoreInfoHandler(core.Handler):
     def _get_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
 
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         try:
             data = {}
             params = self.validator.data
@@ -164,7 +167,7 @@ class StoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
-        # Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
+        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -247,6 +250,8 @@ class StoreEyeHandler(core.Handler):
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _get_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         params = self.validator.data
         uop = UUser()
         uop.call("load_user_by_mobile", params["phone_num"])
@@ -270,8 +275,11 @@ class StoreEyeHandler(core.Handler):
         try:
             params = self.validator.data
             uop = UUser()
-            uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
-            return success({})
+            flag, err_code = uop.store_bind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+            if flag:
+                return success({})
+            else:
+                return error(err_code)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
@@ -309,6 +317,7 @@ class CreateStoreHandler(core.Handler):
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('store_addr', T_STR, False),
         Field('store_name', T_STR, False),
+        Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -350,6 +359,8 @@ class StoreNameListHandler(core.Handler):
     @with_database('uyu_core')
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
         sql = "select store_name from stores"
         db_ret = self.db.query(sql)
 

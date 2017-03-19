@@ -48,6 +48,9 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length
             };
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
             if(channel_name!=''&&channel_name!=undefined){
@@ -98,10 +101,16 @@ $(document).ready(function(){
                     var channel_id =full.channel_id;
                     var is_prepayment = full.is_prepayment;
                     var msg = status ? '打开' : '关闭';
+                    var op = "<button type='button' class='btn btn-primary btn-sm setStatus' data-uid="+uid+" data-status="+status+">"+msg+"</button>";
+                    var view ="<button type='button' class='btn btn-info btn-sm viewStore' data-uid="+uid+" data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">"+'查看门店'+"</button>";
+                    var view_eye ="<button type='button' class='btn btn-success btn-sm viewEyesight' data-uid="+uid+" data-storeid="+store_id+ " data-channel_id="+channel_id+ ">"+'查看视光师'+"</button>";
+                    var add_eye ="<button type='button' class='btn btn-warning btn-sm addEyesight' data-channelid="+channel_id+" data-storeid="+store_id+">"+'添加视光师'+"</button>";
+                    /*
                     var op = "<input type='button' class='btn btn-info btn-sm setStatus' data-uid="+uid+" value="+msg+ " data-status="+status+">";
                     var view ="<input type='button' class='btn btn-primary btn-sm viewStore' data-uid="+uid+" value="+'查看门店'+ " data-storeid="+store_id+ " data-is_prepayment="+is_prepayment+ ">";
                     var view_eye ="<input type='button' class='btn btn-primary btn-sm viewEyesight' data-uid="+uid+" value="+'查看视光师'+ " data-storeid="+store_id+ " data-channel_id="+channel_id+ ">";
                     var add_eye ="<input type='button' class='btn btn-primary btn-sm addEyesight' data-channelid="+channel_id+" value="+'添加视光师'+ " data-storeid="+store_id+">";
+                    */
                     return op+view+view_eye+add_eye;
                 }
             }
@@ -279,6 +288,7 @@ $(document).ready(function(){
         var store_contacter = $('#store_contacter').val();
         var store_mobile = $('#store_mobile').val();
         var store_addr = $('#store_addr').val();
+		var store_type = $('#store_type').val();
 		var training_amt_per= $('#training_amt_per').val() * 100;
 		var divide_percent= $('#divide_percent').val();
 		var business = $('#business').val();
@@ -306,6 +316,7 @@ $(document).ready(function(){
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
+		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
@@ -438,6 +449,7 @@ $(document).ready(function(){
                     $('#e_store_contacter').val(ch_data.store_contacter);
                     $('#e_store_mobile').val(ch_data.store_mobile);
                     $('#e_store_addr').val(ch_data.store_addr);
+					$('#e_store_type').val(ch_data.store_type);
                     $('#storeEditModal').modal();
                 }
 	        },
@@ -645,6 +657,7 @@ $(document).ready(function(){
         var store_contacter = $('#e_store_contacter').val();
         var store_mobile = $('#e_store_mobile').val();
         var store_addr = $('#e_store_addr').val();
+        var store_type = $('#e_store_type').val();
 		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
 		var business = $('#e_business').val();
@@ -668,6 +681,7 @@ $(document).ready(function(){
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
 		post_data['store_addr'] = store_addr;
+		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 
 		post_data['business'] = business;
@@ -785,6 +799,24 @@ $(document).ready(function(){
     });
 
     $('#addEyesightSubmit').click(function(){
+        var add_eye_vt = $('#addEyesightForm').validate({
+            rules: {
+                phone_num: {
+                    required: true,
+                    isMobile: '#eye_phone_num'
+                },
+			},
+			messages: {
+                phone_num: {
+                    required: '请正确填写手机号'
+                },
+			}
+		})
+        var ok = add_eye_vt.form();
+        if(!ok){
+            return false;
+        }
+
         var se_userid = window.localStorage.getItem('myid');
         var channel_id = $('#span_channel_id').text();
         var store_id = $('#span_store_id').text();

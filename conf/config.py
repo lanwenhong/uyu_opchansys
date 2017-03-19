@@ -11,7 +11,7 @@ LOGFILE = {
         }
     }
 }
-LOGFILE = None
+# LOGFILE = None
 
 # 数据库配置
 database = {

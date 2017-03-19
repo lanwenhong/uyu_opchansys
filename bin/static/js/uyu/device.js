@@ -31,6 +31,9 @@ $(document).ready(function(){
 	           'maxnum': data.length
             };
 
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var serial_number = $("#s_device_serial_nu").val();
             if(serial_number){
                 get_data.serial_number = serial_number;
@@ -60,6 +63,7 @@ $(document).ready(function(){
                         var respmsg = data.respmsg;
                         var msg = resperr ? resperr : respmsg;
                         toastr.warning(msg);
+                        console.log('debug exception ....');
                         return false;
                     }
 	                var detail_data = data.data;

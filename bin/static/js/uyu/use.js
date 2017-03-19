@@ -31,6 +31,10 @@ $(document).ready(function(){
 	           'page': Math.ceil(data.start / data.length) + 1,
 	           'maxnum': data.length,
             };
+
+            var se_userid = window.localStorage.getItem('myid');
+            get_data.se_userid = se_userid;
+
             var channel_name = $("#s_channel_name").val();
             if(channel_name){
                 get_data.channel_name = channel_name;
@@ -41,9 +45,9 @@ $(document).ready(function(){
                 get_data.store_name = store_name;
             }
 
-            var consumer_mobile = $("#s_consumer").val();
-            if(consumer_mobile){
-                get_data.consumer_mobile = consumer_mobile;
+            var consumer_id = $("#s_consumer").val();
+            if(consumer_id){
+                get_data.consumer_id = consumer_id;
             }
 
             var eyesight = $("#s_eyesight").val();
