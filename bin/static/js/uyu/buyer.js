@@ -11,6 +11,7 @@ $(document).ready(function(){
     $("#training_times").bind('input propertychange', function () {
         var amount_per = 0;
         var order_type = $('.c_busicd').val();
+        /*
         if(order_type == 'ORG_ALLOT_TO_CHAN') {
             amount_per = $('.c_channel_name').val().split('|')[1];
             amount_per = (amount_per / 100).toFixed(2);
@@ -19,6 +20,10 @@ $(document).ready(function(){
             amount_per = $('.c_store_name').val().split('|')[1];
             amount_per = (amount_per / 100).toFixed(2);
         }
+        */
+        amount_per = $('.c_channel_name').val().split('|')[1];
+        amount_per = (amount_per / 100).toFixed(2);
+
         $('#training_amt').val(($(this).val() * amount_per).toFixed(2));
     });
 
@@ -180,14 +185,16 @@ $(document).ready(function(){
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
         $('.c_channel_name').html('');
-        $('.c_store_name').html('');
+        // $('.c_store_name').html('');
         $("label.error").remove();
         var order_type = $("#c_busicd").val();
+        /*
         if(order_type == 'ORG_ALLOT_TO_CHAN'){
             $('.create_order_store_name').hide();
         } else {
             $('.create_order_store_name').show();
         }
+        */
         channel_name_select();
         $("#trainBuyerCreateModal").modal();
     });
@@ -197,7 +204,7 @@ $(document).ready(function(){
     });
 
     $("#trainBuyerCreateSubmit").click(function(){
-        var post_url = '';
+        var post_url = '/channel_op/v1/api/org_allot_to_chan_order';
         var buyer_vt = $('#trainBuyerCreateForm').validate({
             rules: {
                 busicd: {
@@ -255,11 +262,12 @@ $(document).ready(function(){
         post_data.se_userid = se_userid;
         var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
-        var store_id = $('.c_store_name').val();
+        // var store_id = $('.c_store_name').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
         var training_times = $('#training_times').val();
         var training_amt = $('#training_amt').val() * 100;
+        var remark = $("#remark").val();
         post_data.channel_id = channel_id.split('|')[0];
         post_data.busicd = busicd;
         post_data.category = category;
@@ -267,8 +275,10 @@ $(document).ready(function(){
         post_data.training_times = training_times;
         post_data.training_amt = parseInt(training_amt.toFixed(2));
         post_data.ch_training_amt_per = channel_id.split('|')[1];
+        post_data.remark = remark;
 
 
+        /*
         if(busicd=='CHAN_ALLOT_TO_STORE'){
             if(!store_id){
                 toastr.warning('渠道分配训练点数给门店时请选择门店');
@@ -281,6 +291,7 @@ $(document).ready(function(){
         } else {
             post_url = '/channel_op/v1/api/org_allot_to_chan_order';
         }
+        */
 
 
         $.ajax({
@@ -309,6 +320,7 @@ $(document).ready(function(){
         });
     });
 
+    /*
     $(".c_busicd").change(function () {
         var order_type = $('.c_busicd').val();
         $('#training_times').val('');
@@ -324,14 +336,19 @@ $(document).ready(function(){
             $('.create_order_store_name').show();
         }
     });
+    */
+
 
     $(".c_channel_name").change(function () {
-        var order_type = $("#c_busicd").val();
+        // var order_type = $("#c_busicd").val();
         $('#training_times').val('');
         $('#training_amt').val('');
+        $('#remark').val('');
+        /*
         if(order_type == 'ORG_ALLOT_TO_CHAN'){
             return false;
         }
+
         var get_data = {};
         $('.c_store_name').html('');
         var ch_val = $('.c_channel_name').val();
@@ -378,7 +395,9 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
             }
         });
+        */
     });
+
 
     $(document).on('click', '.order-cancel', function(){
         var orderno = $(this).data('orderno');

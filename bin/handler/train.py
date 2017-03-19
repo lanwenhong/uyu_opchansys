@@ -277,6 +277,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         Field('training_times', T_INT, False),
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
+        Field('remark', T_STR, True),
     ]
 
     @with_database('uyu_core')
