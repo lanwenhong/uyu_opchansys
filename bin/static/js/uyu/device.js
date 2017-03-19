@@ -284,6 +284,9 @@ $(document).ready(function(){
                 else {
                     var c_store_name = $('#a_store_name');
                     c_store_name.html('');
+                    var first_str = $('<option value="-1" selected >无</option>');
+                    first_str.appendTo(c_store_name);
+
                     for(var i=0; i<data.data.length; i++){
                         var store_id = data.data[i].id;
                         var store_name = data.data[i].store_name;
@@ -366,11 +369,6 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id) {
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
-
-                    var c_store_name = $(store_name_tag_id);
-                    var first_str = $('<option value="-1" selected >无</option>');
-                    first_str.appendTo(c_store_name);
-
                     if(i==0){
                         do_first_select(channel_id, store_name_tag_id);
                     }
@@ -404,6 +402,9 @@ function do_first_select(channel_id, store_name_tag_id) {
             }
             else {
                 var c_store_name = $(store_name_tag_id);
+                var first_str = $('<option value="-1" selected >无</option>');
+                first_str.appendTo(c_store_name);
+
                 for(var i=0; i<data.data.length; i++){
                     var store_id = data.data[i].id;
                     var store_name = data.data[i].store_name;
