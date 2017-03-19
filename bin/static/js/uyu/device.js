@@ -125,7 +125,7 @@ $(document).ready(function(){
         $('#channel_name').html('');
         $("#deviceCreateForm").resetForm();
         $("label.error").remove();
-        channel_name_select('#channel_name', '#store_name');
+        // channel_name_select('#channel_name', '#store_name');
         $("#deviceCreateModal").modal();
     });
 
@@ -178,12 +178,13 @@ $(document).ready(function(){
         post_data.blooth_tag = $('#blooth_tag').val();
         post_data.scm_tag = $('#scm_tag').val();
         post_data.status = $('#status').val();
+        /*
         post_data.channel_id = $('#channel_name').val();
         var store_id = $('#store_name').val();
         if(store_id){
             post_data.store_id = store_id;
         }
-
+        */
         $.ajax({
             url: '/channel_op/v1/api/create_device',
             type: 'POST',
@@ -210,6 +211,7 @@ $(document).ready(function(){
 
     });
 
+    /*
     $('#channel_name').change(function () {
         var get_data = {};
         var channel_id = $('#channel_name').val();
@@ -245,6 +247,7 @@ $(document).ready(function(){
             }
         });
     });
+    */
 
     $(document).on('click', '.device-allocate', function(){
         $('#a_channel_name').html('');
@@ -308,7 +311,7 @@ $(document).ready(function(){
         post_data.se_userid = se_userid;
         post_data.serial_number = serial_number;
         post_data.channel_id = channel_id;
-        if(store_id){
+        if(store_id!=-1){
             post_data.store_id = store_id;
         }
         $.ajax({
@@ -363,6 +366,11 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id) {
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+
+                    var c_store_name = $(store_name_tag_id);
+                    var first_str = $('<option value="-1" selected >无</option>');
+                    first_str.appendTo(c_store_name);
+
                     if(i==0){
                         do_first_select(channel_id, store_name_tag_id);
                     }
