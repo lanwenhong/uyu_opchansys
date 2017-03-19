@@ -45,20 +45,18 @@
 						<table id="trainBuyerList" class="display table table-striped table-bordered table-hover dataTable no-footer dtr-inline" cellspacing="0" width="100%">
 							<thead>
 								<tr>
-									<th>订单类型</th>
-									<th>渠道</th>
-									<th>门店</th>
-									<th>用户</th>
+									<th>买方</th>
+									<th>卖方</th>
 									<th>类别</th>
-									<th>订单号</th>
 									<th>操作类型</th>
+									<th>订单号</th>
 									<th>次数</th>
 									<th>金额</th>
 									<th>操作人</th>
-									<!--
+									<th>订单状态</th>
 									<th>创建时间</th>
-									-->
-									<th>状态</th>
+									<th>更新时间</th>
+									<th>备注</th>
 									<th>操作</th>
 								</tr>
 							</thead>
@@ -82,7 +80,7 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" id="trainBuyerCreateForm" role="form">
-						<div class="form-group">
+						<div class="form-group" hidden>
 							<label for="c_busicd" class="col-sm-2 control-label">下单类型</label>
 							<div class="col-sm-10">
 								<select class="form-control c_busicd" id="c_busicd" name="busicd">

@@ -98,7 +98,8 @@ class TrainBuyInfoHandler(core.Handler):
             'id', 'channel_id', 'store_id',
             'consumer_id', 'category', 'op_type',
             'training_times', 'training_amt', 'op_name',
-            'status', 'create_time', 'busicd', 'orderno'
+            'status', 'create_time', 'busicd', 'orderno',
+            'buyer', 'seller', 'remark', 'uptime_time',
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where, other=other)
 
@@ -111,11 +112,12 @@ class TrainBuyInfoHandler(core.Handler):
             return []
 
         for item in data:
-            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
-            item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
-            item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
+            # channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            # store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            # item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
+            # item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['update_time'] = item['uptime_time'].strftime('%Y-%m-%d %H:%M:%S') if item['uptime_time'] else ''
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0

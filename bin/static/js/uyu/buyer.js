@@ -113,9 +113,8 @@ $(document).ready(function(){
             });
         },
         'columnDefs': [
-            /*
             {
-                targets: 5,
+                targets: 4,
                 render: function(data, type, full) {
                     var tmp = '';
                     var len = data.length;
@@ -126,9 +125,8 @@ $(document).ready(function(){
                     return data;
                 }
             },
-            */
             {
-                targets: 11,
+                targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
                     var orderno = full.orderno;
@@ -154,18 +152,20 @@ $(document).ready(function(){
             }
         ],
 		'columns': [
-				{ data: 'busicd_name' },
-				{ data: 'channel_name' },
-				{ data: 'store_name' },
-				{ data: 'consumer_id' },
+				// { data: 'busicd_name' },
+				{ data: 'buyer' },
+				{ data: 'seller' },
 				{ data: 'category' },
-				{ data: 'orderno' },
 				{ data: 'op_type' },
+				{ data: 'orderno' },
 				{ data: 'training_times' },
 				{ data: 'training_amt' },
 				{ data: 'op_name' },
-				// { data: 'create_time' },
-				{ data: 'status' }
+				{ data: 'status' },
+				{ data: 'create_time' },
+				{ data: 'update_time' },
+				{ data: 'remark' }
+
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',
