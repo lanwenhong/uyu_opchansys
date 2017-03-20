@@ -97,6 +97,8 @@ class TrainBuyInfoHandler(core.Handler):
             where.update({'consumer_id': consumer_id})
 
         if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
+            end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
             where.update({'create_time': ('between', [start_time, end_time])})
 
 
