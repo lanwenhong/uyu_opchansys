@@ -53,7 +53,7 @@
 							<div class="datetimepicker-container" style="margin-top: 12px;">
 								<span>时间</span>
 								<div class="form-group">
-									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="start_time" data-link-format="yyyy-mm-dd">
+									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="start_time" data-link-format="yyyy-mm-dd" id="datetimepicker1">
 										<input class="form-control" type="text" value="" readonly="">
 										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
@@ -62,7 +62,7 @@
 								</div>
 								<span> - </span>
 								<div class="form-group">
-									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="end_time" data-link-format="yyyy-mm-dd">
+									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="end_time" data-link-format="yyyy-mm-dd" id="datetimepicker2">
 										<input class="form-control" type="text" value="" readonly="">
 										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
@@ -218,5 +218,21 @@
 	        minView: 2,
 	        forceParse: 0
 	    });
+        $(".form_date input.sea_date").on({
+            'mouseenter': function() {
+                $(this).attr('readonly', 'readonly');
+            },
+            'mouseleave': function() {
+                $(this).removeAttr('readonly');
+            }
+        });
+        $("#datetimepicker1").on("dp.change", function(e) {
+            $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+            $("#start_time").val(date_trans(e.date));
+        });
+        $("#datetimepicker2").on("dp.change", function(e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+            $("#end_time").val(date_trans(e.date));
+        });
 	</script>
 </%block>
