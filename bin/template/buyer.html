@@ -49,7 +49,8 @@
 							  <input type="text" class="form-control" id="s_consumer_id" placeholder="">
 							</div>
 
-							<div class="datetimepicker-container col-lg-12 col-md-12 col-sm-12 m-t m-b">
+							<!--<div class="datetimepicker-container col-lg-12 col-md-12 col-sm-12 m-t m-b"> -->
+							<div class="datetimepicker-container" style="margin-top: 12px;">
 								<span>查询时间</span>
 								<div class="form-group">
 									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="start_time" data-link-format="yyyy-mm-dd">
@@ -68,11 +69,12 @@
 									</div>
 									<input type="hidden" id="end_time" value=""><br>
 								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-primary" id="trainBuyerSearch">搜索</button>
+									<button type="button" class="btn btn-default" id="trainBuyerCreate">新增</button>
+								</div>
 							</div>
-							<div class="form-group">
-								<button type="button" class="btn btn-primary" id="trainBuyerSearch">搜索</button>
-								<button type="button" class="btn btn-default" id="trainBuyerCreate">新增</button>
-							</div>
+
 						</form>
 					</div>
 
