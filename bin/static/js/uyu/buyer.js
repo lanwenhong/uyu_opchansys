@@ -126,6 +126,7 @@ $(document).ready(function(){
             });
         },
         'columnDefs': [
+            /*
             {
                 targets: 4,
                 render: function(data, type, full) {
@@ -138,6 +139,7 @@ $(document).ready(function(){
                     return data;
                 }
             },
+            */
             {
                 targets: 12,
                 data: '操作',
