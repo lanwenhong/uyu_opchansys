@@ -23,6 +23,7 @@ class TrainBuyerManage(core.Handler):
     def GET(self):
         self.write(template.render('buyer.html'))
 
+
 class TrainUseManage(core.Handler):
     @uyu_check_session_for_page(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     def GET(self):
@@ -37,6 +38,8 @@ class TrainBuyInfoHandler(core.Handler):
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
         Field('consumer_id', T_INT, True),
+        Field('start_time', T_STR, True),
+        Field('end_time', T_STR, True),
     ]
 
 
@@ -57,9 +60,11 @@ class TrainBuyInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             store_name = params.get('store_name', None)
             consumer_id = params.get('consumer_id', None)
+            start_time = params.get('start_time', None)
+            end_time = params.get('end_time', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id)
+            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -71,7 +76,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None):
         where = {}
 
         if channel_name:
@@ -91,6 +96,11 @@ class TrainBuyInfoHandler(core.Handler):
         if consumer_id:
             where.update({'consumer_id': consumer_id})
 
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
+            end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+            where.update({'create_time': ('between', [start_time, end_time])})
+
 
         other = ' order by create_time desc'
 
@@ -98,7 +108,8 @@ class TrainBuyInfoHandler(core.Handler):
             'id', 'channel_id', 'store_id',
             'consumer_id', 'category', 'op_type',
             'training_times', 'training_amt', 'op_name',
-            'status', 'create_time', 'busicd', 'orderno'
+            'status', 'create_time', 'busicd', 'orderno',
+            'buyer', 'seller', 'remark', 'uptime_time',
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where, other=other)
 
@@ -111,11 +122,12 @@ class TrainBuyInfoHandler(core.Handler):
             return []
 
         for item in data:
-            channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
-            store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
-            item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
-            item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
+            # channel_ret = self.db.select_one(table='channel', fields='channel_name', where={'id': item['channel_id']})
+            # store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
+            # item['channel_name'] = channel_ret.get('channel_name', '') if channel_ret else ''
+            # item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            item['update_time'] = item['uptime_time'].strftime('%Y-%m-%d %H:%M:%S') if item['uptime_time'] else ''
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
             item['training_amt'] = item['training_amt'] / 100.0
@@ -277,6 +289,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         Field('training_times', T_INT, False),
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
+        Field('remark', T_STR, True),
     ]
 
     @with_database('uyu_core')

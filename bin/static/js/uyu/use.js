@@ -99,9 +99,9 @@ $(document).ready(function(){
 				{ data: 'device_name' },
 				{ data: 'consumer_id' },
 				{ data: 'eyesight_name' },
-				{ data: 'comsumer_nums' },
+				// { data: 'comsumer_nums' },
 				{ data: 'create_time' },
-				{ data: 'status' }
+				// { data: 'status' }
 		],
         'oLanguage': {
             'sProcessing': '<span style="color:red;">加载中....</span>',

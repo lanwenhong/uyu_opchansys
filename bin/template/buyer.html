@@ -5,6 +5,13 @@
 </%block>
 
 <%block name="head_media">
+<style>
+	.form-group input.sea_date{cursor: not-allowed;background-color: #eee;}
+	.m-t-sm {
+		margin-top: 4px;
+	}
+</style>
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link href="/static/css/uyu/define_label_error.css" rel="stylesheet">
 </%block>
 
@@ -24,20 +31,50 @@
                 <div class="panel-body">
 					<div class="row">
 						<form class="form-inline">
+
 							<div class="form-group">
 							  <label for="s_channel_name">渠道</label>
 							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
 							</div>
+
+
 							<div class="form-group">
 							  <label for="s_store_name">门店</label>
 							  <input type="text" class="form-control" id="s_store_name" placeholder="">
 							</div>
+
+
 							<div class="form-group">
 							  <label for="s_consumer_id">用户</label>
 							  <input type="text" class="form-control" id="s_consumer_id" placeholder="">
 							</div>
-							<button type="button" class="btn btn-primary" id="trainBuyerSearch">搜索</button>
-							<button type="button" class="btn btn-default" id="trainBuyerCreate">新增</button>
+
+							<!--<div class="datetimepicker-container col-lg-12 col-md-12 col-sm-12 m-t m-b"> -->
+							<div class="datetimepicker-container" style="margin-top: 12px;">
+								<span>时间</span>
+								<div class="form-group">
+									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="start_time" data-link-format="yyyy-mm-dd" id="datetimepicker1">
+										<input class="form-control sea_date" type="text" value="" readonly="">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+									</div>
+									<input type="hidden" id="start_time" value=""><br>
+								</div>
+								<span> - </span>
+								<div class="form-group">
+									<div class="input-group date form_date" data-date="" data-date-format="yyyy-mm-dd" data-link-field="end_time" data-link-format="yyyy-mm-dd" id="datetimepicker2">
+										<input class="form-control sea_date" type="text" value="" readonly="">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+									</div>
+									<input type="hidden" id="end_time" value=""><br>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-primary" id="trainBuyerSearch">搜索</button>
+									<button type="button" class="btn btn-default" id="trainBuyerCreate">新增</button>
+								</div>
+							</div>
+
 						</form>
 					</div>
 
@@ -45,20 +82,18 @@
 						<table id="trainBuyerList" class="display table table-striped table-bordered table-hover dataTable no-footer dtr-inline" cellspacing="0" width="100%">
 							<thead>
 								<tr>
-									<th>订单类型</th>
-									<th>渠道</th>
-									<th>门店</th>
-									<th>用户</th>
+									<th>买方</th>
+									<th>卖方</th>
 									<th>类别</th>
-									<th>订单号</th>
 									<th>操作类型</th>
+									<th>订单号</th>
 									<th>次数</th>
 									<th>金额</th>
 									<th>操作人</th>
-									<!--
+									<th>订单状态</th>
 									<th>创建时间</th>
-									-->
-									<th>状态</th>
+									<th>更新时间</th>
+									<th>备注</th>
 									<th>操作</th>
 								</tr>
 							</thead>
@@ -82,12 +117,14 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" id="trainBuyerCreateForm" role="form">
-						<div class="form-group">
+						<div class="form-group" hidden>
 							<label for="c_busicd" class="col-sm-2 control-label">下单类型</label>
 							<div class="col-sm-10">
 								<select class="form-control c_busicd" id="c_busicd" name="busicd">
 									<option value="ORG_ALLOT_TO_CHAN" selected>公司送训练点数给渠道</option>
+									<!--
 									<option value="CHAN_ALLOT_TO_STORE">渠道分配训练点数给门店</option>
+									-->
 								</select>
 							</div>
 						</div>
@@ -100,6 +137,7 @@
 							</div>
 						</div>
 
+						<!--
 						<div class="form-group create_order_store_name">
 							<label for="c_store_name" class="col-sm-2 control-label">门店</label>
 							<div class="col-sm-10">
@@ -107,6 +145,7 @@
 								</select>
 							</div>
 						</div>
+						-->
 
 						<div class="form-group">
 							<label for="c_category" class="col-sm-2 control-label">类别</label>
@@ -138,7 +177,15 @@
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="training_amt" name="training_amt" readonly>
 							</div>
-						</div> 
+						</div>
+
+						<div class="form-group">
+							<label for="remark" class="col-sm-2 control-label">备注</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="remark" name="remark">
+							</div>
+						</div>
+
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -155,6 +202,37 @@
 	<script src="/static/js/jquery.validate.messages_cn.js" type="text/javascript"></script>
 	<script src="/static/js/jquery.form.js" type="text/javascript"></script>
 	<script src="/static/js/bootstrap-typeahead.js" type="text/javascript"></script>
+	<script src="/static/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+	<script src="/static/js/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+	<script src="/static/js/moment-with-locales.js" type="text/javascript"></script>
 	<script src="/static/js/uyu/base.js" type="text/javascript"></script>
     <script src="/static/js/uyu/buyer.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	    $('.form_date').datetimepicker({
+	        language:  'zh-CN',
+	        weekStart: 1,
+	        todayBtn:  1,
+	        autoclose: 1,
+	        todayHighlight: 1,
+	        startView: 2,
+	        minView: 2,
+	        forceParse: 0
+		});
+        $(".form_date input.sea_date").on({
+			'mouseenter': function() {
+                $(this).attr('readonly', 'readonly');
+            },
+            'mouseleave': function() {
+                $(this).removeAttr('readonly');
+            }
+		});
+
+		$("#datetimepicker1").datetimepicker().on('changeDate', function(e){
+			$("#datetimepicker2").datetimepicker('setStartDate', e.date);
+		});
+
+		$("#datetimepicker2").datetimepicker().on('changeDate', function(e){
+			$("#datetimepicker1").datetimepicker('setEndDate', e.date);
+		});
+	</script>
 </%block>

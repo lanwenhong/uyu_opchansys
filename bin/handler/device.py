@@ -130,10 +130,10 @@ class DeviceCreateHandler(core.Handler):
         Field('blooth_tag',  T_STR, False),
         Field('scm_tag',  T_STR, True),
         Field('status',  T_INT, True),
-        Field('channel_id', T_INT, False),
-        Field('store_id', T_INT, True),
-        Field('training_nums', T_INT, True),
-        Field('op', T_INT, True),
+        # Field('channel_id', T_INT, False),
+        # Field('store_id', T_INT, True),
+        # Field('training_nums', T_INT, True),
+        # Field('op', T_INT, True),
     ]
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -148,11 +148,11 @@ class DeviceCreateHandler(core.Handler):
         blooth_tag = params.get('blooth_tag', None)
         scm_tag = params.get('scm_tag', None)
         status = params.get('status', None)
-        channel_id = params.get('channel_id', None)
-        store_id = params.get('store_id', None)
-        training_nums = params.get('training_nums', None)
-        op = params.get('op', None)
-        ret = uop.call("create_device", device_name, hd_version, blooth_tag, scm_tag, status, channel_id, store_id, training_nums, op)
+        # channel_id = params.get('channel_id', None)
+        # store_id = params.get('store_id', None)
+        # training_nums = params.get('training_nums', None)
+        # op = params.get('op', None)
+        ret = uop.call("create_device", device_name, hd_version, blooth_tag, scm_tag, status, None, None, None, None)
         log.debug('create_device params: %s ret: %s', params, ret)
         if ret == UYU_OP_ERR:
             return error(UAURET.REQERR)
