@@ -425,3 +425,31 @@ class OrderCancelHandler(core.Handler):
 
     def POST(self):
         return self._post_handler()
+
+
+class OrderConfirmHandler(core.Handler):
+    _post_handler_fields = [
+        Field("order_no", T_STR, False, match=r'^([0-9]{33})$'),
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        params = self.validator.data
+        order_no = params["order_no"]
+        log.debug("order_no: %s", order_no)
+        top = TrainingOP(params, order_no=order_no)
+        ret = top.order_confirm()
+
+        if ret == UYU_OP_OK:
+            return success({})
+
+        return error(UAURET.ORDERERR)
+
+    def POST(self):
+        return self._post_handler()

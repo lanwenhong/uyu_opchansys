@@ -450,7 +450,37 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.order-confirm', function(){
-        alert('准备提交确认操作');
+        var orderno = $(this).data('orderno');
+        var se_userid = window.localStorage.getItem('myid');
+        if(!orderno){
+            toastr.warning('请确认订单号');
+            return false;
+        }
+        var post_data = {};
+        post_data.se_userid = se_userid;
+        post_data.order_no = orderno;
+        $.ajax({
+            url: '/channel_op/v1/api/order_confirm',
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('确认成功');
+                    $('#trainBuyerList').DataTable().draw();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
     });
 
 });
