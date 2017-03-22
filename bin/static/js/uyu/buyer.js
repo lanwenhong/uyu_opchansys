@@ -152,12 +152,12 @@ $(document).ready(function(){
                     var now = new Date();
                     var compare_time = new Date(Year=now.getFullYear(), Months=now.getMonth(), Day=now.getDate(), Hours=0, Minutes=0, senconds=0);
                     if(is_valid==0 && create_time >= compare_time){
-                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-orderno='+orderno+' value=' + '撤销' + '>';
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' data-orderno='+orderno+' value=' + '撤销' + '>';
                     } else {
-                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel"  disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
                     }
                     if(busicd == 'CHAN_BUY' && is_valid == 1){
-                        var confirm = '<input type="button" class="btn btn-primary btn-sm order-confirm" data-orderno='+orderno+' value=' + '确认' + '>';
+                        var confirm = '<input type="button" class="btn btn-primary btn-sm order-confirm" data-busicd='+busicd+' data-orderno='+orderno+' value=' + '确认' + '>';
                     } else {
                         var confirm = '';
                     }
