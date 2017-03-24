@@ -331,7 +331,7 @@ $(document).ready(function(){
                     toastr.warning(msg);
                 }
                 else {
-                    toastr.success('新建设备成功');
+                    toastr.success('分配设备成功');
                     $("#deviceAllocate").modal('hide');
                     $('#deviceList').DataTable().draw();
                 }
