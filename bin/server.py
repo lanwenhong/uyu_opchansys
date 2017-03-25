@@ -6,6 +6,7 @@ import urls
 import dbenc
 import logging
 HOME = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(os.path.dirname(HOME), 'conf'))
 
 from zbase.base import logger
 from zbase.base import dbpool
@@ -16,7 +17,7 @@ from zbase.web import cache
 from zbase.web import runner
 from zbase.web import template
 
-loader.loadconf_argv(HOME)
+#loader.loadconf_argv(HOME)
 import config
 
 if config.LOGFILE:
@@ -49,9 +50,10 @@ def install_db():
     log.info(databases)
     dbpool.install(databases)
 
+install_db()
 app = core.WebApplication(config)
 
 
 if __name__ == '__main__':
-    install_db()
+    #install_db()
     runner.run_simple(app, host=config.HOST, port=config.PORT)
