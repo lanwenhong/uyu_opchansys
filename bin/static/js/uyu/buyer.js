@@ -61,41 +61,47 @@ $(document).ready(function(){
             $trainBuyerList_length.prependTo($page_top);
         },
         "ajax": function(data, callback, settings){
-            var get_data = {
-	           'page': Math.ceil(data.start / data.length) + 1,
-	           'maxnum': data.length
-            };
+             var get_data = {
+	            'page': Math.ceil(data.start / data.length) + 1,
+	            'maxnum': data.length
+             };
 
-            var se_userid = window.localStorage.getItem('myid');
-            get_data.se_userid = se_userid;
+             var se_userid = window.localStorage.getItem('myid');
+             get_data.se_userid = se_userid;
 
-            var channel_name = $("#s_channel_name").val();
-            if(channel_name){
-                get_data.channel_name = channel_name;
-            }
+             var channel_name = $("#s_channel_name").val();
+             if(channel_name){
+                 get_data.channel_name = channel_name;
+             }
 
-            var store_name = $("#s_store_name").val();
-            if(store_name){
-                get_data.store_name = store_name;
-            }
+             var store_name = $("#s_store_name").val();
+             if(store_name){
+                 get_data.store_name = store_name;
+             }
 
-			var consumer_id = $('#s_consumer_id').val();
-			if(consumer_id){
-				get_data.consumer_id = consumer_id;
-			}
+			 var consumer_id = $('#s_consumer_id').val();
+			 if(consumer_id){
+			 	get_data.consumer_id = consumer_id;
+			 }
 
-           var start_time = $("#start_time").val();
-           var end_time = $("#end_time").val();
-           if(start_time && end_time){
-               var start_date = new Date(start_time);
-               var end_date = new Date(end_time);
-               if(end_date <= start_date){
-                   toastr.warning('请核实时间范围');
-                   return false;
-               }
-               get_data.start_time = start_time;
-               get_data.end_time = end_time;
-           }
+			 var order_status = $(".s_status").val();
+			 if(order_status != '-1'){
+			     get_data.status = order_status;
+			 }
+
+             var start_time = $("#start_time").val();
+             var end_time = $("#end_time").val();
+             if(start_time && end_time){
+                 var start_date = new Date(start_time);
+                 var end_date = new Date(end_time);
+                 if(end_date <= start_date){
+                     toastr.warning('请核实时间范围');
+                     return false;
+                 }
+                 get_data.start_time = start_time;
+                 get_data.end_time = end_time;
+             }
+
 
             $.ajax({
 	            url: '/channel_op/v1/api/training_op_list',
@@ -424,32 +430,53 @@ $(document).ready(function(){
         var post_data = {};
         post_data.se_userid = se_userid;
         post_data.order_no = orderno;
-        $.ajax({
-            url: '/channel_op/v1/api/order_cancel',
-            type: 'POST',
-            data: post_data,
-            dataType: 'json',
-            success: function(data) {
-                var respcd = data.respcd;
-                if(respcd != '0000'){
-                    var resperr = data.resperr;
-                    var respmsg = data.respmsg;
-                    var msg = resperr ? resperr : respmsg;
-                    toastr.warning(msg);
+
+        $.confirm({
+            title: '请确认取消',
+            content: '撤销将把次数从对方扣回，确认是否撤销？',
+            type: 'blue',
+            typeAnimated: true,
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-red',
+                    action: function() {
+                        $.ajax({
+                            url: '/channel_op/v1/api/order_cancel',
+                            type: 'POST',
+                            data: post_data,
+                            dataType: 'json',
+                            success: function(data) {
+                                var respcd = data.respcd;
+                                if(respcd != '0000'){
+                                    var resperr = data.resperr;
+                                    var respmsg = data.respmsg;
+                                    var msg = resperr ? resperr : respmsg;
+                                    toastr.warning(msg);
+                                }
+                                else {
+                                    toastr.success('撤销成功');
+                                    $('#trainBuyerList').DataTable().draw();
+                                }
+                            },
+                            error: function(data) {
+                                toastr.warning('请求异常');
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: '取消',
+                    action: function() {
+                        console.log('clicked cancel');
+                    }
                 }
-                else {
-                    toastr.success('撤销成功');
-                    $('#trainBuyerList').DataTable().draw();
-                }
-            },
-            error: function(data) {
-                toastr.warning('请求异常');
             }
         });
-
     });
 
     $(document).on('click', '.order-confirm', function(){
+
         var orderno = $(this).data('orderno');
         var se_userid = window.localStorage.getItem('myid');
         if(!orderno){
@@ -459,26 +486,48 @@ $(document).ready(function(){
         var post_data = {};
         post_data.se_userid = se_userid;
         post_data.order_no = orderno;
-        $.ajax({
-            url: '/channel_op/v1/api/order_confirm',
-            type: 'POST',
-            data: post_data,
-            dataType: 'json',
-            success: function(data) {
-                var respcd = data.respcd;
-                if(respcd != '0000'){
-                    var resperr = data.resperr;
-                    var respmsg = data.respmsg;
-                    var msg = resperr ? resperr : respmsg;
-                    toastr.warning(msg);
+
+        $.confirm({
+            title: '请确认购买',
+            content: '确认要求该次购买资金已经到账，资金是否已经到账？',
+            type: 'blue',
+            typeAnimated: true,
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-red',
+                    action: function() {
+                        $.ajax({
+                            url: '/channel_op/v1/api/order_confirm',
+                            type: 'POST',
+                            data: post_data,
+                            dataType: 'json',
+                            success: function(data) {
+                                var respcd = data.respcd;
+                                if(respcd != '0000'){
+                                    var resperr = data.resperr;
+                                    var respmsg = data.respmsg;
+                                    var msg = resperr ? resperr : respmsg;
+                                    toastr.warning(msg);
+                                }
+                                else {
+                                    toastr.success('确认成功');
+                                    $('#trainBuyerList').DataTable().draw();
+                                }
+                            },
+                            error: function(data) {
+                                toastr.warning('请求异常');
+                            }
+                        });
+                    }
+                },
+                cancel: {
+                    text: '取消',
+                    action: function() {
+                        console.log('clicked cancel');
+                    }
                 }
-                else {
-                    toastr.success('确认成功');
-                    $('#trainBuyerList').DataTable().draw();
-                }
-            },
-            error: function(data) {
-                toastr.warning('请求异常');
+
             }
         });
     });

@@ -40,6 +40,7 @@ class TrainBuyInfoHandler(core.Handler):
         Field('consumer_id', T_INT, True),
         Field('start_time', T_STR, True),
         Field('end_time', T_STR, True),
+        Field('status', T_INT, True, match=r'^([0-2]){1}$'),
     ]
 
 
@@ -62,9 +63,10 @@ class TrainBuyInfoHandler(core.Handler):
             consumer_id = params.get('consumer_id', None)
             start_time = params.get('start_time', None)
             end_time = params.get('end_time', None)
+            status = params.get('status', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time)
+            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time, status)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -76,7 +78,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None, status=None):
         where = {}
 
         if channel_name:
@@ -101,6 +103,8 @@ class TrainBuyInfoHandler(core.Handler):
             end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
             where.update({'create_time': ('between', [start_time, end_time])})
 
+        if status in define.UYU_ORDER_STATUS_MAP.keys():
+            where.update({'status': status})
 
         other = ' order by create_time desc'
 
