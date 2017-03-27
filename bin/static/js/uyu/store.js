@@ -9,7 +9,8 @@ $(document).ready(function(){
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
-        var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        //var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        var yuan = /^([0-9]{1,6})(.([0-9]{1,2})){0,1}$/;
         return this.optional(element) || (length && yuan.test(value));
     }, "请正确填写您的价格");
 
@@ -193,6 +194,7 @@ $(document).ready(function(){
                     required: true,
                     maxlength: 128
                 },
+                /*
                 store_contacter: {
                     required: true,
                     maxlength: 128
@@ -209,6 +211,7 @@ $(document).ready(function(){
                     required: false,
                     email: true
                 },
+                */
                 divide_percent: {
                     required: true,
                     isLessOne: '#divide_percent'
@@ -240,6 +243,7 @@ $(document).ready(function(){
                     required: '请输入单次训练价格',
                     digits: "只能输入整数"
                 },
+                /*
                 store_name: {
                     required: '请输入门店名称',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
@@ -258,8 +262,9 @@ $(document).ready(function(){
                 email: {
                     email: "请输入正确格式的电子邮件"
                 },
+                */
                 divide_percent: {
-                    required: '请输入分成比例',
+                    required: '请输入分成比例'
                 }
             }
         });
@@ -273,10 +278,10 @@ $(document).ready(function(){
         post_data['se_userid'] = se_userid;
         var phone_num = $('#phone_num').val();
 		var login_name = phone_num;
-		var email = $('#email').val();
-		var org_code = $('#org_code').val();
-		var license_id = $('#license_id').val();
-		var legal_person = $('#legal_person').val();
+		//var email = $('#email').val();
+		//var org_code = $('#org_code').val();
+		//var license_id = $('#license_id').val();
+		//var legal_person = $('#legal_person').val();
 		var account_name = $('#account_name').val();
 		var bank_name = $('#bank_name').val();
 		var bank_account = $('#bank_account').val();
@@ -285,14 +290,16 @@ $(document).ready(function(){
 		var contact_email= $('#contact_email').val();
 		var address= $('#address').val();
         var store_name = $('#c_store_name').val();
-        var store_contacter = $('#store_contacter').val();
-        var store_mobile = $('#store_mobile').val();
-        var store_addr = $('#store_addr').val();
+        //var store_contacter = $('#store_contacter').val();
+        //var store_mobile = $('#store_mobile').val();
+        //var store_addr = $('#store_addr').val();
+        var store_contacter =contact_name;
+        var store_mobile = contact_phone;
 		var store_type = $('#store_type').val();
 		var training_amt_per= $('#training_amt_per').val() * 100;
 		var divide_percent= $('#divide_percent').val();
-		var business = $('#business').val();
-		var front_business = $('#front_business').val();
+		//var business = $('#business').val();
+		//var front_business = $('#front_business').val();
 		var channel_val = $('.c_channel_name').val();
 
 		channel_id = channel_val.split('|')[0];
@@ -301,10 +308,10 @@ $(document).ready(function(){
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
 		post_data['phone_num'] = phone_num;
-		post_data['email'] = email;
-		post_data['org_code'] = org_code;
-		post_data['license_id'] = license_id;
-		post_data['legal_person'] = legal_person;
+		//post_data['email'] = email;
+		//post_data['org_code'] = org_code;
+		//post_data['license_id'] = license_id;
+		//post_data['legal_person'] = legal_person;
 		post_data['account_name'] = account_name;
 		post_data['bank_name'] = bank_name;
 		post_data['bank_account'] = bank_account;
@@ -315,11 +322,11 @@ $(document).ready(function(){
 		post_data['store_name'] = store_name;
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
-		post_data['store_addr'] = store_addr;
+		//post_data['store_addr'] = store_addr;
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
-		post_data['business'] = business;
-		post_data['front_business'] = front_business;
+		//post_data['business'] = business;
+		//post_data['front_business'] = front_business;
 		post_data['channel_id'] = channel_id;
 
         if(is_prepayment == 1){
@@ -424,12 +431,12 @@ $(document).ready(function(){
 
                     $('#uid').text(uid);
                     $('#e_phone_num').val(u_data.phone_num);
-                    $('#e_legal_person').val(p_data.legal_person);
-                    $('#e_org_code').val(p_data.org_code);
-                    $('#e_license_id').val(p_data.license_id);
-                    $('#e_email').val(u_data.email);
-                    $('#e_business').val(p_data.business);
-                    $('#e_front_business').val(p_data.front_business);
+                    //$('#e_legal_person').val(p_data.legal_person);
+                    //$('#e_org_code').val(p_data.org_code);
+                    //$('#e_license_id').val(p_data.license_id);
+                    //$('#e_email').val(u_data.email);
+                    //$('#e_business').val(p_data.business);
+                    //$('#e_front_business').val(p_data.front_business);
                     $('#e_account_name').val(p_data.account_name);
                     $('#e_bank_account').val(p_data.bank_account);
                     $('#e_bank_name').val(p_data.bank_name);
@@ -446,9 +453,9 @@ $(document).ready(function(){
                         $('#edit_store_divide_percent').show();
                     }
                     $('#e_store_name').val(ch_data.store_name);
-                    $('#e_store_contacter').val(ch_data.store_contacter);
-                    $('#e_store_mobile').val(ch_data.store_mobile);
-                    $('#e_store_addr').val(ch_data.store_addr);
+                    //$('#e_store_contacter').val(ch_data.store_contacter);
+                    //$('#e_store_mobile').val(ch_data.store_mobile);
+                    //$('#e_store_addr').val(ch_data.store_addr);
 					$('#e_store_type').val(ch_data.store_type);
                     $('#storeEditModal').modal();
                 }
@@ -564,6 +571,7 @@ $(document).ready(function(){
                     required: true,
                     maxlength: 128
                 },
+                /*
                 store_contacter: {
                     required: true,
                     maxlength: 128
@@ -580,6 +588,7 @@ $(document).ready(function(){
                     required: false,
                     email: true
                 },
+                */
                 divide_percent: {
                     required: true,
                     isLessOne: '#e_divide_percent'
@@ -611,6 +620,7 @@ $(document).ready(function(){
                     required: '请输入门店名称',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
                 },
+                /*
                 store_contacter: {
                     required: '请输入门店联系人',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
@@ -625,6 +635,7 @@ $(document).ready(function(){
                 email: {
                     email: "请输入正确格式的电子邮件"
                 },
+                */
                 divide_percent: {
                     required: '请输入正确的比例'
                 }
@@ -642,10 +653,10 @@ $(document).ready(function(){
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
 		var phone_num = $('#e_phone_num').val();
-		var email = $('#e_email').val();
-		var org_code = $('#e_org_code').val();
-		var license_id = $('#e_license_id').val();
-		var legal_person = $('#e_legal_person').val();
+		//var email = $('#e_email').val();
+		//var org_code = $('#e_org_code').val();
+		//var license_id = $('#e_license_id').val();
+		//var legal_person = $('#e_legal_person').val();
 		var account_name = $('#e_account_name').val();
 		var bank_name = $('#e_bank_name').val();
 		var bank_account = $('#e_bank_account').val();
@@ -654,22 +665,24 @@ $(document).ready(function(){
 		var contact_email= $('#e_contact_email').val();
 		var address= $('#e_address').val();
         var store_name = $('#e_store_name').val();
-        var store_contacter = $('#e_store_contacter').val();
-        var store_mobile = $('#e_store_mobile').val();
-        var store_addr = $('#e_store_addr').val();
+        //var store_contacter = $('#e_store_contacter').val();
+        //var store_mobile = $('#e_store_mobile').val();
+        //var store_addr = $('#e_store_addr').val();
+        var store_contacter = contact_name;
+        var store_mobile = contact_phone;
         var store_type = $('#e_store_type').val();
 		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
-		var business = $('#e_business').val();
-		var front_business = $('#e_front_business').val();
+		//var business = $('#e_business').val();
+		//var front_business = $('#e_front_business').val();
 
 
         post_data['se_userid'] = se_userid;
 		post_data['phone_num'] = phone_num;
-		post_data['email'] = email;
-		post_data['org_code'] = org_code;
-		post_data['license_id'] = license_id;
-		post_data['legal_person'] = legal_person;
+		//post_data['email'] = email;
+		//post_data['org_code'] = org_code;
+		//post_data['license_id'] = license_id;
+		//post_data['legal_person'] = legal_person;
 		post_data['account_name'] = account_name;
 		post_data['bank_name'] = bank_name;
 		post_data['bank_account'] = bank_account;
@@ -680,12 +693,12 @@ $(document).ready(function(){
 		post_data['store_name'] = store_name;
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
-		post_data['store_addr'] = store_addr;
+		//post_data['store_addr'] = store_addr;
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 
-		post_data['business'] = business;
-		post_data['front_business'] = front_business;
+		//post_data['business'] = business;
+		//post_data['front_business'] = front_business;
 
 		if(is_prepayment==1){
 		    if(!divide_percent){

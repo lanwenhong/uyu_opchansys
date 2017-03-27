@@ -9,7 +9,8 @@ $(document).ready(function(){
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
-        var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        // var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        var yuan = /^([0-9]{1,6})(.([0-9]{1,2})){0,1}$/;
         return this.optional(element) || (length && yuan.test(value));
     }, "请正确填写您的价格");
 
@@ -186,10 +187,12 @@ $(document).ready(function(){
                     required: true,
                     range:[0, 2]
                 },
+                /*
                 email: {
                     required: false,
                     email: true
                 },
+                */
                 divide_percent: {
                     required: true,
                     isLessOne: '#divide_percent',
@@ -225,11 +228,13 @@ $(document).ready(function(){
                     required: '请选择结算模式',
                     range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值")
                 },
+                /*
                 email: {
                     email: "请输入正确格式的电子邮件"
                 },
+                */
                 divide_percent: {
-                    required: '请正确填写比例',
+                    required: '请正确填写比例'
                 }
             }
         });
@@ -242,10 +247,6 @@ $(document).ready(function(){
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
 		var phone_num = $('#phone_num').val();
-		var email = $('#email').val();
-		var org_code = $('#org_code').val();
-		var license_id = $('#license_id').val();
-		var legal_person = $('#legal_person').val();
 		var account_name = $('#account_name').val();
 		var bank_name = $('#bank_name').val();
 		var bank_account = $('#bank_account').val();
@@ -257,15 +258,17 @@ $(document).ready(function(){
 		var training_amt_per= $('#training_amt_per').val() * 100;
         var is_prepayment= $('.is_prepayment').val();
 		var divide_percent= $('#divide_percent').val();
-		var business = $('#business').val();
-		var front_business = $('#front_business').val();
+
+        //var email = $('#email').val();
+        //var org_code = $('#org_code').val();
+        //var license_id = $('#license_id').val();
+        //var legal_person = $('#legal_person').val();
+        //var business = $('#business').val();
+        //var front_business = $('#front_business').val();
+
         post_data['se_userid'] = se_userid;
         post_data['login_name'] = phone_num;
 		post_data['phone_num'] = phone_num;
-		post_data['email'] = email;
-		post_data['org_code'] = org_code;
-		post_data['license_id'] = license_id;
-		post_data['legal_person'] = legal_person;
 		post_data['account_name'] = account_name;
 		post_data['bank_name'] = bank_name;
 		post_data['bank_account'] = bank_account;
@@ -276,8 +279,13 @@ $(document).ready(function(){
 		post_data['address'] = address;
 		post_data['training_amt_per'] = training_amt_per;
 		post_data['is_prepayment'] = is_prepayment;
-		post_data['business'] = business;
-		post_data['front_business'] = front_business;
+
+		//post_data['business'] = business;
+		//post_data['front_business'] = front_business;
+        //post_data['email'] = email;
+        //post_data['org_code'] = org_code;
+        //post_data['license_id'] = license_id;
+        //post_data['legal_person'] = legal_person;
 		if(is_prepayment != 0){
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
@@ -343,13 +351,13 @@ $(document).ready(function(){
                     $('#e_login_name').val(u_data.phone_num);
                     $('#e_phone_num').val(u_data.phone_num);
                     $('#e_channel_name').val(ch_data.channel_name);
-                    $('#e_create_time').val(ch_data.ctime);
-                    $('#e_legal_person').val(p_data.legal_person);
-                    $('#e_org_code').val(p_data.org_code);
-                    $('#e_license_id').val(p_data.license_id);
-                    $('#e_email').val(u_data.email);
-                    $('#e_business').val(p_data.business);
-                    $('#e_front_business').val(p_data.front_business);
+                    //$('#e_create_time').val(ch_data.ctime);
+                    //$('#e_legal_person').val(p_data.legal_person);
+                    //$('#e_org_code').val(p_data.org_code);
+                    //$('#e_license_id').val(p_data.license_id);
+                    //$('#e_email').val(u_data.email);
+                    //$('#e_business').val(p_data.business);
+                    //$('#e_front_business').val(p_data.front_business);
                     $('#e_account_name').val(p_data.account_name);
                     $('#e_bank_account').val(p_data.bank_account);
                     $('#e_bank_name').val(p_data.bank_name);
