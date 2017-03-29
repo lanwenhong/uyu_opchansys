@@ -8,11 +8,12 @@ from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR, T_FLOAT
 from zbase.base.dbpool import with_database
 from uyubase.base.uyu_user import UUser
+from uyubase.base.response import success, error, UAURET
 
 from runtime import g_rt
 from config import cookie_conf
 import logging, datetime, time
-
+import tools
 log = logging.getLogger()
 
 
@@ -48,6 +49,7 @@ class SettleInfoHandler(core.Handler):
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
+            return success(data)
         except Exception as e:
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
@@ -69,8 +71,12 @@ class SettleInfoHandler(core.Handler):
             store_ret = tools.store_id_to_name(item['store_id'])
             item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
             item['store_name'] = store_ret.get('store_name') if store_ret else ''
-            item['settle_cycle'] = item['settle_cycle'].strftime('%Y-%M-%d')
-            item['settle_time'] = item['settle_time'].strftime('%Y-%M-%d')
+            item['settle_cycle'] = item['settle_cycle'].strftime('%Y-%m-%d')
+            item['settle_time'] = item['settle_time'].strftime('%Y-%m-%d')
+            item['channel_divide_amt'] = '%0.2f' % (item['channel_divide_amt'] / 100.0)
+            item['store_divide_amt'] = '%0.2f' % (item['store_divide_amt'] / 100.0)
+            item['company_divide_amt'] = '%0.2f' % (item['company_divide_amt'] / 100.0)
+            item['settle_amt'] = '%0.2f' % (item['settle_amt'] / 100.0)
 
         return data
 

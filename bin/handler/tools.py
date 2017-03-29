@@ -61,6 +61,6 @@ def channel_id_to_name(channel_id):
 
 
 def store_id_to_name(store_id):
-    with get_connection_exception('uyu_core'):
+    with get_connection_exception('uyu_core') as conn:
         ret = conn.select_one(table='stores', fields='store_name', where={'id': store_id})
         return ret
