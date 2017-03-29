@@ -71,7 +71,7 @@ class SettleInfoHandler(core.Handler):
             store_ret = tools.store_id_to_name(item['store_id'])
             item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
             item['store_name'] = store_ret.get('store_name') if store_ret else ''
-            item['settle_cycle'] = item['settle_cycle'].strftime('%Y-%m-%d')
+            item['settle_cycle'] = item['settle_cycle'].strftime('%Y-%m')
             item['settle_time'] = item['settle_time'].strftime('%Y-%m-%d')
             item['channel_divide_amt'] = '%0.2f' % (item['channel_divide_amt'] / 100.0)
             item['store_divide_amt'] = '%0.2f' % (item['store_divide_amt'] / 100.0)
