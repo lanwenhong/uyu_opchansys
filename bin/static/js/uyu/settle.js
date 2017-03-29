@@ -32,6 +32,21 @@ $(document).ready(function(){
                 'maxnum': data.length
             };
 
+            var channel_name = $('#channel_name').val();
+            if(channel_name){
+                get_data.channel_name = channel_name;
+            }
+
+            var store_name = $('#store_name').val();
+            if(store_name){
+                get_data.store_name = store_name;
+            }
+
+            var start_time = $('#start_time').val();
+            if(start_time){
+                get_data.start_time = start_time;
+            }
+
             var se_userid = window.localStorage.getItem('myid');
             get_data.se_userid = se_userid;
 
@@ -93,6 +108,11 @@ $(document).ready(function(){
         }
 
     });
+
+    $("#settleSearch").click(function(){
+        $("#settleList").DataTable().draw();
+    });
+
 });
 
 
