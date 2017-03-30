@@ -65,6 +65,7 @@ class SettleInfoHandler(core.Handler):
     def _query_handler(self, channel_name=None, store_name=None, start_time=None):
         where = {}
         keep_fields = '*'
+        other = ' order by settle_cycle desc '
 
         if channel_name:
             channel_list = tools.channel_name_to_id(channel_name)
@@ -90,7 +91,7 @@ class SettleInfoHandler(core.Handler):
             etime = datetime.datetime(year=year, month=month, day=last_day)
             where.update({'settle_cycle': ('between', [stime, etime])})
 
-        ret = self.db.select(table='settlement_record', fields=keep_fields, where=where)
+        ret = self.db.select(table='settlement_record', fields=keep_fields, where=where, other=other)
         return ret
 
     @with_database('uyu_core')
