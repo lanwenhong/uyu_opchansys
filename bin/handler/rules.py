@@ -25,9 +25,8 @@ class RulesInfoHandler(core.Handler):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         try:
-            data = {}
             info_data = self._query_handler()
-            data['info'] = self._trans_record(info_data)
+            data = self._trans_record(info_data)
             return success(data)
         except Exception as e:
             log.warn(e)

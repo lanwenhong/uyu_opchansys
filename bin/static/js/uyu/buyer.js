@@ -217,6 +217,7 @@ $(document).ready(function(){
         }
         */
         channel_name_select();
+        rules_select();
         $("#trainBuyerCreateModal").modal();
     });
 
@@ -668,4 +669,48 @@ function do_first_select(channel_id, store_name_tag_id) {
             toastr.warning('请求异常');
         }
     });
+}
+
+
+function rules_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+
+    $.ajax({
+        url: '/channel_op/v1/api/rules_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                if(data.data.length==0){
+                    return false;
+                }  else {
+
+                    var c_rules = $("#c_rules");
+                    for(var i=0; i<data.data.length; i++){
+                        var rule_id = data.data[i].id;
+                        var rule_name = data.data[i].name;
+                        var rule_total_amt = data.data[i].total_amt;
+                        var rule_training_times = data.data[i].training_times;
+
+                        var option_str = $('<option value='+rule_id+' data-total_amt='+rule_total_amt+' data-training_times='+rule_training_times+'>'+rule_name+'</option>');
+                        option_str.prependTo(c_rules);
+                    }
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+
 }
