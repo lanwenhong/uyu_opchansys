@@ -477,6 +477,7 @@ $(document).ready(function(){
         });
     });
 
+    
     $(document).on('click', '.order-confirm', function(){
 
         var orderno = $(this).data('orderno');
@@ -533,6 +534,19 @@ $(document).ready(function(){
             }
         });
     });
+    
+    
+    $(".c_rules").change(function () {
+        var rule_id = $(".c_rules").val();
+        if(rule_id != 0){
+            var total_amt = $(this).data('total_amt');
+            var training_times = $(this).data('training_times');
+            $("#training_times").val(training_times);
+            $("#training_amt").val(total_amt).attr("readonly", "readonly");
+        } else {
+            $("#training_amt").removeAttr("readonly");
+        }
+    })
 
 });
 
