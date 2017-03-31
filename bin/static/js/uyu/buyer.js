@@ -376,8 +376,8 @@ $(document).ready(function(){
 
     $(".c_channel_name").change(function () {
         // var order_type = $("#c_busicd").val();
-        $('#training_times').val('');
-        $('#training_amt').val('');
+        //$('#training_times').val('');
+        //$('#training_amt').val('');
         $('#remark').val('');
         /*
         if(order_type == 'ORG_ALLOT_TO_CHAN'){
@@ -489,7 +489,7 @@ $(document).ready(function(){
         });
     });
 
-    
+
     $(document).on('click', '.order-confirm', function(){
 
         var orderno = $(this).data('orderno');
@@ -546,8 +546,8 @@ $(document).ready(function(){
             }
         });
     });
-    
-    
+
+
     $(".c_rules").change(function () {
         var rule_id = $(".c_rules").val();
         if(rule_id != 0){
