@@ -206,6 +206,7 @@ $(document).ready(function(){
     $("#trainBuyerCreate").click(function(){
         $("#trainBuyerCreateForm").resetForm();
         $('.c_channel_name').html('');
+        $('.c_rules').html('');
         // $('.c_store_name').html('');
         $("label.error").remove();
         var order_type = $("#c_busicd").val();
@@ -696,6 +697,8 @@ function rules_select() {
                 }  else {
 
                     var c_rules = $("#c_rules");
+                    var option_str = $('<option value="0">自定义</option>');
+                    option_str.prependTo(c_rules);
                     for(var i=0; i<data.data.length; i++){
                         var rule_id = data.data[i].id;
                         var rule_name = data.data[i].name;
@@ -705,6 +708,8 @@ function rules_select() {
                         var option_str = $('<option value='+rule_id+' data-total_amt='+rule_total_amt+' data-training_times='+rule_training_times+'>'+rule_name+'</option>');
                         option_str.prependTo(c_rules);
                     }
+                    $("#c_rules option:first").prop("selected", 'selected');
+
                 }
             }
         },

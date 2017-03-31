@@ -37,7 +37,8 @@ class RulesInfoHandler(core.Handler):
     def _query_handler(self):
         where = {'is_valid': UYU_RULES_STATUS_OPEN}
         keep_fields = ['*']
-        ret = self.db.select(table='rules', fields=keep_fields, where=where)
+        other = ' order by name desc'
+        ret = self.db.select(table='rules', fields=keep_fields, where=where, other=other)
         return ret
 
     @with_database('uyu_core')
