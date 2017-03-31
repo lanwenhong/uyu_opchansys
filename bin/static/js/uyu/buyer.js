@@ -544,7 +544,8 @@ $(document).ready(function(){
             $("#training_times").val(training_times);
             $("#training_amt").val(total_amt).attr("readonly", "readonly");
         } else {
-            $("#training_amt").removeAttr("readonly");
+            $("#training_times").val('');
+            $("#training_amt").val('').removeAttr("readonly");
         }
     })
 
@@ -723,7 +724,13 @@ function rules_select() {
                         option_str.prependTo(c_rules);
                     }
                     $("#c_rules option:first").prop("selected", 'selected');
-
+                    var rule_id = $(".c_rules option:selected").val();
+                    if(rule_id != 0){
+                        var total_amt = $(".c_rules option:selected").data('total_amt');
+                        var training_times = $(".c_rules option:selected").data('training_times');
+                        $("#training_times").val(training_times);
+                        $("#training_amt").val(total_amt).attr("readonly", "readonly");
+                    }
                 }
             }
         },
