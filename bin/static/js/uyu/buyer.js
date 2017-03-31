@@ -558,7 +558,7 @@ $(document).ready(function(){
             $("#training_amt").val(total_amt).attr("readonly", "readonly");
             $("#description").val(description).attr("readonly", "readonly");
         } else {
-            $("#training_times").val('');
+            $("#training_times").val('').removeAttr("readonly");
             $("#training_amt").val('').removeAttr("readonly");
             $("#description").val('').removeAttr("readonly");
         }
