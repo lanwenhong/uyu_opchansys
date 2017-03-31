@@ -31,8 +31,13 @@ $(document).ready(function(){
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
-        var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
-        return this.optional(element) || (length && yuan.test(value));
+        if(value <=0){
+            return false;
+        }
+        else {
+            var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+            return this.optional(element) || (length && yuan.test(value));
+        }
     }, "请正确填写您的价格");
 
     $('#trainBuyerList').DataTable({
@@ -250,6 +255,7 @@ $(document).ready(function(){
                 },
                 training_amt: {
                     required: true,
+                    number: true,
                     isYuan: '#training_amt'
                 }
             },
@@ -272,7 +278,8 @@ $(document).ready(function(){
                     digits: "只能输入整数"
                 },
                 training_amt: {
-                    required: "请输入训练金额"
+                    required: "请输入训练金额",
+                    number: "请输入合法的数字"
                 }
             }
         });
@@ -291,6 +298,7 @@ $(document).ready(function(){
         var training_times = $('#training_times').val();
         var training_amt = $('#training_amt').val() * 100;
         var remark = $("#remark").val();
+        var rule_id = $(".c_rules").val();
         post_data.channel_id = channel_id.split('|')[0];
         post_data.busicd = busicd;
         post_data.category = category;
@@ -299,6 +307,7 @@ $(document).ready(function(){
         post_data.training_amt = parseInt(training_amt.toFixed(2));
         post_data.ch_training_amt_per = channel_id.split('|')[1];
         post_data.remark = remark;
+        post_data.rule_id = rule_id;
 
 
         /*
