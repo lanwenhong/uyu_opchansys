@@ -290,6 +290,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
     _post_handler_fields = [
         Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
         Field('channel_id', T_INT, False),
+        Field('rule_id', T_INT, False),
         Field('training_times', T_INT, False),
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
@@ -299,18 +300,29 @@ class OrgAllotToChanOrderHandler(core.Handler):
     @with_database('uyu_core')
     def _check_permission(self, params):
         channel_id = params["channel_id"]
+        rule_id = params['rule_id']
         channel_reocord = self.db.select_one("channel", {"id": channel_id})
+        rule_record = self.db.select_one("rules", {"id": rule_id})
         training_amt = params["training_amt"]
         training_times = params["training_times"]
-        ch_training_amt_per = params["training_amt_per"]
+        ch_training_amt_per = params["ch_training_amt_per"]
 
         is_valid = channel_reocord["is_valid"]
 
         if is_valid == define.UYU_CHAN_STATUS_CLOSE:
             return UYU_OP_ERR
 
-        if ch_training_amt_per != channel_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
-            return UYU_OP_ERR
+        # if ch_training_amt_per != channel_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
+        #     return UYU_OP_ERR
+
+        if rule_id != 0 and rule_record:
+            if training_amt != rule_record['total_amt'] or training_times != rule_record['training_times']:
+                return UYU_OP_ERR
+
+        if rule_id == 0:
+            if training_amt < 0 or training_times < 0:
+                return UYU_OP_ERR
+
 
         return UYU_OP_OK
 
@@ -325,6 +337,9 @@ class OrgAllotToChanOrderHandler(core.Handler):
         if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
             log.warn('client busicd: %s real busicd: %s', params['busicd'], define.BUSICD_ORG_ALLOT_TO_CHAN)
             return error(UAURET.BUSICEERR)
+
+        if self._check_permission(params) == UYU_OP_ERR:
+            return error(UAURET.ORDERERR)
 
         self.user.load_user()
         top = TrainingOP(params, self.user.udata)
