@@ -553,7 +553,7 @@ $(document).ready(function(){
         if(rule_id != 0){
             var total_amt = $(".c_rules option:selected").data('total_amt');
             var training_times = $(".c_rules option:selected").data('training_times');
-            $("#training_times").val(training_times);
+            $("#training_times").val(training_times).attr("readonly", "readonly");
             $("#training_amt").val(total_amt).attr("readonly", "readonly");
         } else {
             $("#training_times").val('');
@@ -740,7 +740,7 @@ function rules_select() {
                     if(rule_id != 0){
                         var total_amt = $(".c_rules option:selected").data('total_amt');
                         var training_times = $(".c_rules option:selected").data('training_times');
-                        $("#training_times").val(training_times);
+                        $("#training_times").val(training_times).attr("readonly", "readonly");
                         $("#training_amt").val(total_amt).attr("readonly", "readonly");
                     }
                 }
