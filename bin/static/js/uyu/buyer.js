@@ -553,11 +553,14 @@ $(document).ready(function(){
         if(rule_id != 0){
             var total_amt = $(".c_rules option:selected").data('total_amt');
             var training_times = $(".c_rules option:selected").data('training_times');
+            var description = $(".c_rules option:selected").data('description');
             $("#training_times").val(training_times).attr("readonly", "readonly");
             $("#training_amt").val(total_amt).attr("readonly", "readonly");
+            $("#description").val(description).attr("readonly", "readonly");
         } else {
             $("#training_times").val('');
             $("#training_amt").val('').removeAttr("readonly");
+            $("#description").val('').removeAttr("readonly");
         }
     })
 
@@ -731,8 +734,9 @@ function rules_select() {
                         var rule_name = data.data[i].name;
                         var rule_total_amt = data.data[i].total_amt;
                         var rule_training_times = data.data[i].training_times;
+                        var rule_description = data.data[i].description;
 
-                        var option_str = $('<option value='+rule_id+' data-total_amt='+rule_total_amt+' data-training_times='+rule_training_times+'>'+rule_name+'</option>');
+                        var option_str = $('<option value='+rule_id+' data-total_amt='+rule_total_amt+' data-training_times='+rule_training_times+ ' data-description='+rule_description+'>'+rule_name+'</option>');
                         option_str.prependTo(c_rules);
                     }
                     $("#c_rules option:first").prop("selected", 'selected');
@@ -740,8 +744,10 @@ function rules_select() {
                     if(rule_id != 0){
                         var total_amt = $(".c_rules option:selected").data('total_amt');
                         var training_times = $(".c_rules option:selected").data('training_times');
+                        var description = $(".c_rules option:selected").data('description');
                         $("#training_times").val(training_times).attr("readonly", "readonly");
                         $("#training_amt").val(total_amt).attr("readonly", "readonly");
+                        $("#description").val(description).attr("readonly", "readonly");
                     }
                 }
             }
