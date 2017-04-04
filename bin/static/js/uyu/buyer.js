@@ -470,7 +470,11 @@ $(document).ready(function(){
                 }
                 else {
                     var chn_data = data.data.chn_data;
+                    var profile = data.data.profile;
+                    var u_data = data.data.u_data;
                     console.dir(chn_data);
+                    console.dir(profile);
+                    console.dir(u_data);
                 }
             },
             error: function(data) {
