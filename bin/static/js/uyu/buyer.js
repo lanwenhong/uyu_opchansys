@@ -155,6 +155,22 @@ $(document).ready(function(){
             },
             */
             {
+                targets: 0,
+                render: function(data, type, full){
+                    var tmp = '';
+                    var busicd = full.busicd;
+                    var buyer = full.buyer;
+                    var buyer_id = full.buyer_id;
+
+                    if(busicd === 'ORG_ALLOT_TO_CHAN' || busicd === 'CHAN_BUY') {
+                        tmp = '<span class="buyer-name" data-buyer_id='+buyer_id+'>'+buyer+'</span>';
+                    } else {
+                        tmp = '<span>'+buyer+'</span>';
+                    }
+                    return tmp;
+                }
+            },
+            {
                 targets: 12,
                 data: '操作',
                 render: function(data, type, full) {
@@ -431,6 +447,11 @@ $(document).ready(function(){
             }
         });
         */
+    });
+
+    $(document).on('click', '.buyer-name', function(){
+        var buyer_id = $(this).data('buyer_id');
+        console.log('buyer_id: '+ buyer_id);
     });
 
 

@@ -114,6 +114,7 @@ class TrainBuyInfoHandler(core.Handler):
             'training_times', 'training_amt', 'op_name',
             'status', 'create_time', 'busicd', 'orderno',
             'buyer', 'seller', 'remark', 'uptime_time',
+            'buyer_id',
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where, other=other)
 
