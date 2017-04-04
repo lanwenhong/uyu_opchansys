@@ -473,14 +473,14 @@ $(document).ready(function(){
                     var chn_data = data.data.chn_data;
                     var profile = data.data.profile;
                     var u_data = data.data.u_data;
-                    console.dir(chn_data);
-                    console.dir(profile);
-                    console.dir(u_data);
+                    // console.dir(chn_data);
+                    // console.dir(profile);
+                    // console.dir(u_data);
                     $("#channel_name").text(chn_data.channel_name);
                     $("#contact_name").text(profile.contact_name);
                     $("#contact_phone").text(profile.contact_phone);
                     $("#remain_times").text(chn_data.remain_times);
-                    $("#channelInfoModal").show();
+                    $("#channelInfoModal").modal();
                 }
             },
             error: function(data) {
