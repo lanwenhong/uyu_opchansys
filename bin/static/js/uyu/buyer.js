@@ -451,6 +451,32 @@ $(document).ready(function(){
 
     $(document).on('click', '.buyer-name', function(){
         var buyer_id = $(this).data('buyer_id');
+        var se_userid = window.localStorage.getItem('myid');
+        var get_data = {};
+        get_data.userid = buyer_id;
+        get_data.se_userid = se_userid;
+        $.ajax({
+            url: '/channel_op/v1/api/channel',
+            type: 'GET',
+            data: get_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    var chn_data = data.data.chn_data;
+                    console.dir(chn_data);
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
         console.log('buyer_id: '+ buyer_id);
     });
 
