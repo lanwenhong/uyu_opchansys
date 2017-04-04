@@ -450,6 +450,7 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.buyer-name', function(){
+        $("#channel_info").resetForm();
         var buyer_id = $(this).data('buyer_id');
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {};
@@ -475,6 +476,11 @@ $(document).ready(function(){
                     console.dir(chn_data);
                     console.dir(profile);
                     console.dir(u_data);
+                    $("#channel_name").text(chn_data.channel_name);
+                    $("#contact_name").text(profile.contact_name);
+                    $("#contact_phone").text(profile.contact_phone);
+                    $("#remain_times").text(chn_data.remain_times);
+                    $("#channelInfoModal").show();
                 }
             },
             error: function(data) {
