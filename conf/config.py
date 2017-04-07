@@ -6,8 +6,8 @@ rtenv = 'product'
 LOGFILE = {
     'root': {
         'filename': {
-            'DEBUG': os.path.join(HOME, '../log/channel_op_debug.log'),
-            'WARN': os.path.join(HOME, '../log/channel_op_warn.log'),
+            'DEBUG': os.path.join(HOME, '../log/channel_op.log'),
+            'WARN': os.path.join(HOME, '../log/channel_op.error.log'),
         }
     }
 }

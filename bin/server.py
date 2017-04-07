@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import urls
 import dbenc
 import logging
 HOME = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +18,7 @@ from zbase.web import template
 
 #loader.loadconf_argv(HOME)
 import config
+import urls
 
 if config.LOGFILE:
     log = logger.install(config.LOGFILE)
