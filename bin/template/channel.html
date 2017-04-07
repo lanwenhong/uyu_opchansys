@@ -131,6 +131,30 @@
 						</div>
 
 						<div class="form-group">
+							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="is_prepayment" class="col-sm-2 control-label">结算模式</label>
+							<div class="col-sm-10">
+								<select class="form-control is_prepayment" id="is_prepayment" name="is_prepayment">
+									<option value="1" selected>分成</option>
+									<option value="0">次卡</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group" id="create_divide_percent_div">
+							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="分成模式必填">
+							</div>
+						</div>
+
+						<div class="form-group">
 							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="">
@@ -151,29 +175,7 @@
 							</div>
 						</div>
 
-						<div class="form-group">
-							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="is_prepayment" class="col-sm-2 control-label">结算模式</label>
-							<div class="col-sm-10">
-								<select class="form-control is_prepayment" id="is_prepayment" name="is_prepayment">
-									<option value="1" selected>分成</option>
-									<option value="0">次卡</option>
-								</select>
-							</div>
-						</div> 
-
-						<div class="form-group" id="create_divide_percent_div">
-							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
-							<div class="col-sm-10">
-							    <input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="分成模式必填">
-							</div>
-						</div> 
+						<!--
 
 						<div class="form-group">
 							<label for="email" class="col-sm-2 control-label">邮箱</label>
@@ -215,7 +217,9 @@
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="front_business" name="front_business" placeholder="">
 							</div>
-						</div> 
+						</div>
+
+						-->
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -287,29 +291,6 @@
 							</div>
 						</div>
 
-
-						<div class="form-group">
-							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
-							</div>
-						</div>
-
-
 						<div class="form-group">
 							<label for="e_training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
 							<div class="col-sm-10">
@@ -334,16 +315,38 @@
 							</div>
 						</div>
 
+						<div class="form-group">
+							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
+							</div>
+						</div>
 
 						<div class="form-group">
-                            <label for="business" class="col-sm-2 control-label">经营范围</label>
+							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
+							</div>
+						</div>
+
+						<!--
+
+						<div class="form-group">
+                            <label for="e_business" class="col-sm-2 control-label">经营范围</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_business" name="business">
                             </div>
 						</div>
 
                         <div class="form-group">
-                            <label for="front_business" class="col-sm-2 control-label">前置经营范围</label>
+                            <label for="e_front_business" class="col-sm-2 control-label">前置经营范围</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_front_business" name="front_business">
                             </div>
@@ -357,32 +360,33 @@
                         </div>                        
 
                         <div class="form-group">
-                            <label for="legal_person" class="col-sm-2 control-label">法人姓名</label>
+                            <label for="e_legal_person" class="col-sm-2 control-label">法人姓名</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_legal_person" name="legal_person" placeholder="">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="org_code" class="col-sm-2 control-label">组织机构代码</label>
+                            <label for="e_org_code" class="col-sm-2 control-label">组织机构代码</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_org_code" name="org_code" placeholder="">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="license_id" class="col-sm-2 control-label">工商注册号</label>
+                            <label for="e_license_id" class="col-sm-2 control-label">工商注册号</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_license_id" name="license_id" placeholder="">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <label for="e_email" class="col-sm-2 control-label">邮箱</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_email" name="email" placeholder="">
                             </div>
                         </div>
+						-->
 
                     </form>
                 </div>

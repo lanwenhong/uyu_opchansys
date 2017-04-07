@@ -40,6 +40,7 @@ class TrainBuyInfoHandler(core.Handler):
         Field('consumer_id', T_INT, True),
         Field('start_time', T_STR, True),
         Field('end_time', T_STR, True),
+        Field('status', T_INT, True, match=r'^([0-2]){1}$'),
     ]
 
 
@@ -62,9 +63,10 @@ class TrainBuyInfoHandler(core.Handler):
             consumer_id = params.get('consumer_id', None)
             start_time = params.get('start_time', None)
             end_time = params.get('end_time', None)
+            status = params.get('status', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time)
+            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time, status)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -76,7 +78,7 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None):
+    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None, status=None):
         where = {}
 
         if channel_name:
@@ -101,6 +103,8 @@ class TrainBuyInfoHandler(core.Handler):
             end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
             where.update({'create_time': ('between', [start_time, end_time])})
 
+        if status in define.UYU_ORDER_STATUS_MAP.keys():
+            where.update({'status': status})
 
         other = ' order by create_time desc'
 
@@ -110,6 +114,7 @@ class TrainBuyInfoHandler(core.Handler):
             'training_times', 'training_amt', 'op_name',
             'status', 'create_time', 'busicd', 'orderno',
             'buyer', 'seller', 'remark', 'uptime_time',
+            'buyer_id',
         ]
         ret = self.db.select(table='training_operator_record', fields=keep_fields, where=where, other=other)
 
@@ -286,6 +291,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
     _post_handler_fields = [
         Field("busicd", T_STR, False, match=r'^([0-9]{6})$'),
         Field('channel_id', T_INT, False),
+        Field('rule_id', T_INT, False),
         Field('training_times', T_INT, False),
         Field('training_amt', T_INT, False),
         Field('ch_training_amt_per', T_INT, False),
@@ -295,18 +301,29 @@ class OrgAllotToChanOrderHandler(core.Handler):
     @with_database('uyu_core')
     def _check_permission(self, params):
         channel_id = params["channel_id"]
+        rule_id = params['rule_id']
         channel_reocord = self.db.select_one("channel", {"id": channel_id})
+        rule_record = self.db.select_one("rules", {"id": rule_id})
         training_amt = params["training_amt"]
         training_times = params["training_times"]
-        ch_training_amt_per = params["training_amt_per"]
+        ch_training_amt_per = params["ch_training_amt_per"]
 
         is_valid = channel_reocord["is_valid"]
 
         if is_valid == define.UYU_CHAN_STATUS_CLOSE:
             return UYU_OP_ERR
 
-        if ch_training_amt_per != channel_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
-            return UYU_OP_ERR
+        # if ch_training_amt_per != channel_reocord["training_amt_per"] or training_amt != training_times * ch_training_amt_per:
+        #     return UYU_OP_ERR
+
+        if rule_id != 0 and rule_record:
+            if training_amt != rule_record['total_amt'] or training_times != rule_record['training_times']:
+                return UYU_OP_ERR
+
+        if rule_id == 0:
+            if training_amt < 0 or training_times < 0:
+                return UYU_OP_ERR
+
 
         return UYU_OP_OK
 
@@ -321,6 +338,9 @@ class OrgAllotToChanOrderHandler(core.Handler):
         if params["busicd"] != define.BUSICD_ORG_ALLOT_TO_CHAN:
             log.warn('client busicd: %s real busicd: %s', params['busicd'], define.BUSICD_ORG_ALLOT_TO_CHAN)
             return error(UAURET.BUSICEERR)
+
+        if self._check_permission(params) == UYU_OP_ERR:
+            return error(UAURET.ORDERERR)
 
         self.user.load_user()
         top = TrainingOP(params, self.user.udata)

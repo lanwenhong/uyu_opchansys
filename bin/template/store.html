@@ -100,7 +100,6 @@
 							</div>
 						</div>
 
-
 						<div class="form-group">
 							<label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
 							<div class="col-sm-10">
@@ -119,6 +118,38 @@
 							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="contact_email" name="contact_email" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
+							</div>
+						</div>
+
+						<div class="form-group" id="create_store_divide_percent">
+							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="必填">
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label for="store_name" class="col-sm-2 control-label">门店名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="c_store_name" name="store_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="store_type" class="col-sm-2 control-label">门店类型</label>
+							<div class="col-sm-10">
+								<select class="form-control store_type" id="store_type" name="store_type">
+									<option value="0">门店</option>
+									<option value="1">医院</option>
+								</select>
 							</div>
 						</div>
 
@@ -143,26 +174,8 @@
 							</div>
 						</div>
 
-						<div class="form-group">
-							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
-							</div>
-						</div>
 
-						<div class="form-group" id="create_store_divide_percent">
-							<label for="divide_percent" class="col-sm-2 control-label">分成比例</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="divide_percent" name="divide_percent" placeholder="必填">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="store_name" class="col-sm-2 control-label">门店名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="c_store_name" name="store_name" placeholder="">
-							</div>
-						</div>
+						<!--
 
 						<div class="form-group">
 							<label for="store_contacter" class="col-sm-2 control-label">门店联系人</label>
@@ -182,16 +195,6 @@
 							<label for="store_addr" class="col-sm-2 control-label">门店地址</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="store_addr" name="store_addr" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="store_type" class="col-sm-2 control-label">门店类型</label>
-							<div class="col-sm-10">
-								<select class="form-control store_type" id="store_type" name="store_type">
-									<option value="0">门店</option>
-									<option value="1">医院</option>
-								</select>
 							</div>
 						</div>
 
@@ -236,6 +239,8 @@
                                 <input type="text" class="form-control" id="front_business" name="front_business">
                             </div>
 						</div>
+
+						-->
 
 					</form>
 				</div>
@@ -303,7 +308,6 @@
 							</div>
 						</div>
 
-
 						<div class="form-group">
 							<label for="contact_name" class="col-sm-2 control-label">联系人名称</label>
 							<div class="col-sm-10">
@@ -322,28 +326,6 @@
 							<label for="contact_email" class="col-sm-2 control-label">联系人邮箱</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_contact_email" name="contact_email" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-
-							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
 							</div>
 						</div>
 
@@ -369,6 +351,38 @@
 						</div>
 
 						<div class="form-group">
+							<label for="e_store_type" class="col-sm-2 control-label">门店类型</label>
+							<div class="col-sm-10">
+								<select class="form-control store_type" id="e_store_type" name="store_type">
+									<option value="0">门店</option>
+									<option value="1">医院</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_name" name="bank_name" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="bank_account" class="col-sm-2 control-label">开户银行账号</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_bank_account" name="bank_account" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="account_name" class="col-sm-2 control-label">企业开户名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_account_name" name="account_name" placeholder="">
+							</div>
+						</div>
+
+						<!--
+						<div class="form-group">
 							<label for="e_store_contacter" class="col-sm-2 control-label">门店联系人</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_store_contacter" name="store_contacter" placeholder="必填">
@@ -391,57 +405,48 @@
 						</div>
 
 						<div class="form-group">
-							<label for="e_store_type" class="col-sm-2 control-label">门店类型</label>
-							<div class="col-sm-10">
-								<select class="form-control store_type" id="e_store_type" name="store_type">
-									<option value="0">门店</option>
-									<option value="1">医院</option>
-								</select>
-
-							</div>
-						</div> 
-
-						<div class="form-group">
-							<label for="email" class="col-sm-2 control-label">邮箱</label>
+							<label for="e_email" class="col-sm-2 control-label">邮箱</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_email" name="email" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="org_code" class="col-sm-2 control-label">组织机构代码</label>
+							<label for="e_org_code" class="col-sm-2 control-label">组织机构代码</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_org_code" name="org_code" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="license_id" class="col-sm-2 control-label">工商注册号</label>
+							<label for="e_license_id" class="col-sm-2 control-label">工商注册号</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_license_id" name="license_id" placeholder="">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label for="legal_person" class="col-sm-2 control-label">法人姓名</label>
+							<label for="e_legal_person" class="col-sm-2 control-label">法人姓名</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_legal_person" name="legal_person" placeholder="">
 							</div>
 						</div>
 
                         <div class="form-group">
-                            <label for="business" class="col-sm-2 control-label">经营范围</label>
+                            <label for="e_business" class="col-sm-2 control-label">经营范围</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_business" name="business">
                             </div>
 						</div>
 
                         <div class="form-group">
-                            <label for="front_business" class="col-sm-2 control-label">前置经营范围</label>
+                            <label for="e_front_business" class="col-sm-2 control-label">前置经营范围</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="e_front_business" name="front_business">
                             </div>
 						</div>
+
+						-->
 					</form>
 				</div>
 				<div class="modal-footer">

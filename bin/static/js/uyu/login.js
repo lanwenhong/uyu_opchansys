@@ -5,7 +5,7 @@ $(document).ready(function(){
         if(mobile&&password){
 		    var post_data = {
 				'mobile': mobile,
-				'password': password,
+				'password': md5(password),
 			}
             $.ajax({
 	            url: '/channel_op/v1/api/login',
@@ -88,7 +88,7 @@ $(document).ready(function(){
         var post_data = {
             'mobile': mobile,
             'vcode': code,
-            'password': password
+            'password': md5(password)
         }
         $.ajax({
 	        url: '/channel_op/v1/api/passwd_change',

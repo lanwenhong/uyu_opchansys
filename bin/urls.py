@@ -9,6 +9,7 @@ from handler import device
 from handler import train
 from handler import settle
 from handler import eyesight
+from handler import rules
 urls = (
     ('/ping', ping.Ping),
     #页面
@@ -61,4 +62,10 @@ urls = (
     #设备
     ('^/channel_op/v1/api/create_device$', device.DeviceCreateHandler),
     ('^/channel_op/v1/api/allocate_device$', device.DeviceAllocateHandler),
+
+    #结算
+    ('^/channel_op/v1/api/settle_list$', settle.SettleInfoHandler),
+
+    #套餐规则
+    ('^/channel_op/v1/api/rules_list$', rules.RulesInfoHandler),
 )

@@ -7,11 +7,11 @@ LOGFILE = {
     'root': {
         'filename': {
             'DEBUG': os.path.join(HOME, '../log/channel_op.log'),
-            'WARN': os.path.join(HOME, '../log/channel_op.error.log'),
+            'ERROR': os.path.join(HOME, '../log/channel_op.error.log'),
         }
     }
 }
-LOGFILE = None
+# LOGFILE = None
 
 # 数据库配置
 database = {
@@ -51,7 +51,7 @@ template = os.path.join(HOME, 'template')
 # 服务地址
 HOST = '0.0.0.0'
 # 服务端口
-PORT = 8083
+PORT = 8084
 #redis
 redis_url = 'redis://127.0.0.1:4600/0'
 #cookie 配置
