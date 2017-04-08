@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import urls
 import dbenc
 import logging
 HOME = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +18,7 @@ from zbase.web import template
 
 #loader.loadconf_argv(HOME)
 import config
+import urls
 
 if config.LOGFILE:
     log = logger.install(config.LOGFILE)
@@ -46,9 +46,9 @@ def _trans_token_db_conf(db_settings):
 
 
 def install_db():
-    databases = _trans_token_db_conf(config.database)
-    log.info(databases)
-    dbpool.install(databases)
+    #databases = _trans_token_db_conf(config.database)
+    #log.info(databases)
+    dbpool.install(config.database)
 
 install_db()
 app = core.WebApplication(config)
