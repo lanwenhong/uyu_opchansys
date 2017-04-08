@@ -46,9 +46,9 @@ def _trans_token_db_conf(db_settings):
 
 
 def install_db():
-    databases = _trans_token_db_conf(config.database)
-    log.info(databases)
-    dbpool.install(databases)
+    #databases = _trans_token_db_conf(config.database)
+    #log.info(databases)
+    dbpool.install(config.database)
 
 install_db()
 app = core.WebApplication(config)
