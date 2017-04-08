@@ -300,9 +300,9 @@ $(document).ready(function(){
 		var divide_percent= $('#divide_percent').val();
 		//var business = $('#business').val();
 		//var front_business = $('#front_business').val();
-		//var channel_val = $('.c_channel_name').val();
+		var channel_val = $('.c_channel_name').val();
 
-		//channel_id = channel_val.split('|')[0];
+		channel_id = channel_val.split('|')[0];
 		//var is_prepayment = channel_val.split('|')[1];
         var is_prepayment = $("#is_prepayment").val();
 
@@ -323,7 +323,7 @@ $(document).ready(function(){
 		post_data['store_name'] = store_name;
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
-		//post_data['store_addr'] = store_addr;
+		post_data['store_addr'] = address;
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 		//post_data['business'] = business;
@@ -697,7 +697,7 @@ $(document).ready(function(){
 		post_data['store_name'] = store_name;
 		post_data['store_contacter'] = store_contacter;
 		post_data['store_mobile'] = store_mobile;
-		//post_data['store_addr'] = store_addr;
+		post_data['store_addr'] = address;
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 		post_data['is_prepayment'] = is_prepayment;
