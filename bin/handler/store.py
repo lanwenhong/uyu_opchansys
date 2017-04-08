@@ -161,7 +161,7 @@ class StoreHandler(core.Handler):
         #门店信息
         Field('training_amt_per', T_INT, False),
         Field('divide_percent', T_FLOAT, True),
-        # Field('is_prepayment', T_INT, False),
+        Field('is_prepayment', T_INT, False, match=r'^([0-1]{1})$'),
         # Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
         Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),

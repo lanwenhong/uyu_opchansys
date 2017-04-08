@@ -300,10 +300,11 @@ $(document).ready(function(){
 		var divide_percent= $('#divide_percent').val();
 		//var business = $('#business').val();
 		//var front_business = $('#front_business').val();
-		var channel_val = $('.c_channel_name').val();
+		//var channel_val = $('.c_channel_name').val();
 
-		channel_id = channel_val.split('|')[0];
-		is_prepayment = channel_val.split('|')[1];
+		//channel_id = channel_val.split('|')[0];
+		//var is_prepayment = channel_val.split('|')[1];
+        var is_prepayment = $("#is_prepayment").val();
 
         post_data['se_userid'] = se_userid;
 		post_data['login_name'] = login_name;
@@ -328,6 +329,7 @@ $(document).ready(function(){
 		//post_data['business'] = business;
 		//post_data['front_business'] = front_business;
 		post_data['channel_id'] = channel_id;
+		post_data['is_prepayment'] = is_prepayment;
 
         if(is_prepayment == 1){
             if(!divide_percent){
@@ -404,8 +406,8 @@ $(document).ready(function(){
     $(document).on('click', '.viewStore', function(){
         $("label.error").remove();
         var uid = $(this).data('uid');
-        var is_prepayment = $(this).data('is_prepayment');
-        $('#prepayment').text(is_prepayment);
+        //var is_prepayment = $(this).data('is_prepayment');
+        //$('#prepayment').text(is_prepayment);
         var se_userid = window.localStorage.getItem('myid');
         var get_data = {
             'userid': uid,
@@ -445,7 +447,8 @@ $(document).ready(function(){
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100.0);
-                    $('#e_is_prepayment').val(ch_data.is_prepayment);
+                    var is_prepayment = ch_data.is_prepayment;
+                    $('#e_is_prepayment').val(is_prepayment);
                     if(is_prepayment == 0){
                         $('#edit_store_divide_percent').hide();
                     } else {
@@ -648,7 +651,8 @@ $(document).ready(function(){
 
         var post_data = {};
         var uid = $('#uid').text();
-        var is_prepayment = $('#prepayment').text();
+        //var is_prepayment = $('#prepayment').text();
+        var is_prepayment = $('#e_is_prepayment').val();
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
         post_data['userid'] = uid;
@@ -696,6 +700,7 @@ $(document).ready(function(){
 		//post_data['store_addr'] = store_addr;
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
+		post_data['is_prepayment'] = is_prepayment;
 
 		//post_data['business'] = business;
 		//post_data['front_business'] = front_business;
@@ -870,6 +875,7 @@ $(document).ready(function(){
         });
     });
 
+    /*
     $('.c_channel_name').change(function () {
         $("label.error").remove();
         var channel_val = $('.c_channel_name').val();
@@ -879,6 +885,28 @@ $(document).ready(function(){
             $('#create_store_divide_percent').hide();
         } else {
             $('#create_store_divide_percent').show();
+        }
+    });
+    */
+
+    $('.is_prepayment').change(function(){
+        var is_prepayment = $('.is_prepayment').val();
+        if(is_prepayment==0){
+            $('#divide_percent').next('label').remove();
+            $('#create_store_divide_percent').hide();
+        }else{
+            $('#create_store_divide_percent').show();
+        }
+    });
+
+
+    $('#e_is_prepayment').change(function(){
+        var is_prepayment= $('#e_is_prepayment').val();
+        if(is_prepayment==0){
+            $('#e_divide_percent').next('label').remove();
+            $('#edit_store_divide_percent').hide();
+        }else{
+            $('#edit_store_divide_percent').show();
         }
     });
 
@@ -963,6 +991,7 @@ function channel_name_select() {
                     channel_id = channel_id + '|' + is_prepayment;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                    /*
                     if(i==0){
                         if(is_prepayment == 0){
                             $('#create_store_divide_percent').hide();
@@ -970,6 +999,7 @@ function channel_name_select() {
                             $('#create_store_divide_percent').show();
                         }
                     }
+                    */
                 }
             }
         },
