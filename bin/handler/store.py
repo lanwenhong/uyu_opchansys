@@ -97,7 +97,7 @@ class StoreInfoHandler(core.Handler):
 
         keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
                        'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',
-                       'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name', 'channel.is_prepayment', 'channel.channel_name']
+                       'stores.remain_times', 'stores.is_valid', 'stores.ctime', 'stores.store_name', 'stores.is_prepayment', 'channel.channel_name']
 
         ret = self.db.select_join(table1='stores', table2='channel', on={'channel.id': 'stores.channel_id'}, fields=keep_fields, where=where, other=other)
 
