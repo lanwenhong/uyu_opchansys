@@ -340,7 +340,7 @@ class CreateStoreHandler(core.Handler):
 
         sdata = {}
         for key in uop.skey:
-            if params.get(key, None):
+            if params.get(key, None) != None:
                 sdata[key] = params[key]
 
         log.debug("udata: %s pdata: %s sdata: %s", udata, pdata, sdata)
