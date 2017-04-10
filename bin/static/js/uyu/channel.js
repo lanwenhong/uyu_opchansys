@@ -2,10 +2,10 @@ $(document).ready(function(){
     search_source();
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        // var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
         //var mobile = /^(1\d{10})$/;
-        var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
-        return this.optional(element) || (length == 11 && mobile.test(value));
+        //var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
+        var mobile = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
+        return this.optional(element) || (length >= 9 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
     $.validator.addMethod("isYuan", function(value, element) {

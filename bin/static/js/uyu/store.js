@@ -4,8 +4,9 @@ $(document).ready(function(){
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
         //var mobile = /^(1\d{10})$/;
-        var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
-        return this.optional(element) || (length == 11 && mobile.test(value));
+        // var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
+        var mobile = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
+        return this.optional(element) || (length >= 9 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
     $.validator.addMethod("isYuan", function(value, element) {
@@ -415,6 +416,7 @@ $(document).ready(function(){
     $(document).on('click', '.viewStore', function(){
         $("label.error").remove();
         var uid = $(this).data('uid');
+        $('#e_channel_name').html('');
         store_edit_channel_name_select();
         //var is_prepayment = $(this).data('is_prepayment');
         //$('#prepayment').text(is_prepayment);
