@@ -130,7 +130,7 @@ class ChanHandler(core.Handler):
 
         chndata = {}
         for key in uop.chan_key:
-            if params.get(key, None):
+            if params.get(key, None) not in [None, '']:
                 chndata[key] = params[key]
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         uop = UUser()
