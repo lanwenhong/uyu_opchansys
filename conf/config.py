@@ -22,8 +22,8 @@ LOGFILE = {
 #    },
 #}
 
-database = {'uyu_core':
-    {
+database = {
+    'uyu_core':{
         'engine': 'pymysql',
         'passwd': '123456',
         'charset': 'utf8',
@@ -32,7 +32,8 @@ database = {'uyu_core':
         'host': '127.0.0.1',
         'user': 'yyy',
         'port': 3306,
-        'conn': 5}
+        'conn': 5
+    }
 }
 
 # web config
