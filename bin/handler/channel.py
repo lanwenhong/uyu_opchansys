@@ -200,7 +200,7 @@ class ChannelInfoHandler(core.Handler):
             where.update({'auth_user.phone_num': phone_num})
 
         if is_prepayment in (0, 1):
-            where.update({'channel.is_prepayment': is_prepayment}) 
+            where.update({'channel.is_prepayment': is_prepayment})
 
         if is_valid in (0, 1):
             where.update({'channel.is_valid': is_valid})
@@ -289,7 +289,7 @@ class CreateChanHandler(core.Handler):
 
         chndata = {}
         for key in uop.chan_key:
-            if params.get(key, None):
+            if params.get(key, None) not in [None, '']:
                 chndata[key] = params[key]
 
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
