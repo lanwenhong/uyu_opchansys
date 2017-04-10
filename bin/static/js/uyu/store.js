@@ -3,7 +3,8 @@ $(document).ready(function(){
 
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        var mobile = /^(1\d{10})$/;
+        //var mobile = /^(1\d{10})$/;
+        var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
@@ -54,12 +55,20 @@ $(document).ready(function(){
 
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
+            var is_valid = $("#s_is_valid").val();
+
             if(channel_name!=''&&channel_name!=undefined){
                 get_data.channel_name = channel_name;
             }
+
             if(store_name!=''&&store_name!=undefined){
                 get_data.store_name = store_name;
             }
+
+            if(is_valid!=-1){
+                get_data.is_valid = is_valid;
+            }
+
             $.ajax({
 	            url: '/channel_op/v1/api/storeinfo_pagelist',
 	            type: 'GET',
@@ -406,6 +415,7 @@ $(document).ready(function(){
     $(document).on('click', '.viewStore', function(){
         $("label.error").remove();
         var uid = $(this).data('uid');
+        store_edit_channel_name_select();
         //var is_prepayment = $(this).data('is_prepayment');
         //$('#prepayment').text(is_prepayment);
         var se_userid = window.localStorage.getItem('myid');
@@ -460,6 +470,7 @@ $(document).ready(function(){
                     //$('#e_store_mobile').val(ch_data.store_mobile);
                     //$('#e_store_addr').val(ch_data.store_addr);
 					$('#e_store_type').val(ch_data.store_type);
+                    $('.e_channel_name').val(ch_data.channel_id);
                     $('#storeEditModal').modal();
                 }
 	        },
@@ -677,6 +688,7 @@ $(document).ready(function(){
         var store_type = $('#e_store_type').val();
 		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
+		var channel_id = $('.e_channel_name').val();
 		//var business = $('#e_business').val();
 		//var front_business = $('#e_front_business').val();
 
@@ -701,6 +713,7 @@ $(document).ready(function(){
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 		post_data['is_prepayment'] = is_prepayment;
+		post_data['channel_id'] = channel_id;
 
 		//post_data['business'] = business;
 		//post_data['front_business'] = front_business;
@@ -1008,3 +1021,39 @@ function channel_name_select() {
         }
     });
 }
+
+
+
+function store_edit_channel_name_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                var e_channel_name = $('.e_channel_name');
+                for(var i=0; i<data.data.length; i++){
+                    var channel_id = data.data[i].channel_id;
+                    var channel_name = data.data[i].channel_name;
+                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    option_str.appendTo(e_channel_name);
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+

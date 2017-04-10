@@ -49,6 +49,11 @@ $(document).ready(function(){
                 get_data.store_name = store_name;
             }
 
+            var status = $('#s_status').val();
+            if(status!=-1){
+                get_data.status = status;
+            }
+
             $.ajax({
 	            url: '/channel_op/v1/api/devinfo_pagelist',
 	            type: 'GET',
