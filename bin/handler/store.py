@@ -56,6 +56,7 @@ class StoreInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
+        Field('is_valid', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -73,9 +74,10 @@ class StoreInfoHandler(core.Handler):
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
+            is_valid = params.get('is_valid', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name)
+            info_data = self._query_handler(channel_name, store_name, is_valid)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -86,12 +88,17 @@ class StoreInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None):
+    def _query_handler(self, channel_name=None, store_name=None, is_valid=None):
         where = {}
+
         if channel_name:
             where.update({'channel_name': channel_name})
+
         if store_name:
             where.update({'store_name': store_name})
+
+        if is_valid in (0, 1):
+            where.update({'stores.is_valid': is_valid})
 
         other = ' order by ctime desc'
 

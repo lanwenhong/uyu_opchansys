@@ -152,6 +152,7 @@ class ChannelInfoHandler(core.Handler):
         Field('channel_name', T_STR, True),
         Field('phone_num', T_STR, True),
         Field('is_prepayment', T_INT, True),
+        Field('is_valid', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -170,10 +171,11 @@ class ChannelInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             phone_num = params.get('phone_num', None)
             is_prepayment = params.get('is_prepayment', None)
-            log.debug('is_prepayment: %s', is_prepayment)
+            is_valid = params.get('is_valid', None)
+            log.debug('is_prepayment: %s, is_valid:%s', is_prepayment, is_valid)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, phone_num, is_prepayment)
+            info_data = self._query_handler(channel_name, phone_num, is_prepayment, is_valid)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -184,7 +186,7 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None):
+    def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None, is_valid=None):
         keep_fields = [
             'channel.id', 'channel.remain_times', 'channel.training_amt_per',
             'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
@@ -198,7 +200,10 @@ class ChannelInfoHandler(core.Handler):
             where.update({'auth_user.phone_num': phone_num})
 
         if is_prepayment in (0, 1):
-            where.update({'channel.is_prepayment': is_prepayment})
+            where.update({'channel.is_prepayment': is_prepayment}) 
+
+        if is_valid in (0, 1):
+            where.update({'channel.is_valid': is_valid})
 
         other = ' order by ctime desc'
         log.debug('where: %s', where)

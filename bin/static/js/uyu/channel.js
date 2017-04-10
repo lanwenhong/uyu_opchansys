@@ -3,7 +3,8 @@ $(document).ready(function(){
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
         // var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
-        var mobile = /^(1\d{10})$/;
+        //var mobile = /^(1\d{10})$/;
+        var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
@@ -56,16 +57,23 @@ $(document).ready(function(){
             var channel_name = $("#channelName").val();
             var phone_num = $("#s_phone_num").val();
             var is_prepayment = $("#s_is_prepayment").val();
+            var is_valid = $("#s_is_valid").val();
+
             if(channel_name){
                 get_data.channel_name = channel_name;
             }
+
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
+
             if(is_prepayment!=-1){
                 get_data.is_prepayment = is_prepayment;
             }
 
+            if(is_valid!=-1){
+                get_data.is_valid = is_valid;
+            }
 
             $.ajax({
 	            url: '/channel_op/v1/api/chninfo_pagelist',
