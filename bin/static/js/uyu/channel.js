@@ -2,11 +2,15 @@ $(document).ready(function(){
     search_source();
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        //var mobile = /^(1\d{10})$/;
-        //var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
-        var mobile = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
-        return this.optional(element) || (length >= 9 && mobile.test(value));
+        var mobile = /^(1\d{10})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
+
+    $.validator.addMethod("isPhone", function(value, element) {
+        var length = value.length;
+        var phone_num = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
+        return this.optional(element) || (length >= 9 && phone_num.test(value));
+    }, "请正确填写您的电话号码");
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -181,7 +185,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#contact_phone'
+                    isPhone: '#contact_phone'
                 },
                 contact_email: {
                     required: false,
@@ -450,7 +454,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#e_contact_phone'
+                    isPhone: '#e_contact_phone'
                 },
                 contact_email: {
                     required: false,

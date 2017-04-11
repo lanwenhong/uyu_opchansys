@@ -3,11 +3,16 @@ $(document).ready(function(){
 
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        //var mobile = /^(1\d{10})$/;
-        // var mobile = /^(0\\d{2,3}-\\d{7,8}(-\\d{3,5}){0,1})|(1\d{10})$/;
-        var mobile = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
-        return this.optional(element) || (length >= 9 && mobile.test(value));
+        var mobile = /^(1\d{10})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
+
+    $.validator.addMethod("isPhone", function(value, element) {
+        var length = value.length;
+        var phone_num = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
+        return this.optional(element) || (length >= 9 && phone_num.test(value));
+    }, "请正确填写您的电话号码");
+
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -190,7 +195,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#contact_phone'
+                    isPhone: '#contact_phone'
                 },
                 contact_email: {
 				    required: false,
@@ -573,7 +578,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#e_contact_phone'
+                    isPhone: '#e_contact_phone'
                 },
                 contact_email: {
                     required: false,
@@ -927,8 +932,86 @@ $(document).ready(function(){
     
     
     $('#eyesight_register').click(function () {
+        $("label.error").remove();
         $("#eyesightCreateForm").resetForm();
         $("#registerEyesight").modal();
+    });
+    
+    
+    $('#eyesightCreateSubmit').click(function () {
+        var eyesight_register_vt = $('#eyesightCreateForm').validate({
+            rules: {
+                eyesight_phone_num: {
+                    required: true,
+                    isMobile: '#eyesight_phone_num'
+                },
+                eyesight_email: {
+                    required: false,
+                    email: true
+                }
+            },
+            messages: {
+                eyesight_phone_num: {
+                    required: '请输入手机号'
+                },
+                eyesight_email: {
+                    email: "请输入正确格式的电子邮件"
+                }
+            }
+        });
+
+        var ok = eyesight_register_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var eyesight_phone_num = $('#eyesight_phone_num').val();
+        var eyesight_nick_name = $('#eyesight_nick_name').val();
+        var eyesight_username = $('#eyesight_username').val();
+        var eyesight_email = $('#eyesight_email').val();
+
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data['se_userid'] = se_userid;
+
+        post_data['phone_num'] = eyesight_phone_num;
+
+        if(eyesight_nick_name){
+            post_data['nick_name'] = eyesight_nick_name;
+        }
+
+        if(eyesight_username){
+            post_data['username'] = eyesight_username;
+        }
+
+        if(eyesight_email){
+            post_data['email'] = eyesight_email;
+        }
+
+
+        $.ajax({
+            url: '/channel_op/v1/api/register_eye',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    $("#registerEyesight").modal('hide');
+                    toastr.success('注册成功');
+                }
+            },
+            error: function(data) {
+                toastr.success('请求异常');
+            }
+        });
+
     })
 
 
