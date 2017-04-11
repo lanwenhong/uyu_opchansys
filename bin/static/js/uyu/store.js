@@ -956,8 +956,7 @@ $(document).ready(function(){
                 eyesight_username: {
                     required: true,
                     maxlength: 128
-                },
-
+                }
             },
             messages: {
                 eyesight_phone_num: {
@@ -973,7 +972,7 @@ $(document).ready(function(){
                 eyesight_username: {
                     required: '请输入用户名',
                     maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
-                },
+                }
             }
         });
 

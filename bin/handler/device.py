@@ -197,3 +197,47 @@ class DeviceAllocateHandler(core.Handler):
     def POST(self, *args):
         ret = self._post_handler()
         self.write(ret)
+
+
+class DeviceEditHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field("se_userid", T_INT, False),
+        Field('device_name',  T_STR, False),
+        Field('hd_version',  T_STR, False),
+        Field('blooth_tag',  T_STR, False),
+        Field('scm_tag',  T_STR, True),
+        Field('status',  T_INT, False, match=r'^([0-1]{1})$'),
+        Field('serial_number', T_INT, False),
+    ]
+
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            serial_number = params.get('serial_number')
+            device_name = params.get('device_name', None)
+            hd_version = params.get('hd_version', None)
+            blooth_tag = params.get('blooth_tag', None)
+            scm_tag = params.get('scm_tag', None)
+            status = params.get('status', None)
+
+            uop = UUser()
+            ret = uop.call("edit_device", serial_number, device_name, hd_version, blooth_tag, status, scm_tag)
+            log.debug('edit_device params: %s ret: %s', params, ret)
+            if ret == UYU_OP_ERR:
+                return error(UAURET.REQERR)
+            return success({})
+
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
+
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)
