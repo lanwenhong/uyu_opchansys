@@ -205,6 +205,62 @@
         </div>
     </div>
 
+	<div class="modal fade" tabindex="-1" role="dialog" id="deviceEditModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">修改设备</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="deviceEditForm" role="form">
+						<div class="form-group">
+							<label for="e_device_name" class="col-sm-2 control-label">设备名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_device_name" name="e_device_name" placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_hd_version" class="col-sm-2 control-label">硬件版本</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_hd_version" name="e_hd_version" placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_blooth_tag" class="col-sm-2 control-label">蓝牙标示</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_blooth_tag" name="e_blooth_tag"  placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_scm_tag" class="col-sm-2 control-label">单片机标示</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_scm_tag" name="e_scm_tag" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_status" class="col-sm-2 control-label">状态</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="e_status" name="e_status">
+									<option value="0">启用</option>
+									<option value="1">关闭</option>
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="deviceCreateSubmit">保存修改</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </%block>
 
 <%block name="body_media">

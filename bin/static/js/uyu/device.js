@@ -93,8 +93,14 @@ $(document).ready(function(){
                 render: function(data, type, full) {
                     var device_name = full.device_name;
                     var serial_number = full.serial_number;
+                    var hd_version = full.hd_version;
+                    var blooth_tag = full.blooth_tag;
+                    var scm_tag = full.scm_tag;
+                    var is_valid = full.is_valid;
+
                     var allocate = '<input type="button" class="btn btn-primary btn-sm device-allocate" data-serial_number='+serial_number+' data-device_name='+device_name+' value=' + '分配' + '>';
-                    return allocate;
+                    var edit = '<input type="button" class="btn btn-primary btn-sm device-edit" data-serial_number='+serial_number+' data-device_name='+device_name+ ' data-hd_version='+ hd_version +' data-blooth_tag='+ blooth_tag +' data-scm_tag='+scm_tag+'data-is_valid='+ is_valid +' value=' + '修改' + '>';
+                    return allocate + edit;
                 }
             }
         ],
@@ -345,6 +351,17 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
             }
         });
+    })
+    
+    $(document).on('click', '.device-edit', function () {
+        var device_name = $(this).data('device_name');
+        var serial_number = $(this).data('serial_number');
+        var hd_version = $(this).data('hd_version');
+        var blooth_tag = $(this).data('blooth_tag');
+        var scm_tag = $(this).data('scm_tag');
+        var is_valid = $(this).data('is_valid');
+        console.log($(this).data);
+        $('#deviceEditModal').modal();
     })
 
 

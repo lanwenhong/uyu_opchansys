@@ -112,6 +112,7 @@ class DeviceInfoHandler(core.Handler):
             item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['serial_number'] = item['id']
+            item['is_valid'] = item['status']
             item['status'] = UYU_DEVICE_MAP.get(item['status'], '')
 
         return data
