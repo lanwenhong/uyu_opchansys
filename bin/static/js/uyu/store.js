@@ -974,7 +974,7 @@ $(document).ready(function(){
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
 
-        post_data['phone_num'] = eyesight_phone_num;
+        post_data['mobile'] = eyesight_phone_num;
 
         if(eyesight_nick_name){
             post_data['nick_name'] = eyesight_nick_name;
