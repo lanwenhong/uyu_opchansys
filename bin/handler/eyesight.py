@@ -122,7 +122,9 @@ class EyeRegisterHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         try:
             params = self.validator.data
+            mobile = params['mobile']
             params['user_type'] = define.UYU_USER_ROLE_EYESIGHT
+            params['password'] = mobile[-6:]
             uop = UUser()
             flag, userid = uop.internal_user_register(params)
             if flag:

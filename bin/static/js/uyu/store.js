@@ -929,15 +929,15 @@ $(document).ready(function(){
             $('#edit_store_divide_percent').show();
         }
     });
-    
-    
+
+
     $('#eyesight_register').click(function () {
         $("label.error").remove();
         $("#eyesightCreateForm").resetForm();
         $("#registerEyesight").modal();
     });
-    
-    
+
+
     $('#eyesightCreateSubmit').click(function () {
         var eyesight_register_vt = $('#eyesightCreateForm').validate({
             rules: {
@@ -948,7 +948,16 @@ $(document).ready(function(){
                 eyesight_email: {
                     required: false,
                     email: true
-                }
+                },
+                eyesight_nick_name: {
+                    required: true,
+                    maxlength: 30
+                },
+                eyesight_username: {
+                    required: true,
+                    maxlength: 128
+                },
+
             },
             messages: {
                 eyesight_phone_num: {
@@ -956,7 +965,15 @@ $(document).ready(function(){
                 },
                 eyesight_email: {
                     email: "请输入正确格式的电子邮件"
-                }
+                },
+                eyesight_nick_name: {
+                    required: '请输入昵称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                eyesight_username: {
+                    required: '请输入用户名',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
             }
         });
 
