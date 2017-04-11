@@ -924,6 +924,12 @@ $(document).ready(function(){
             $('#edit_store_divide_percent').show();
         }
     });
+    
+    
+    $('#eyesight_register').click(function () {
+        $("#eyesightCreateForm").resetForm();
+        $("#registerEyesight").modal();
+    })
 
 
 });
@@ -1023,8 +1029,6 @@ function channel_name_select() {
         }
     });
 }
-
-
 
 function store_edit_channel_name_select() {
     var get_data = {};
