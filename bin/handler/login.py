@@ -71,7 +71,7 @@ class LoginHandler(core.Handler):
         log.debug("get user data: %s", u_op.udata)
         log.debug("userid: %d login succ", u_op.udata["id"])
         return success({"userid": u_op.udata["id"]})
-        
+
     def POST(self, *args):
         ret = self._post_handler(args)
         return ret
@@ -90,7 +90,7 @@ class SmsHandler(core.Handler):
     def _post_handler(self, *args):
         params = self.validator.data
         mobile = params['mobile']
-        
+
         uop = UUser()
         uop.load_user_by_mobile(mobile)
         if len(uop.udata) == 0:

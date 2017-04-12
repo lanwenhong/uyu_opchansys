@@ -145,8 +145,9 @@ class EyeRegisterHandler(core.Handler):
                 data['updated_at'] = now
                 data['sex'] = 0
                 data['recommend_code'] = str(uuid.uuid4())
-                if email:
-                    data['email'] = email
+                data['portrait_data'] = ''
+                data['portrait_type'] = ''
+                data['email'] = email
                 uop.call('record_optometrists', data)
                 return success({'userid': userid})
             else:
