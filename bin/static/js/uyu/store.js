@@ -951,7 +951,7 @@ $(document).ready(function(){
                 },
                 eyesight_nick_name: {
                     required: true,
-                    maxlength: 30
+                    maxlength: 128
                 },
                 eyesight_username: {
                     required: true,
