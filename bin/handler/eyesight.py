@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 import traceback
 from zbase.web import core
 from zbase.web import template
@@ -7,6 +8,7 @@ from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.uyu_user import UUser
+from uyubase.base.uyu_user import gen_old_password
 
 from uyubase.uyu import define
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
@@ -123,11 +125,29 @@ class EyeRegisterHandler(core.Handler):
         try:
             params = self.validator.data
             mobile = params['mobile']
+            nick_name = params.get('nick_name')
+            email = params.get('email')
             params['user_type'] = define.UYU_USER_ROLE_EYESIGHT
             params['password'] = mobile[-6:]
+            params['sex'] = 0
             uop = UUser()
             flag, userid = uop.internal_user_register(params)
             if flag:
+                data = {}
+                now = datetime.datetime.now()
+                data['id'] = userid
+                data['login_name'] = mobile
+                data['password'] = gen_old_password(mobile[-6:])
+                data['phone_num'] = mobile
+                data['nick_name'] = nick_name
+                data['optometrist_type'] = 2
+                data['created_at'] = now
+                data['updated_at'] = now
+                data['sex'] = 0
+                data['recommend_code'] = str(uuid.uuid4())
+                if email:
+                    data['email'] = email
+                uop.call('record_optometrists', data)
                 return success({'userid': userid})
             else:
                 return error(UAURET.DATAEXIST)
