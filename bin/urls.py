@@ -12,62 +12,95 @@ from handler import eyesight
 from handler import rules
 urls = (
     ('/ping', ping.Ping),
-    #页面
+    # 登录页面
     ('^/channel_op/v1/page/login.html$', login.Login),
     ('^/channel_op/v1/page/index.html$', index.Index),
+    # 总览页面
     ('^/channel_op/v1/page/overview.html$', overview.OverView),
+    # 渠道页面
     ('^/channel_op/v1/page/channel.html$', channel.ChannelManage),
+    # 门店页面
     ('^/channel_op/v1/page/store.html$', store.StoreManage),
+    # 设备页面
     ('^/channel_op/v1/page/device.html$', device.DeviceManage),
+    # 训练管理页面
     ('^/channel_op/v1/page/train/buyer.html$', train.TrainBuyerManage),
+    # 训练使用页面
     ('^/channel_op/v1/page/train/use.html$', train.TrainUseManage),
+    # 清算信息页面
     ('^/channel_op/v1/page/settle.html$', settle.SettleManage),
-    #api
+
+    # 登录接口
     ('^/channel_op/v1/api/login$', login.LoginHandler),
+    # 发送验证码接口
     ('^/channel_op/v1/api/sms_send$', login.SmsHandler),
+    # 修改密码接口
     ('^/channel_op/v1/api/passwd_change$', login.ChangePassHandler),
 
-    #渠道API
+    # 渠道API
+    # 新建渠道接口
     ('^/channel_op/v1/api/channel_create$', channel.CreateChanHandler),
+    # 获取渠道信息和修改渠道信息接口
     ('^/channel_op/v1/api/channel$', channel.ChanHandler),
+    # 设置渠道状态接口
     ('^/channel_op/v1/api/channel_set_state', channel.ChanStateSetHandler),
+    # 获取渠道数据列表接口
     ('^/channel_op/v1/api/chninfo_pagelist$', channel.ChannelInfoHandler),
+    # 获取有效渠道名称列表接口
     ('^/channel_op/v1/api/chan_name_list$', channel.ChanNameList),
+    # 获取渠道和对应门店名称列表接口
     ('^/channel_op/v1/api/chan_store_list$', channel.ChanStoreMap),
 
-
-    #门店API
+    # 门店API
+    # 设置门店状态接口
     ('^/channel_op/v1/api/store_set_state', store.StoreStateSetHandler),
+    # 新建门店接口
     ('^/channel_op/v1/api/store_create$', store.CreateStoreHandler),
+    # 获取门店信息和修改门店信息接口
     ('^/channel_op/v1/api/store$', store.StoreHandler),
+    # 获取门店数据接口
     ('^/channel_op/v1/api/storeinfo_pagelist$', store.StoreInfoHandler),
+    # 门店绑定视光师接口
     ('^/channel_op/v1/api/store_eye$', store.StoreEyeHandler),
+    # 获取有效门店名称接口
     ('^/channel_op/v1/api/store_name_list$', store.StoreNameListHandler),
+    # 获取渠道和门店数量统计接口
     ('^/channel_op/v1/api/chan_store_total$', overview.OverViewInfoHandler),
 
-
+    # 获取设备数量接口
     ('^/channel_op/v1/api/devinfo_pagelist$', device.DeviceInfoHandler),
+    # 获取训练操作记录接口
     ('^/channel_op/v1/api/training_op_list$', train.TrainBuyInfoHandler),
+    # 获取训练使用记录接口
     ('^/channel_op/v1/api/training_use_list$', train.TrainUseInfoHandler),
 
-    #视光师
+    # 视光师
+    # 获取视光师信息接口
     ('^/channel_op/v1/api/eyesight_info$', eyesight.EyeSightInfoHandler),
+    # 注册视光师接口
     ('^/channel_op/v1/api/register_eye$', eyesight.EyeRegisterHandler),
 
-    #训练订单
+    # 训练订单
+    # 公司分配点数给渠道接口
     ('^/channel_op/v1/api/org_allot_to_chan_order$', train.OrgAllotToChanOrderHandler),
+    # 渠道分配点数给门店接口
     ('^/channel_op/v1/api/org_allot_to_store_order$', train.OrgAllotToStoreOrderHandler),
+    # 订单撤销接口
     ('^/channel_op/v1/api/order_cancel$', train.OrderCancelHandler),
+    # 订单确认接口
     ('^/channel_op/v1/api/order_confirm$', train.OrderConfirmHandler),
 
-    #设备
+    # 设备
+    # 新建设备接口
     ('^/channel_op/v1/api/create_device$', device.DeviceCreateHandler),
+    # 分配设备接口
     ('^/channel_op/v1/api/allocate_device$', device.DeviceAllocateHandler),
+    # 修改设备信息接口
     ('^/channel_op/v1/api/edit_device$', device.DeviceEditHandler),
 
-    #结算
+    # 结算数据接口
     ('^/channel_op/v1/api/settle_list$', settle.SettleInfoHandler),
 
-    #套餐规则
+    # 套餐规则
     ('^/channel_op/v1/api/rules_list$', rules.RulesInfoHandler),
 )
