@@ -30,6 +30,9 @@ class StoreStateSetHandler(core.Handler):
         Field('state', T_INT, False),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -145,6 +148,10 @@ class StoreHandler(core.Handler):
          Field('userid', T_INT, False)
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+
     _post_handler_fields = [
         Field("se_userid", T_INT, False),
         Field('userid', T_INT, False),
@@ -177,6 +184,9 @@ class StoreHandler(core.Handler):
         Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -184,6 +194,7 @@ class StoreHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        params['login_name'] = params['phone_num']
 
         udata = {}
         for key in ["login_name", "nick_name", "phone_num"]:
@@ -248,11 +259,17 @@ class StoreEyeHandler(core.Handler):
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     _post_handler_fields = [
         Field('userid', T_INT, False, match=r'^([0-9]{0,10})$'),
         Field('store_id', T_INT, False, match=r'^([0-9]{0,10})$'),
         Field('channel_id', T_INT, False, match=r'^([0-9]{0,10})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -326,6 +343,9 @@ class CreateStoreHandler(core.Handler):
         Field('store_name', T_STR, False),
         Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self

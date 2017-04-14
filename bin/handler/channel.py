@@ -32,6 +32,9 @@ class ChanStateSetHandler(core.Handler):
         Field('state', T_INT, False),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -56,6 +59,9 @@ class ChanHandler(core.Handler):
         Field('userid', T_INT, False)
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     _post_handler_fields = [
         Field("se_userid", T_INT, False),
         Field("userid", T_INT, False),
@@ -79,6 +85,9 @@ class ChanHandler(core.Handler):
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -117,6 +126,7 @@ class ChanHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        params['login_name'] = params['phone_num']
 
         udata = {}
         for key in ["login_name", "nick_name", "phone_num"]:
@@ -264,6 +274,9 @@ class CreateChanHandler(core.Handler):
         Field('is_prepayment', T_INT, True),
         Field('channel_name', T_STR, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self

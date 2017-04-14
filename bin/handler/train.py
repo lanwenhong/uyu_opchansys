@@ -298,6 +298,10 @@ class OrgAllotToChanOrderHandler(core.Handler):
         Field('remark', T_STR, True),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+
     @with_database('uyu_core')
     def _check_permission(self, params):
         channel_id = params["channel_id"]
@@ -365,6 +369,10 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         Field('training_amt', T_FLOAT, False),
         Field('store_training_amt_per', T_INT, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
 
     @with_database('uyu_core')
     def _check_permission(self, params):

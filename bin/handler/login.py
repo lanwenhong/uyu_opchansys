@@ -32,6 +32,9 @@ class ChangePassHandler(core.Handler):
         Field('password', T_STR, False),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @with_validator_self
     def _post_handler(self, *args):
         params = self.validator.data
@@ -49,11 +52,15 @@ class ChangePassHandler(core.Handler):
         ret = self._post_handler(self, args)
         self.write(ret)
 
+
 class LoginHandler(core.Handler):
     _post_handler_fields = [
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('password', T_STR, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_set_cookie(g_rt.redis_pool, cookie_conf, UYU_USER_ROLE_SUPER)
     @with_validator_self
@@ -85,6 +92,12 @@ class SmsHandler(core.Handler):
         Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
         Field('vcode', T_REG, False, match=r'^([0-9]{4})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @with_validator_self
     def _post_handler(self, *args):
