@@ -425,12 +425,12 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    @unittest.skip("skipping")
+    #@unittest.skip("skipping")
     def test_order_confirm(self):
         self.url = "/channel_op/v1/api/order_confirm"
         self.send = {
             "se_userid": 1262,
-            "order_no": "2017041401586142"
+            "order_no": "2017041501586143"
         }
         ret = self.client.post(self.url, self.send, headers=self.headers)
         log.debug(ret)
@@ -600,7 +600,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    #@unittest.skip("skipping")
+    @unittest.skip("skipping")
     def test_register_eyesight(self):
         self.url = "/channel_op/v1/api/register_eye"
         self.send = {
