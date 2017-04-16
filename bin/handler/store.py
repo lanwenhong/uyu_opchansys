@@ -7,6 +7,7 @@ from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.uyu_user import UUser
+from uyubase.uyu import define
 
 
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_USER_ROLE_EYESIGHT
@@ -187,6 +188,12 @@ class StoreHandler(core.Handler):
     def _post_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
 
+    @with_database('uyu_core')
+    def _can_modify(self, channel_id):
+        ret = self.db.select_one(table='channel',fields='is_prepayment', where={'id': channel_id})
+        is_prepayment = ret.get('is_prepayment')
+        return is_prepayment
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -194,6 +201,11 @@ class StoreHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        channel_id = params['channel_id']
+        store_is_prepayment = params['is_prepayment']
+        channel_is_prepayment = self._can_modify(channel_id)
+        if channel_is_prepayment != store_is_prepayment and channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
+            return error(UAURET.CHANGESTOREERR)
         params['login_name'] = params['phone_num']
 
         udata = {}
@@ -347,12 +359,25 @@ class CreateStoreHandler(core.Handler):
     def _post_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
 
+    @with_database('uyu_core')
+    def _can_modify(self, channel_id):
+        ret = self.db.select_one(table='channel',fields='is_prepayment', where={'id': channel_id})
+        is_prepayment = ret.get('is_prepayment')
+        return is_prepayment
+
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data
+        channel_id = params['channel_id']
+        store_is_prepayment = params['is_prepayment']
+        channel_is_prepayment = self._can_modify(channel_id)
+        if channel_is_prepayment != store_is_prepayment and channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
+            return error(UAURET.CHANGESTOREERR)
+        params['username'] = params['store_name']
         uop = UUser()
 
         udata = {}

@@ -284,7 +284,7 @@ class CreateChanHandler(core.Handler):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data
-
+        params['username'] = params['channel_name']
         log.debug('params: %s', params)
         if params.get("is_prepayment") == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
             return error(UAURET.REGISTERERR)
