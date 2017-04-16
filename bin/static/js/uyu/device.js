@@ -97,8 +97,10 @@ $(document).ready(function(){
                     var blooth_tag = full.blooth_tag;
                     var scm_tag = full.scm_tag;
                     var is_valid = full.is_valid;
+                    var store_id = full.store_id;
+                    var channel_id = full.channel_id;
 
-                    var allocate = '<input type="button" class="btn btn-primary btn-sm device-allocate" data-serial_number='+serial_number+' data-device_name='+device_name+' value=' + '分配' + '>';
+                    var allocate = '<input type="button" class="btn btn-primary btn-sm device-allocate" data-serial_number='+serial_number+' data-device_name='+device_name+ ' data-store_id='+ store_id +' data-channel_id='+ channel_id +' value=' + '分配' + '>';
                     var edit = '<input type="button" class="btn btn-primary btn-sm device-edit" data-serial_number='+serial_number+' data-device_name='+device_name+ ' data-hd_version='+ hd_version +' data-blooth_tag='+ blooth_tag +' data-scm_tag='+scm_tag+' data-is_valid='+ is_valid +' value=' + '修改' + '>';
                     return allocate + edit;
                 }
@@ -265,11 +267,13 @@ $(document).ready(function(){
         $('#a_store_name').html('');
         var device_name = $(this).data('device_name');
         var serial_number = $(this).data('serial_number');
+        var store_id = $(this).data('store_id');
+        var channel_id = $(this).data('channel_id');
 
         $('#deviceAllocateForm').resetForm();
         $('#a_device_name').val(device_name);
         $('#a_serial_number').val(serial_number);
-        channel_name_select('#a_channel_name', '#a_store_name');
+        channel_name_select('#a_channel_name', '#a_store_name', channel_id, store_id);
         $('#deviceAllocate').modal();
     });
 
@@ -454,7 +458,7 @@ $(document).ready(function(){
 
 });
 
-function channel_name_select(channel_name_tag_id, store_name_tag_id) {
+function channel_name_select(channel_name_tag_id, store_name_tag_id, record_channel_id, record_store_id) {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
@@ -478,10 +482,12 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id) {
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
-                    if(i==0){
-                        do_first_select(channel_id, store_name_tag_id);
-                    }
+                    //if(i==0){
+                    //    do_first_select(channel_id, store_name_tag_id, record_store_id);
+                    //}
                 }
+                $(channel_name_tag_id).val(record_channel_id);
+                do_first_select(record_channel_id, store_name_tag_id, record_store_id);
             }
         },
         error: function(data) {
@@ -490,7 +496,7 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id) {
     });
 }
 
-function do_first_select(channel_id, store_name_tag_id) {
+function do_first_select(channel_id, store_name_tag_id, record_store_id) {
     $('#store_name').html('');
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
@@ -520,6 +526,7 @@ function do_first_select(channel_id, store_name_tag_id) {
                     var option_str = $('<option value='+store_id+'>'+store_name+'</option>');
                     option_str.appendTo(c_store_name);
                 }
+                $(store_name_tag_id).val(record_store_id);
             }
         },
         error: function(data) {
