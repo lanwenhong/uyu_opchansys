@@ -194,6 +194,13 @@ class StoreHandler(core.Handler):
         is_prepayment = ret.get('is_prepayment')
         return is_prepayment
 
+    @with_database('uyu_core')
+    def _update_device_eyesight_channel(self, channel_id, store_userid):
+        ret = self.db.select_one(table='stores', fields='id', where={'userid': store_userid})
+        store_id = ret.get('id')
+        self.db.update(table='device', values={'channel_id': channel_id}, where={'store_id': store_id})
+        self.db.update(table='store_eyesight_bind', values={'channel_id': channel_id}, where={'store_id': store_id})
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -201,11 +208,27 @@ class StoreHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        store_userid = params['userid']
+        log.debug('store change store_userid=%s', store_userid)
+        uop.load_info_by_userid(store_userid)
+        origin_channel_id = uop.sdata['channel_id']
+        origin_store_is_prepayment = uop.sdata['is_prepayment']
+
+        remain_times = uop.sdata['remain_times']
         channel_id = params['channel_id']
         store_is_prepayment = params['is_prepayment']
-        channel_is_prepayment = self._can_modify(channel_id)
-        if channel_is_prepayment != store_is_prepayment and channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
-            return error(UAURET.CHANGESTOREERR)
+        origin_channel_is_prepayment = self._can_modify(origin_channel_id)
+        new_channel_is_prepayment = self._can_modify(channel_id)
+        if origin_channel_id == channel_id:
+            if store_is_prepayment == define.UYU_STORE_PREPAY_TYPE:
+                if origin_channel_is_prepayment == define.UYU_CHAN_PREPAY_TYPE and remain_times > 0:
+                    pass
+                else:
+                    return error(UAURET.STOREERR1)
+        else:
+            if store_is_prepayment == define.UYU_STORE_PREPAY_TYPE and new_channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
+                return error(UAURET.STOREERR1)
+
         params['login_name'] = params['phone_num']
 
         udata = {}
@@ -230,6 +253,11 @@ class StoreHandler(core.Handler):
         ret = uop.call("store_info_change", params["userid"], udata, pdata, sdata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGESTOREERR)
+        if origin_channel_id != channel_id:
+            # 更新这个门店下绑定下设备的channel_id
+            # 更新这个门店下视光师绑定的channel_id
+            self._update_device_eyesight_channel(channel_id, store_userid)
+
         return success({"userid": params["userid"]})
 
     def POST(self):
