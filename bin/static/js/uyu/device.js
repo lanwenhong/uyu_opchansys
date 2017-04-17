@@ -477,17 +477,23 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id, record_chan
             }
             else {
                 var c_channel_name = $(channel_name_tag_id);
+                var first_str = $('<option value="-1" selected >无</option>');
+                first_str.appendTo(c_channel_name);
                 for(var i=0; i<data.data.length; i++){
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
                     var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
-                    //if(i==0){
-                    //    do_first_select(channel_id, store_name_tag_id, record_store_id);
-                    //}
+                   // if(i==0){
+                   //     do_first_select(record_channel_id, store_name_tag_id, record_store_id);
+                   // }
                 }
-                $(channel_name_tag_id).val(record_channel_id);
-                do_first_select(record_channel_id, store_name_tag_id, record_store_id);
+                if(record_channel_id){
+                    $(channel_name_tag_id).val(record_channel_id);
+                    do_first_select(record_channel_id, store_name_tag_id, record_store_id);
+                } else {
+                    $(channel_name_tag_id).options[0].selected = true;
+                }
             }
         },
         error: function(data) {
@@ -496,12 +502,12 @@ function channel_name_select(channel_name_tag_id, store_name_tag_id, record_chan
     });
 }
 
-function do_first_select(channel_id, store_name_tag_id, record_store_id) {
+function do_first_select(record_channel_id, store_name_tag_id, record_store_id) {
     $('#store_name').html('');
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
-    get_data['channel_id'] = channel_id;
+    get_data['channel_id'] = record_channel_id;
     $.ajax({
         url: '/channel_op/v1/api/chan_store_list',
         type: 'GET',
