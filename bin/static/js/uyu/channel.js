@@ -7,9 +7,9 @@ $(document).ready(function(){
     }, "请正确填写您的手机号码");
 
     $.validator.addMethod("isPhone", function(value, element) {
-        var length = value.length;
-        var phone_num = /^(0\d{2,3}\-\d{7,8})|(1\d{10})$/;
-        return this.optional(element) || (length >= 9 && phone_num.test(value));
+        var tel_pattern =  /^\d{3,4}-\d{7,8}(-\d{3,4})?$/;
+        var mobile_pattern = /^(1\d{10})$/;
+        return this.optional(element) || (tel_pattern.test(value)|| mobile_pattern.test(value));
     }, "请正确填写您的电话号码");
 
     $.validator.addMethod("isYuan", function(value, element) {
