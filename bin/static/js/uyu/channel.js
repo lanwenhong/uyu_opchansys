@@ -160,6 +160,31 @@ $(document).ready(function(){
 	});
 
     $("#channelNameSearch").click(function(){
+        var channel_query_vt = $('#channel_query').validate({
+           rules: {
+               q_channel_name: {
+                   required: false,
+                   maxlength: 256
+               },
+               q_phone_num: {
+                   required: false,
+                   isMobile: '#s_phone_num'
+               }
+           },
+           messages: {
+               q_channel_name: {
+                   required: '请输入渠道名称',
+                   maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+               },
+               q_phone_num: {
+                   required: '请输入手机号'
+               }
+           }
+        });
+        var ok = channel_query_vt.form();
+        if(!ok){
+            return false;
+        }
         $('#channelList').DataTable().draw();
     });
 
@@ -207,7 +232,7 @@ $(document).ready(function(){
                 */
                 divide_percent: {
                     required: true,
-                    isLessOne: '#divide_percent',
+                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
