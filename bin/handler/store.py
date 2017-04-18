@@ -404,7 +404,7 @@ class CreateStoreHandler(core.Handler):
         store_is_prepayment = params['is_prepayment']
         channel_is_prepayment = self._can_modify(channel_id)
         if channel_is_prepayment != store_is_prepayment and channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
-            return error(UAURET.CHANGESTOREERR)
+            return error(UAURET.STOREERR1)
         params['username'] = params['store_name']
         uop = UUser()
 
