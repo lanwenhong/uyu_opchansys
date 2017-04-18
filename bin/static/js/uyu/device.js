@@ -143,7 +143,7 @@ $(document).ready(function(){
     });
 
     $("#deviceSearch").click(function(){
-        var device_query_vt = $('#store_query').validate({
+        var device_query_vt = $('#device_query').validate({
             rules: {
                 q_channel_name: {
                     required: false,
