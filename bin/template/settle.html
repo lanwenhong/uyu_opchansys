@@ -29,14 +29,14 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="settle_query">
 							<div class="form-group">
 							  <label for="channel_name">渠道</label>
-							  <input type="text" class="form-control" id="channel_name" placeholder="">
+							  <input type="text" class="form-control" id="channel_name" name="q_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
 							  <label for="store_name">门店</label>
-							  <input type="text" class="form-control" id="store_name" placeholder="">
+							  <input type="text" class="form-control" id="store_name" name="q_store_name" placeholder="">
 							</div>
 
 							<div class="form-group">
@@ -52,6 +52,7 @@
 							<button type="button" class="btn btn-primary" id="settleSearch">搜索</button>
 							<button type="button" class="btn btn-primary" id="settleOutput">导出</button>
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">

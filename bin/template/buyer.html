@@ -31,23 +31,23 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="buyer_query">
 
 							<div class="form-group">
 							  <label for="s_channel_name">渠道</label>
-							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
+							  <input type="text" class="form-control" id="s_channel_name" name="q_channel_name" placeholder="">
 							</div>
 
 
 							<div class="form-group">
 							  <label for="s_store_name">门店</label>
-							  <input type="text" class="form-control" id="s_store_name" placeholder="">
+							  <input type="text" class="form-control" id="s_store_name" name="q_store_name" placeholder="">
 							</div>
 
 
 							<div class="form-group">
 							  <label for="s_consumer_id">用户</label>
-							  <input type="text" class="form-control" id="s_consumer_id" placeholder="">
+							  <input type="text" class="form-control" id="s_consumer_id" name="q_consumer_id" placeholder="">
 						    </div>
  
 						    <div class="form-group">
@@ -88,6 +88,7 @@
 							</div>
 
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">

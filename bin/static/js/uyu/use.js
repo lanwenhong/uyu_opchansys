@@ -119,6 +119,57 @@ $(document).ready(function(){
     });
 
     $("#useSearch").click(function(){
+
+        var use_query_vt = $('#use_query').validate({
+            rules: {
+                q_channel_name: {
+                    required: false,
+                    maxlength: 256
+                },
+                q_store_name: {
+                    required: false,
+                    maxlength: 256
+                },
+                q_consumer_id: {
+                    required: false,
+                    digits:true,
+                    max: 2147483647
+                },
+                q_eyesight_name: {
+                    required: false,
+                    maxlength: 256
+                }
+            },
+            messages: {
+                q_channel_name: {
+                    required: '请输入渠道名称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                },
+                q_store_name: {
+                    required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                },
+                q_consumer_id: {
+                    digits: "只能输入整数",
+                    max: $.validator.format("请输入一个最大为{0} 的值")
+                },
+                q_eyesight_name: {
+                    required: '请输入视光市昵称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                }
+            },
+            errorPlacement: function(error, element){
+                var $error_element = element.parent().parent().next();
+                $error_element.text('');
+                error.appendTo($error_element);
+            }
+        });
+        var ok = use_query_vt.form();
+        if(!ok){
+            $("#query_label_error").show();
+            $("#query_label_error").fadeOut(1400);
+            return false;
+        }
         $('#trainUseList').DataTable().draw();
     });
 });
