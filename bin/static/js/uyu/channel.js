@@ -174,15 +174,22 @@ $(document).ready(function(){
            messages: {
                q_channel_name: {
                    required: '请输入渠道名称',
-                   maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                   maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
                },
                q_phone_num: {
                    required: '请输入手机号'
                }
+           },
+           errorPlacement: function(error, element){
+               var $error_element = element.parent().parent().next();
+               $error_element.text('');
+               error.appendTo($error_element);
            }
         });
         var ok = channel_query_vt.form();
         if(!ok){
+            $("#query_label_error").show();
+            $("#query_label_error").fadeOut(1400);
             return false;
         }
         $('#channelList').DataTable().draw();
