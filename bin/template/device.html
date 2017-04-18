@@ -23,18 +23,18 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="device_query">
 							<div class="form-group">
 							  <label for="s_channel_name">渠道</label>
-							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
+							  <input type="text" class="form-control" id="s_channel_name" name="q_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
 								<label for="s_store_name">门店</label>
-								<input type="text" class="form-control" id="s_store_name" placeholder="">
+								<input type="text" class="form-control" id="s_store_name" name="q_store_name" placeholder="">
 							</div>
 							<div class="form-group">
 							  <label for="s_device_serial_nu">设备编号</label>
-							  <input type="text" class="form-control" id="s_device_serial_nu" placeholder="">
+							  <input type="text" class="form-control" id="s_device_serial_nu" name="q_serial_number" placeholder="">
 							</div>
 							<div class="form-group">
 								<label for="s_status">状态</label>
@@ -47,6 +47,7 @@
 							<button type="button" class="btn btn-primary" id="deviceSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="deviceCreate">新建</button>
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">

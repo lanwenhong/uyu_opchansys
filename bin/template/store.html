@@ -25,14 +25,14 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="store_query">
 							<div class="form-group">
 							  <label for="channel_name">渠道名称</label>
-							  <input type="text" class="form-control" id="channel_name" placeholder="">
+							  <input type="text" class="form-control" id="channel_name" name="q_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
 							  <label for="store_name">门店名称</label>
-							  <input type="text" class="form-control" id="store_name" placeholder="">
+							  <input type="text" class="form-control" id="store_name" name="q_store_name" placeholder="">
 							</div>
                             <div class="form-group">
                                 <label for="s_is_valid">状态</label>
@@ -46,6 +46,7 @@
 							<button type="button" class="btn btn-default" id="storeCreate">新建门店</button>
 							<button type="button" class="btn btn-default" id="eyesight_register">注册视光师</button>
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">
