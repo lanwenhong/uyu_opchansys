@@ -355,6 +355,7 @@ $(document).ready(function(){
                     toastr.success('新建渠道成功');
                     search_source();
 		            $("#channelCreateModal").modal('hide');
+		            location.reload();
                     $('#channelList').DataTable().draw();
                 }
 	        },

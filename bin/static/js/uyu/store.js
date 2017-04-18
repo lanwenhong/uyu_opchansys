@@ -407,6 +407,7 @@ $(document).ready(function(){
                     search_source();
                     $("#storeCreateForm").resetForm();
                     $("#storeCreateModal").modal('hide');
+                    location.reload();
                     $('#storeList').DataTable().draw();
                 }
 	        },
