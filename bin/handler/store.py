@@ -241,7 +241,6 @@ class StoreHandler(core.Handler):
             if params.get(key, None):
                 pdata[key] = params[key]
 
-        # log.debug("store_type: %d", params["store_type"])
         sdata = {}
         for key in uop.skey:
             if params.get(key, None) not in [None, '']:
