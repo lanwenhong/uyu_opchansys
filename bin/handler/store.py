@@ -219,14 +219,14 @@ class StoreHandler(core.Handler):
         store_is_prepayment = params['is_prepayment']
         origin_channel_is_prepayment = self._can_modify(origin_channel_id)
         new_channel_is_prepayment = self._can_modify(channel_id)
-        
+
         log.debug("channel_id: %d origin_channel_id: %d store_is_prepayment: %d origin_store_is_prepayment: %d", channel_id, origin_channel_id, store_is_prepayment, origin_store_is_prepayment)
 
         if origin_channel_id == channel_id and store_is_prepayment == origin_store_is_prepayment:
             log.debug("not change channel and store type not change pass!!!")
             pass
         else:
-            if new_channel_is_prepayment == define.UYU_CHAN_DIV_TYPE and store_is_prepayment != UYU_STORE_DIV_TYPE:
+            if new_channel_is_prepayment == define.UYU_CHAN_DIV_TYPE and store_is_prepayment != define.UYU_STORE_DIV_TYPE:
                 return error(UAURET.STOREERR1)
 
             if remain_times <= 0 and store_is_prepayment == define.UYU_STORE_PREPAY_TYPE:
