@@ -27,6 +27,7 @@ template.install(config.template)
 
 config.URLS = urls.urls
 
+
 def install_db():
     dbpool.install(config.database)
 
