@@ -32,6 +32,7 @@ class DeviceInfoHandler(core.Handler):
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
         Field('serial_number', T_STR, True),
+        Field('status', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -50,9 +51,10 @@ class DeviceInfoHandler(core.Handler):
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
             serial_number = params.get('serial_number')
+            status = params.get('status', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, serial_number)
+            info_data = self._query_handler(channel_name, store_name, serial_number, status)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -63,7 +65,7 @@ class DeviceInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, serial_number=None):
+    def _query_handler(self, channel_name=None, store_name=None, serial_number=None, status=None):
         where = {}
 
         keep_fields = [
@@ -91,6 +93,9 @@ class DeviceInfoHandler(core.Handler):
         if serial_number:
             where.update({'id': serial_number})
 
+        if status in (0, 1):
+            where.update({'status': status})
+
         ret = self.db.select(table='device', fields=keep_fields, where=where, other=other)
 
         return ret
@@ -107,6 +112,7 @@ class DeviceInfoHandler(core.Handler):
             item['store_name'] = store_ret.get('store_name', '') if store_ret else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['serial_number'] = item['id']
+            item['is_valid'] = item['status']
             item['status'] = UYU_DEVICE_MAP.get(item['status'], '')
 
         return data
@@ -135,6 +141,9 @@ class DeviceCreateHandler(core.Handler):
         # Field('training_nums', T_INT, True),
         # Field('op', T_INT, True),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -172,6 +181,9 @@ class DeviceAllocateHandler(core.Handler):
         Field('store_id', T_INT, True),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -187,6 +199,52 @@ class DeviceAllocateHandler(core.Handler):
         if ret == UYU_OP_ERR:
             return error(UAURET.REQERR)
         return success({})
+
+    def POST(self, *args):
+        ret = self._post_handler()
+        self.write(ret)
+
+
+class DeviceEditHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field("se_userid", T_INT, False),
+        Field('device_name',  T_STR, False),
+        Field('hd_version',  T_STR, False),
+        Field('blooth_tag',  T_STR, False),
+        Field('scm_tag',  T_STR, True),
+        Field('status',  T_INT, False, match=r'^([0-1]{1})$'),
+        Field('serial_number', T_INT, False),
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            serial_number = params.get('serial_number')
+            device_name = params.get('device_name', None)
+            hd_version = params.get('hd_version', None)
+            blooth_tag = params.get('blooth_tag', None)
+            scm_tag = params.get('scm_tag', None)
+            status = params.get('status', None)
+
+            uop = UUser()
+            ret = uop.call("edit_device", serial_number, device_name, hd_version, blooth_tag, status, scm_tag)
+            log.debug('edit_device params: %s ret: %s', params, ret)
+            if ret == UYU_OP_ERR:
+                return error(UAURET.REQERR)
+            return success({})
+
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
 
     def POST(self, *args):
         ret = self._post_handler()

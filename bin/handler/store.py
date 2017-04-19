@@ -7,6 +7,7 @@ from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.uyu_user import UUser
+from uyubase.uyu import define
 
 
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_USER_ROLE_EYESIGHT
@@ -29,6 +30,9 @@ class StoreStateSetHandler(core.Handler):
         Field('userid', T_INT, False),
         Field('state', T_INT, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -56,6 +60,7 @@ class StoreInfoHandler(core.Handler):
         Field('maxnum', T_INT, False),
         Field('channel_name', T_STR, True),
         Field('store_name', T_STR, True),
+        Field('is_valid', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -73,9 +78,10 @@ class StoreInfoHandler(core.Handler):
             max_page_num = params.get('maxnum')
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
+            is_valid = params.get('is_valid', None)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name)
+            info_data = self._query_handler(channel_name, store_name, is_valid)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -86,12 +92,17 @@ class StoreInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None):
+    def _query_handler(self, channel_name=None, store_name=None, is_valid=None):
         where = {}
+
         if channel_name:
             where.update({'channel_name': channel_name})
+
         if store_name:
             where.update({'store_name': store_name})
+
+        if is_valid in (0, 1):
+            where.update({'stores.is_valid': is_valid})
 
         other = ' order by ctime desc'
 
@@ -138,6 +149,10 @@ class StoreHandler(core.Handler):
          Field('userid', T_INT, False)
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+
     _post_handler_fields = [
         Field("se_userid", T_INT, False),
         Field('userid', T_INT, False),
@@ -154,7 +169,7 @@ class StoreHandler(core.Handler):
         Field('bank_name',  T_STR, True),
         Field('bank_account',  T_STR, True),
         Field('contact_name',  T_STR, False),
-        Field('contact_phone',  T_STR, False),
+        Field('contact_phone',  T_STR, False, match=r'^(0\d{2,3}\-\d{7,8})|(1\d{10})$'),
         Field('contact_email',  T_STR, True),
         Field('address',  T_STR, False),
 
@@ -162,13 +177,29 @@ class StoreHandler(core.Handler):
         Field('training_amt_per', T_INT, False),
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, False, match=r'^([0-1]{1})$'),
-        # Field('channel_id', T_INT, False),
+        Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
-        Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
+        Field('store_mobile', T_REG, False, match=r'^(0\d{2,3}\-\d{7,8})|(1\d{10})$'),
         Field('store_addr', T_STR, True),
         Field('store_name', T_STR, False),
         Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @with_database('uyu_core')
+    def _can_modify(self, channel_id):
+        ret = self.db.select_one(table='channel',fields='is_prepayment', where={'id': channel_id})
+        is_prepayment = ret.get('is_prepayment')
+        return is_prepayment
+
+    @with_database('uyu_core')
+    def _update_device_eyesight_channel(self, channel_id, store_userid):
+        ret = self.db.select_one(table='stores', fields='id', where={'userid': store_userid})
+        store_id = ret.get('id')
+        self.db.update(table='device', values={'channel_id': channel_id}, where={'store_id': store_id})
+        self.db.update(table='store_eyesight_bind', values={'channel_id': channel_id}, where={'store_id': store_id})
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -177,6 +208,28 @@ class StoreHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        store_userid = params['userid']
+        log.debug('store change store_userid=%s', store_userid)
+        uop.load_info_by_userid(store_userid)
+        origin_channel_id = uop.sdata['channel_id']
+        origin_store_is_prepayment = uop.sdata['is_prepayment']
+
+        remain_times = uop.sdata['remain_times']
+        channel_id = params['channel_id']
+        store_is_prepayment = params['is_prepayment']
+        origin_channel_is_prepayment = self._can_modify(origin_channel_id)
+        new_channel_is_prepayment = self._can_modify(channel_id)
+        if origin_channel_id == channel_id:
+            if store_is_prepayment == define.UYU_STORE_PREPAY_TYPE:
+                if origin_channel_is_prepayment == define.UYU_CHAN_PREPAY_TYPE and remain_times > 0:
+                    pass
+                else:
+                    return error(UAURET.STOREERR1)
+        else:
+            if store_is_prepayment == define.UYU_STORE_PREPAY_TYPE and new_channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
+                return error(UAURET.STOREERR1)
+
+        params['login_name'] = params['phone_num']
 
         udata = {}
         for key in ["login_name", "nick_name", "phone_num"]:
@@ -191,7 +244,7 @@ class StoreHandler(core.Handler):
         # log.debug("store_type: %d", params["store_type"])
         sdata = {}
         for key in uop.skey:
-            if params.get(key, None) != None:
+            if params.get(key, None) not in [None, '']:
                 log.debug("key: %s v: %s", key, params[key])
                 sdata[key] = params[key]
 
@@ -200,6 +253,11 @@ class StoreHandler(core.Handler):
         ret = uop.call("store_info_change", params["userid"], udata, pdata, sdata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGESTOREERR)
+        if origin_channel_id != channel_id:
+            # 更新这个门店下绑定下设备的channel_id
+            # 更新这个门店下视光师绑定的channel_id
+            self._update_device_eyesight_channel(channel_id, store_userid)
+
         return success({"userid": params["userid"]})
 
     def POST(self):
@@ -241,11 +299,17 @@ class StoreEyeHandler(core.Handler):
         Field('phone_num', T_REG, False, match=r'^(1\d{10})$'),
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     _post_handler_fields = [
         Field('userid', T_INT, False, match=r'^([0-9]{0,10})$'),
         Field('store_id', T_INT, False, match=r'^([0-9]{0,10})$'),
         Field('channel_id', T_INT, False, match=r'^([0-9]{0,10})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -305,7 +369,7 @@ class CreateStoreHandler(core.Handler):
         Field('bank_name',  T_STR, True),
         Field('bank_account',  T_STR, True),
         Field('contact_name',  T_STR, False),
-        Field('contact_phone',  T_STR, False),
+        Field('contact_phone',  T_STR, False, match=r'^(0\d{2,3}\-\d{7,8})|(1\d{10})$'),
         Field('contact_email',  T_STR, True),
         Field('address',  T_STR, False),
         #门店信息
@@ -314,11 +378,21 @@ class CreateStoreHandler(core.Handler):
         Field('is_prepayment', T_INT, False, match=r'^([0-1]{1})$'),
         Field('channel_id', T_INT, False),
         Field('store_contacter', T_STR, False),
-        Field('store_mobile', T_REG, False, match=r'^(1\d{10})$'),
+        Field('store_mobile', T_REG, False, match=r'^(0\d{2,3}\-\d{7,8})|(1\d{10})$'),
         Field('store_addr', T_STR, True),
         Field('store_name', T_STR, False),
         Field("store_type", T_INT, False, match=r'^([0-1]{1})$'),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @with_database('uyu_core')
+    def _can_modify(self, channel_id):
+        ret = self.db.select_one(table='channel',fields='is_prepayment', where={'id': channel_id})
+        is_prepayment = ret.get('is_prepayment')
+        return is_prepayment
+
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -326,6 +400,12 @@ class CreateStoreHandler(core.Handler):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data
+        channel_id = params['channel_id']
+        store_is_prepayment = params['is_prepayment']
+        channel_is_prepayment = self._can_modify(channel_id)
+        if channel_is_prepayment != store_is_prepayment and channel_is_prepayment == define.UYU_CHAN_DIV_TYPE:
+            return error(UAURET.STOREERR1)
+        params['username'] = params['store_name']
         uop = UUser()
 
         udata = {}
@@ -340,7 +420,7 @@ class CreateStoreHandler(core.Handler):
 
         sdata = {}
         for key in uop.skey:
-            if params.get(key, None):
+            if params.get(key, None) not in [None, '']:
                 sdata[key] = params[key]
 
         log.debug("udata: %s pdata: %s sdata: %s", udata, pdata, sdata)

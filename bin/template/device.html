@@ -23,22 +23,31 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="device_query">
 							<div class="form-group">
 							  <label for="s_channel_name">渠道</label>
-							  <input type="text" class="form-control" id="s_channel_name" placeholder="">
+							  <input type="text" class="form-control" id="s_channel_name" name="q_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
 								<label for="s_store_name">门店</label>
-								<input type="text" class="form-control" id="s_store_name" placeholder="">
+								<input type="text" class="form-control" id="s_store_name" name="q_store_name" placeholder="">
 							</div>
 							<div class="form-group">
 							  <label for="s_device_serial_nu">设备编号</label>
-							  <input type="text" class="form-control" id="s_device_serial_nu" placeholder="">
+							  <input type="text" class="form-control" id="s_device_serial_nu" name="q_serial_number" placeholder="">
+							</div>
+							<div class="form-group">
+								<label for="s_status">状态</label>
+								<select class="form-control" id="s_status" name="status">
+									<option value="-1">请选择</option>
+									<option value="0" selected>启用</option>
+									<option value="1">关闭</option>
+								</select>
 							</div>
 							<button type="button" class="btn btn-primary" id="deviceSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="deviceCreate">新建</button>
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">
@@ -196,6 +205,62 @@
             </div>
         </div>
     </div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="deviceEditModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">修改设备</h4><span id="e_serial_number" hidden></span>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="deviceEditForm" role="form">
+						<div class="form-group">
+							<label for="e_device_name" class="col-sm-2 control-label">设备名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_device_name" name="e_device_name" placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_hd_version" class="col-sm-2 control-label">硬件版本</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_hd_version" name="e_hd_version" placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_blooth_tag" class="col-sm-2 control-label">蓝牙标示</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_blooth_tag" name="e_blooth_tag"  placeholder="必填">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_scm_tag" class="col-sm-2 control-label">单片机标示</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_scm_tag" name="e_scm_tag" placeholder="">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="e_status" class="col-sm-2 control-label">状态</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="e_status" name="e_status">
+									<option value="0">启用</option>
+									<option value="1">关闭</option>
+								</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="deviceEditSubmit">保存修改</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </%block>
 

@@ -32,6 +32,9 @@ class ChanStateSetHandler(core.Handler):
         Field('state', T_INT, False),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self):
@@ -56,6 +59,9 @@ class ChanHandler(core.Handler):
         Field('userid', T_INT, False)
     ]
 
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     _post_handler_fields = [
         Field("se_userid", T_INT, False),
         Field("userid", T_INT, False),
@@ -79,6 +85,9 @@ class ChanHandler(core.Handler):
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, False),
     ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
@@ -117,6 +126,7 @@ class ChanHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         uop = UUser()
         params = self.validator.data
+        params['login_name'] = params['phone_num']
 
         udata = {}
         for key in ["login_name", "nick_name", "phone_num"]:
@@ -130,7 +140,7 @@ class ChanHandler(core.Handler):
 
         chndata = {}
         for key in uop.chan_key:
-            if params.get(key, None):
+            if params.get(key, None) not in [None, '']:
                 chndata[key] = params[key]
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
         uop = UUser()
@@ -152,6 +162,7 @@ class ChannelInfoHandler(core.Handler):
         Field('channel_name', T_STR, True),
         Field('phone_num', T_STR, True),
         Field('is_prepayment', T_INT, True),
+        Field('is_valid', T_INT, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -170,10 +181,11 @@ class ChannelInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             phone_num = params.get('phone_num', None)
             is_prepayment = params.get('is_prepayment', None)
-            log.debug('is_prepayment: %s', is_prepayment)
+            is_valid = params.get('is_valid', None)
+            log.debug('is_prepayment: %s, is_valid:%s', is_prepayment, is_valid)
 
             start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, phone_num, is_prepayment)
+            info_data = self._query_handler(channel_name, phone_num, is_prepayment, is_valid)
 
             data['info'] = self._trans_record(info_data[start:end])
             data['num'] = len(info_data)
@@ -184,7 +196,7 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None):
+    def _query_handler(self, channel_name=None, phone_num=None, is_prepayment=None, is_valid=None):
         keep_fields = [
             'channel.id', 'channel.remain_times', 'channel.training_amt_per',
             'channel.divide_percent', 'channel.is_valid', 'channel.ctime',
@@ -199,6 +211,9 @@ class ChannelInfoHandler(core.Handler):
 
         if is_prepayment in (0, 1):
             where.update({'channel.is_prepayment': is_prepayment})
+
+        if is_valid in (0, 1):
+            where.update({'channel.is_valid': is_valid})
 
         other = ' order by ctime desc'
         log.debug('where: %s', where)
@@ -260,13 +275,16 @@ class CreateChanHandler(core.Handler):
         Field('channel_name', T_STR, False),
     ]
 
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
     @with_validator_self
     def _post_handler(self, *args):
         if not self.user.sauth:
             return error(UAURET.SESSIONERR)
         params = self.validator.data
-
+        params['username'] = params['channel_name']
         log.debug('params: %s', params)
         if params.get("is_prepayment") == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
             return error(UAURET.REGISTERERR)
@@ -284,7 +302,7 @@ class CreateChanHandler(core.Handler):
 
         chndata = {}
         for key in uop.chan_key:
-            if params.get(key, None):
+            if params.get(key, None) not in [None, '']:
                 chndata[key] = params[key]
 
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)

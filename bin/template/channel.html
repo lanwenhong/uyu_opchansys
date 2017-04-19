@@ -25,29 +25,37 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 					<div class="row">
-						<form class="form-inline">
+						<form class="form-inline" id="channel_query">
 							<div class="form-group">
 							  <label for="channelName">渠道名称</label>
-							  <input type="text" class="form-control" id="channelName" placeholder="">
+							  <input type="text" class="form-control" id="channelName" name="q_channel_name" placeholder="">
 							</div>
 							<div class="form-group">
 								<label for="s_phone_num">渠道手机号</label>
-								<input type="text" class="form-control" id="s_phone_num" placeholder="">
+								<input type="text" class="form-control" id="s_phone_num" name="q_phone_num" placeholder="">
 							</div>
 							<div class="form-group">
 								<label for="s_is_prepayment">结算模式</label>
-								<!--
-								<input type="text" class="form-control" id="s_is_prepayment" placeholder="">
-								-->
 								<select class="form-control" id="s_is_prepayment" name="is_prepayment">
 									<option value="-1" selected>请选择</option>
 									<option value="0">次卡</option>
 									<option value="1">分成</option>
 								</select>
 							</div>
+
+							<div class="form-group">
+								<label for="s_is_valid">状态</label>
+								<select class="form-control" id="s_is_valid" name="is_valid">
+									<option value="-1">请选择</option>
+									<option value="0" selected>启用</option>
+									<option value="1">关闭</option>
+								</select>
+							</div>
+
 							<button type="button" class="btn btn-primary" id="channelNameSearch">搜索</button>
 							<button type="button" class="btn btn-default" id="channelCreate">新建渠道</button>
 						</form>
+						<label id="query_label_error"></label>
 					</div>
 
 					<div class="row">
@@ -117,7 +125,7 @@
 						</div>
 
 						<div class="form-group">
-							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+							<label for="contact_phone" class="col-sm-2 control-label">联系人电话</label>
 							<div class="col-sm-10">
 							    <input type="text" class="form-control" id="contact_phone" name="contact_phone" placeholder="必填">
 							</div>
@@ -278,7 +286,7 @@
 						</div>
 
 						<div class="form-group">
-							<label for="contact_phone" class="col-sm-2 control-label">联系人手机号</label>
+							<label for="contact_phone" class="col-sm-2 control-label">联系人电话</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="e_contact_phone" name="contact_phone" placeholder="必填">
 							</div>

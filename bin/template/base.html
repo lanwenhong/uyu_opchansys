@@ -94,7 +94,7 @@
 		</div>
     </div>
 
-    <script src="/static/js/jquery.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.min.js" type="text/javascript"></script>
     <script src="/static/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="/static/js/metisMenu.min.js" type="text/javascript"></script>
 	<!--
@@ -128,7 +128,7 @@
 		$('.logout').click(function(){
 			options = {
 				'path': '/channel_op',
-				'domain': '121.40.177.111',
+				'domain': document.domain,
 			};
 			$.cookie('sessionid', null, options);
 			window.location.href="/channel_op/v1/page/login.html"

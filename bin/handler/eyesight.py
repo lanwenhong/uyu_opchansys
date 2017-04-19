@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 import traceback
 from zbase.web import core
 from zbase.web import template
@@ -7,8 +8,9 @@ from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
 from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
 from uyubase.base.uyu_user import UUser
+from uyubase.base.uyu_user import gen_old_password
 
-
+from uyubase.uyu import define
 from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK
 from uyubase.uyu.define import UYU_STORE_EYESIGHT_BIND, UYU_STORE_EYESIGHT_BIND_MAP
 from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_OP_ERR
@@ -35,6 +37,9 @@ class EyeSightInfoHandler(core.Handler):
     ]
 
     def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    def _post_handler_errfunc(self, msg):
         return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
@@ -100,6 +105,63 @@ class EyeSightInfoHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+    def POST(self, *arg):
+        return self._post_handler()
+
+
+class EyeRegisterHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field('mobile', T_REG, False, match=r'^(1\d{10})$'),
+        Field('nick_name', T_STR, False),
+        Field('username', T_STR, False),
+        Field('email', T_STR, True, match=r'^[a-zA-Z0-9_\-\'\.]+@[a-zA-Z0-9_]+(\.[a-z]+){1,2}$'),
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            mobile = params['mobile']
+            nick_name = params.get('nick_name')
+            email = params.get('email')
+            params['user_type'] = define.UYU_USER_ROLE_EYESIGHT
+            params['password'] = mobile[-6:]
+            params['sex'] = 0
+            uop = UUser()
+            flag, userid = uop.internal_user_register(params)
+            if flag:
+                data = {}
+                now = datetime.datetime.now()
+                data['id'] = userid
+                data['login_name'] = mobile
+                data['password'] = gen_old_password(mobile[-6:])
+                data['phone_num'] = mobile
+                data['nick_name'] = nick_name
+                data['optometrist_type'] = 2
+                data['created_at'] = now
+                data['updated_at'] = now
+                data['sex'] = 0
+                data['recommend_code'] = str(uuid.uuid4())
+                data['portrait_data'] = ''
+                data['portrait_type'] = ''
+                data['email'] = email
+                uop.call('record_optometrists', data)
+                return success({'userid': userid})
+            else:
+                return error(UAURET.DATAEXIST)
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
+
 
     def POST(self, *arg):
         return self._post_handler()

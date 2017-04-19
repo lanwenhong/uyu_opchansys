@@ -2,10 +2,15 @@ $(document).ready(function(){
     search_source();
     $.validator.addMethod("isMobile", function(value, element) {
         var length = value.length;
-        // var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
         var mobile = /^(1\d{10})$/;
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
+
+    $.validator.addMethod("isPhone", function(value, element) {
+        var tel_pattern =  /^\d{3,4}-\d{7,8}(-\d{3,4})?$/;
+        var mobile_pattern = /^(1\d{10})$/;
+        return this.optional(element) || (tel_pattern.test(value)|| mobile_pattern.test(value));
+    }, "请正确填写您的电话号码");
 
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
@@ -56,16 +61,23 @@ $(document).ready(function(){
             var channel_name = $("#channelName").val();
             var phone_num = $("#s_phone_num").val();
             var is_prepayment = $("#s_is_prepayment").val();
+            var is_valid = $("#s_is_valid").val();
+
             if(channel_name){
                 get_data.channel_name = channel_name;
             }
+
             if(phone_num){
                 get_data.phone_num = phone_num;
             }
+
             if(is_prepayment!=-1){
                 get_data.is_prepayment = is_prepayment;
             }
 
+            if(is_valid!=-1){
+                get_data.is_valid = is_valid;
+            }
 
             $.ajax({
 	            url: '/channel_op/v1/api/chninfo_pagelist',
@@ -148,6 +160,38 @@ $(document).ready(function(){
 	});
 
     $("#channelNameSearch").click(function(){
+        var channel_query_vt = $('#channel_query').validate({
+           rules: {
+               q_channel_name: {
+                   required: false,
+                   maxlength: 256
+               },
+               q_phone_num: {
+                   required: false,
+                   isMobile: '#s_phone_num'
+               }
+           },
+           messages: {
+               q_channel_name: {
+                   required: '请输入渠道名称',
+                   maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+               },
+               q_phone_num: {
+                   required: '请输入手机号'
+               }
+           },
+           errorPlacement: function(error, element){
+               var $error_element = element.parent().parent().next();
+               $error_element.text('');
+               error.appendTo($error_element);
+           }
+        });
+        var ok = channel_query_vt.form();
+        if(!ok){
+            $("#query_label_error").show();
+            $("#query_label_error").fadeOut(1400);
+            return false;
+        }
         $('#channelList').DataTable().draw();
     });
 
@@ -173,7 +217,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#contact_phone'
+                    isPhone: '#contact_phone'
                 },
                 contact_email: {
                     required: false,
@@ -195,7 +239,7 @@ $(document).ready(function(){
                 */
                 divide_percent: {
                     required: true,
-                    isLessOne: '#divide_percent',
+                    isLessOne: '#divide_percent'
                 }
             },
             messages: {
@@ -311,6 +355,7 @@ $(document).ready(function(){
                     toastr.success('新建渠道成功');
                     search_source();
 		            $("#channelCreateModal").modal('hide');
+		            location.reload();
                     $('#channelList').DataTable().draw();
                 }
 	        },
@@ -442,7 +487,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#e_contact_phone'
+                    isPhone: '#e_contact_phone'
                 },
                 contact_email: {
                     required: false,

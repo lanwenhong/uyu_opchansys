@@ -7,6 +7,13 @@ $(document).ready(function(){
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
+    $.validator.addMethod("isPhone", function(value, element) {
+        var tel_pattern =  /^\d{3,4}-\d{7,8}(-\d{3,4})?$/;
+        var mobile_pattern = /^(1\d{10})$/;
+        return this.optional(element) || (tel_pattern.test(value)|| mobile_pattern.test(value));
+    }, "请正确填写您的电话号码");
+
+
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
         //var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
@@ -54,12 +61,20 @@ $(document).ready(function(){
 
             var channel_name = $("#channel_name").val();
             var store_name = $("#store_name").val();
+            var is_valid = $("#s_is_valid").val();
+
             if(channel_name!=''&&channel_name!=undefined){
                 get_data.channel_name = channel_name;
             }
+
             if(store_name!=''&&store_name!=undefined){
                 get_data.store_name = store_name;
             }
+
+            if(is_valid!=-1){
+                get_data.is_valid = is_valid;
+            }
+
             $.ajax({
 	            url: '/channel_op/v1/api/storeinfo_pagelist',
 	            type: 'GET',
@@ -155,6 +170,39 @@ $(document).ready(function(){
     });
 
     $("#storeSearch").click(function(){
+        var store_query_vt = $('#store_query').validate({
+            rules: {
+                q_channel_name: {
+                    required: false,
+                    maxlength: 256
+                },
+                q_store_name: {
+                    required: false,
+                    maxlength: 256
+                }
+            },
+            messages: {
+                q_channel_name: {
+                    required: '请输入渠道名称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                },
+                q_store_name: {
+                    required: '请输入门店名称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                }
+            },
+            errorPlacement: function(error, element){
+                var $error_element = element.parent().parent().next();
+                $error_element.text('');
+                error.appendTo($error_element);
+            }
+        });
+        var ok = store_query_vt.form();
+        if(!ok){
+            $("#query_label_error").show();
+            $("#query_label_error").fadeOut(1400);
+            return false;
+        }
         $('#storeList').DataTable().draw();
     });
 
@@ -180,7 +228,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#contact_phone'
+                    isPhone: '#contact_phone'
                 },
                 contact_email: {
 				    required: false,
@@ -359,6 +407,7 @@ $(document).ready(function(){
                     search_source();
                     $("#storeCreateForm").resetForm();
                     $("#storeCreateModal").modal('hide');
+                    location.reload();
                     $('#storeList').DataTable().draw();
                 }
 	        },
@@ -406,6 +455,8 @@ $(document).ready(function(){
     $(document).on('click', '.viewStore', function(){
         $("label.error").remove();
         var uid = $(this).data('uid');
+        $('#e_channel_name').html('');
+        store_edit_channel_name_select();
         //var is_prepayment = $(this).data('is_prepayment');
         //$('#prepayment').text(is_prepayment);
         var se_userid = window.localStorage.getItem('myid');
@@ -460,6 +511,7 @@ $(document).ready(function(){
                     //$('#e_store_mobile').val(ch_data.store_mobile);
                     //$('#e_store_addr').val(ch_data.store_addr);
 					$('#e_store_type').val(ch_data.store_type);
+                    $('.e_channel_name').val(ch_data.channel_id);
                     $('#storeEditModal').modal();
                 }
 	        },
@@ -560,7 +612,7 @@ $(document).ready(function(){
                 },
                 contact_phone: {
                     required: true,
-                    isMobile: '#e_contact_phone'
+                    isPhone: '#e_contact_phone'
                 },
                 contact_email: {
                     required: false,
@@ -677,6 +729,7 @@ $(document).ready(function(){
         var store_type = $('#e_store_type').val();
 		var training_amt_per= $('#e_training_amt_per').val() * 100;
 		var divide_percent= $('#e_divide_percent').val();
+		var channel_id = $('.e_channel_name').val();
 		//var business = $('#e_business').val();
 		//var front_business = $('#e_front_business').val();
 
@@ -701,6 +754,7 @@ $(document).ready(function(){
 		post_data['store_type'] = store_type;
 		post_data['training_amt_per'] = training_amt_per;
 		post_data['is_prepayment'] = is_prepayment;
+		post_data['channel_id'] = channel_id;
 
 		//post_data['business'] = business;
 		//post_data['front_business'] = front_business;
@@ -911,6 +965,106 @@ $(document).ready(function(){
     });
 
 
+    $('#eyesight_register').click(function () {
+        $("label.error").remove();
+        $("#eyesightCreateForm").resetForm();
+        $("#registerEyesight").modal();
+    });
+
+
+    $('#eyesightCreateSubmit').click(function () {
+        var eyesight_register_vt = $('#eyesightCreateForm').validate({
+            rules: {
+                eyesight_phone_num: {
+                    required: true,
+                    isMobile: '#eyesight_phone_num'
+                },
+                eyesight_email: {
+                    required: false,
+                    email: true
+                },
+                eyesight_nick_name: {
+                    required: true,
+                    maxlength: 128
+                },
+                eyesight_username: {
+                    required: true,
+                    maxlength: 128
+                }
+            },
+            messages: {
+                eyesight_phone_num: {
+                    required: '请输入手机号'
+                },
+                eyesight_email: {
+                    email: "请输入正确格式的电子邮件"
+                },
+                eyesight_nick_name: {
+                    required: '请输入昵称',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                eyesight_username: {
+                    required: '请输入用户名',
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                }
+            }
+        });
+
+        var ok = eyesight_register_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var eyesight_phone_num = $('#eyesight_phone_num').val();
+        var eyesight_nick_name = $('#eyesight_nick_name').val();
+        var eyesight_username = $('#eyesight_username').val();
+        var eyesight_email = $('#eyesight_email').val();
+
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data['se_userid'] = se_userid;
+
+        post_data['mobile'] = eyesight_phone_num;
+
+        if(eyesight_nick_name){
+            post_data['nick_name'] = eyesight_nick_name;
+        }
+
+        if(eyesight_username){
+            post_data['username'] = eyesight_username;
+        }
+
+        if(eyesight_email){
+            post_data['email'] = eyesight_email;
+        }
+
+
+        $.ajax({
+            url: '/channel_op/v1/api/register_eye',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    $("#registerEyesight").modal('hide');
+                    toastr.success('注册成功');
+                }
+            },
+            error: function(data) {
+                toastr.success('请求异常');
+            }
+        });
+
+    })
+
+
 });
 
 function search_source() {
@@ -1008,3 +1162,37 @@ function channel_name_select() {
         }
     });
 }
+
+function store_edit_channel_name_select() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/chan_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                var e_channel_name = $('.e_channel_name');
+                for(var i=0; i<data.data.length; i++){
+                    var channel_id = data.data[i].channel_id;
+                    var channel_name = data.data[i].channel_name;
+                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    option_str.appendTo(e_channel_name);
+                }
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
+
