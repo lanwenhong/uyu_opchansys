@@ -10,6 +10,7 @@ from handler import train
 from handler import settle
 from handler import eyesight
 from handler import rules
+from handler import user
 urls = (
     ('/ping', ping.Ping),
     # 登录页面
@@ -29,6 +30,8 @@ urls = (
     ('^/channel_op/v1/page/train/use.html$', train.TrainUseManage),
     # 清算信息页面
     ('^/channel_op/v1/page/settle.html$', settle.SettleManage),
+    # 用户管理页面
+    ('^/channel_op/v1/page/users.html$', user.UserManage),
 
     # 登录接口
     ('^/channel_op/v1/api/login$', login.LoginHandler),
@@ -103,4 +106,7 @@ urls = (
 
     # 套餐规则
     ('^/channel_op/v1/api/rules_list$', rules.RulesInfoHandler),
+
+    # 用户数据
+    ('^/channel_op/v1/api/user_list$', user.UserInfoListHandler),
 )
