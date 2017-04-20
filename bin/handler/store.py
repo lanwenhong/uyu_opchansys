@@ -229,7 +229,7 @@ class StoreHandler(core.Handler):
             if new_channel_is_prepayment == define.UYU_CHAN_DIV_TYPE and store_is_prepayment != define.UYU_STORE_DIV_TYPE:
                 return error(UAURET.STOREERR1)
 
-            if remain_times <= 0 and store_is_prepayment == define.UYU_STORE_PREPAY_TYPE and origin_store_is_prepayment == define.UYU_STORE_DIV_TYPE:
+            if remain_times < 0 and store_is_prepayment == define.UYU_STORE_PREPAY_TYPE and origin_store_is_prepayment == define.UYU_STORE_DIV_TYPE:
                 return error(UAURET.STOREERR1)
 
         params['login_name'] = params['phone_num']
