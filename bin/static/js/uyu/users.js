@@ -10,6 +10,13 @@ $(document).ready(function(){
     }, "请正确填写您的手机号码");
 
 
+    $.validator.addMethod("isElevenNum", function(value, element) {
+        var length = value.length;
+        var mobile = /^([0-9]{11})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
+    }, "请正确填写您的手机号码");
+
+
     $('#userList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -109,7 +116,7 @@ $(document).ready(function(){
             rules: {
                 q_phone_num: {
                     required: false,
-                    isMobile: '#s_phone_num'
+                    isElevenNum: '#s_phone_num'
                 }
             },
             messages: {
