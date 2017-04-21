@@ -105,7 +105,7 @@ $(document).ready(function(){
 
     $("#userSearch").click(function(){
 
-        var user_query_vt = $('#use_query').validate({
+        var user_query_vt = $('#users_query').validate({
             rules: {
                 q_phone_num: {
                     required: false,
