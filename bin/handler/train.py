@@ -135,7 +135,7 @@ class TrainBuyInfoHandler(core.Handler):
             item['update_time'] = item['uptime_time'].strftime('%Y-%m-%d %H:%M:%S') if item['uptime_time'] else ''
             item['category'] = UYU_OP_CATEGORY_MAP.get(item['category'], '')
             item['op_type'] = UYU_ORDER_TYPE_MAP.get(item['op_type'], '')
-            item['training_amt'] = item['training_amt'] / 100.0
+            item['training_amt'] = item['training_amt'] / 100.0 if item['training_amt'] else 0.00
             item['is_valid'] = item['status']
             item['status'] = UYU_ORDER_STATUS_MAP.get(item['status'], '')
             item['busicd_name'] = item['busicd']
