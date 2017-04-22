@@ -299,7 +299,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    # @unittest.skip("skipping")
+    @unittest.skip("skipping")
     def test_bind_eyesight(self):
         self.url = '/channel_op/v1/api/store_eye'
         self.send = {
@@ -604,15 +604,15 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    @unittest.skip("skipping")
+    #@unittest.skip("skipping")
     def test_register_eyesight(self):
         self.url = "/channel_op/v1/api/register_eye"
         self.send = {
             "se_userid": 1262,
-            "mobile": "13928478192",
-            "nick_name": "视光师8192",
-            "username": "wende",
-            "email": "wende@ccc.com"
+            "mobile": "13928478194",
+            "nick_name": "视光师8194",
+            "username": "wende8914",
+            "email": "wende8914@ccc.com"
         }
         ret = self.client.post(self.url, self.send, headers=self.headers)
         log.debug(ret)
