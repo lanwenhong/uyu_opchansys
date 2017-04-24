@@ -85,18 +85,17 @@ class UserInfoListHandler(core.Handler):
             item['state'] = define.UYU_USER_STATE_MAP.get(item['state'])
             item['user_type'] = define.UYU_USER_ROLE_MAP.get(item['user_type'])
             item['ctime'] = datetime.datetime.strftime(item['ctime'], '%Y-%m-%d %H:%M:%S')
-            item['remain_times'] = self._collect_remain_times(item['id'])
+            item['remain_times'] = self._collect_remain_times(self.db, item['id'])
 
         return data
 
 
-    @with_database('uyu_core')
-    def _collect_remain_times(self, userid):
+    def _collect_remain_times(self, conn, userid):
         keep_fields = [
             'sum(remain_times) as remain_times'
         ]
         where = {'userid': userid}
-        ret = self.db.select_one(
+        ret = conn.select_one(
             table='consumer', fields=keep_fields, where=where
         )
         remain_times = int(ret['remain_times']) if ret['remain_times'] else 0
