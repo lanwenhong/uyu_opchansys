@@ -163,8 +163,6 @@ $(document).ready(function(){
         var userid = $('#modify_userid').text();
         var new_password = $('#newPassword').val();
         var new_password_confirm = $('#newPasswordConfirm').val();
-        console.log(new_password);
-        console.log(new_password_confirm);
 
         if(new_password.length < 6 || new_password_confirm.length < 6){
             toastr.warning('密码长度至少六位');
