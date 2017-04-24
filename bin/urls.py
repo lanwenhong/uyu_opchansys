@@ -114,4 +114,7 @@ urls = (
     ('^/channel_op/v1/api/user_list$', user.UserInfoListHandler),
     # 验证码数据
     ('^/channel_op/v1/api/verify_codes_list$', vcode.VerifyCodeInfoListHandler),
+    # 用户管理页面修改密码
+    ('^/channel_op/v1/api/user_change_password$', user.UserChangePasswordHandler),
+
 )

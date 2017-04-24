@@ -111,3 +111,42 @@ class UserInfoListHandler(core.Handler):
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
 
+
+class UserChangePasswordHandler(core.Handler):
+    _post_handler_fields = [
+        Field('userid', T_INT, False),
+        Field('password', T_STR, False),
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        params = self.validator.data
+        userid = params['userid']
+        password = params["password"]
+
+        ret = self._check_user(userid)
+        if not ret:
+            return error(UAURET.USERERR)
+
+        u_op = UUser()
+        ret = u_op.call("change_password_without_code", userid, password)
+        if ret != UYU_OP_OK:
+            return error(ret)
+        return success({})
+
+
+    @with_database('uyu_core')
+    def _check_user(self, userid):
+        ret = self.db.select_one(table='auth_user', where={'id': userid})
+        return ret
+
+
+    def POST(self, *args):
+        ret = self._post_handler(self, args)
+        self.write(ret)

@@ -160,9 +160,45 @@ $(document).ready(function(){
     });
 
     $('.saveNewPassword').click(function () {
+        var userid = $('#modify_userid').text();
         var new_password = $('#newPassword').val();
         var new_password_confirm = $('#newPasswordConfirm').val();
         console.log(new_password);
         console.log(new_password_confirm);
+
+
+        if(!new_password||!new_password_confirm||new_password!=new_password_confirm){
+            toastr.warning('请检查密码');
+            return false;
+        }
+        var se_userid = window.localStorage.getItem('myid');
+        var post_data = {
+            'se_userid': se_userid,
+            'userid': userid,
+            'password': md5(new_password)
+        };
+        $.ajax({
+            url: '/channel_op/v1/api/user_change_password',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                    return false;
+                } else {
+                    $("#ModifyPassWord").modal('hide');
+                    toastr.success('修改密码成功');
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求数据异常');
+            }
+        });
+
     })
 });
