@@ -10,6 +10,7 @@ from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_R
 from uyubase.base.training_op import TrainingOP
 from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP, UYU_BUSICD_MAP, UYU_TRAIN_USE_MAP
 from uyubase.uyu import define
+from uyubase.base.uyu_user import UUser
 
 from runtime import g_rt
 from config import cookie_conf
