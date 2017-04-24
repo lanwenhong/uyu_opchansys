@@ -86,6 +86,18 @@ $(document).ready(function(){
 
             });
         },
+        'columnDefs': [
+            {
+                targets: 9,
+                data: '操作',
+                render: function(data, type, full) {
+                    var userid = full.id;
+                    var msg = '修改密码';
+                    var op = "<button type='button' class='btn btn-success btn-sm modify-password' data-userid="+userid+">"+msg+"</button>";
+                    return op;
+                }
+            }
+        ],
         'columns': [
             { data: 'id' },
             { data: 'phone_num' },
@@ -139,4 +151,17 @@ $(document).ready(function(){
         }
         $('#userList').DataTable().draw();
     });
+
+    $(document).on('click', '.modify-password', function(){
+        var userid = $(this).data('userid');
+        $('#modify_userid').text(userid);
+        $('#ModifyPassWordForm').resetForm();
+    });
+    
+    $('.saveNewPassword').click(function () {
+        var new_password = $('#newPassword').val();
+        var new_password_confirm = $('#newPasswordConfirm').val();
+        console.log(new_password);
+        console.log(new_password_confirm);
+    })
 });
