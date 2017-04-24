@@ -156,6 +156,7 @@ $(document).ready(function(){
         var userid = $(this).data('userid');
         $('#modify_userid').text(userid);
         $('#ModifyPassWordForm').resetForm();
+        $('#ModifyPassWord').modal();
     });
 
     $('.saveNewPassword').click(function () {
