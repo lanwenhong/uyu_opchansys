@@ -172,7 +172,7 @@ $(document).ready(function(){
         }
 
         if(!new_password||!new_password_confirm||new_password!=new_password_confirm){
-            toastr.warning('请检查密码');
+            toastr.warning('请检查密码是否一致');
             return false;
         }
         var se_userid = window.localStorage.getItem('myid');
