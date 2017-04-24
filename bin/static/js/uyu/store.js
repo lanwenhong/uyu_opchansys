@@ -18,7 +18,7 @@ $(document).ready(function(){
         var length = value.length;
         //var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
         var yuan = /^([0-9]{1,6})(.([0-9]{1,2})){0,1}$/;
-        return this.optional(element) || (length && yuan.test(value));
+        return this.optional(element) || (length && yuan.test(value) && parseFloat(value) > 0);
     }, "请正确填写您的价格");
 
     $.validator.addMethod("isLessOne", function(value, element) {
