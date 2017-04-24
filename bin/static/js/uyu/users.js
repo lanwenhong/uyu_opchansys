@@ -177,7 +177,8 @@ $(document).ready(function(){
         var post_data = {
             'se_userid': se_userid,
             'userid': userid,
-            'password': md5(new_password)
+            'password': md5(new_password),
+            'echo_password': new_password,
         };
         $.ajax({
             url: '/channel_op/v1/api/user_change_password',

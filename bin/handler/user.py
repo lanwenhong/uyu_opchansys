@@ -117,6 +117,7 @@ class UserChangePasswordHandler(core.Handler):
     _post_handler_fields = [
         Field('userid', T_INT, False),
         Field('password', T_STR, False),
+        Field('echo_password', T_STR, False),
     ]
 
     def _post_handler_errfunc(self, msg):
@@ -130,13 +131,15 @@ class UserChangePasswordHandler(core.Handler):
         params = self.validator.data
         userid = params['userid']
         password = params["password"]
+        echo_password = params["echo_password"]
 
         ret = self._check_user(userid)
         if not ret:
             return error(UAURET.USERERR)
-
+        user_type = ret['user_type']
+        login_name = ret['login_name']
         u_op = UUser()
-        ret = u_op.call("change_password_without_code", userid, password)
+        ret = u_op.call("change_password_all", userid, password, echo_password, user_type, login_name)
         if ret != UYU_OP_OK:
             return error(ret)
         return success({})
