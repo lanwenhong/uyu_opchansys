@@ -166,6 +166,10 @@ $(document).ready(function(){
         console.log(new_password);
         console.log(new_password_confirm);
 
+        if(new_password.length < 6 || new_password_confirm.length < 6){
+            toastr.warning('密码长度至少六位');
+            return false;
+        }
 
         if(!new_password||!new_password_confirm||new_password!=new_password_confirm){
             toastr.warning('请检查密码');
