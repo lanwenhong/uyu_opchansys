@@ -93,6 +93,7 @@ $(document).ready(function(){
             { data: 'nick_name' },
             { data: 'state' },
             { data: 'user_type' },
+            { data: 'remain_times' },
             { data: 'ctime' }
         ],
         'oLanguage': {
