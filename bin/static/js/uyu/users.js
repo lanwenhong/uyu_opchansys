@@ -88,7 +88,7 @@ $(document).ready(function(){
         },
         'columnDefs': [
             {
-                targets: 9,
+                targets: 8,
                 data: '操作',
                 render: function(data, type, full) {
                     var userid = full.id;
@@ -157,7 +157,7 @@ $(document).ready(function(){
         $('#modify_userid').text(userid);
         $('#ModifyPassWordForm').resetForm();
     });
-    
+
     $('.saveNewPassword').click(function () {
         var new_password = $('#newPassword').val();
         var new_password_confirm = $('#newPasswordConfirm').val();
