@@ -84,23 +84,41 @@ class UserInfoListHandler(core.Handler):
             return []
 
         for item in data:
+            user_type = item['user_type']
             item['state'] = define.UYU_USER_STATE_MAP.get(item['state'])
-            item['user_type'] = define.UYU_USER_ROLE_MAP.get(item['user_type'])
+            item['user_type'] = define.UYU_USER_ROLE_MAP.get(user_type)
             item['ctime'] = datetime.datetime.strftime(item['ctime'], '%Y-%m-%d %H:%M:%S')
-            item['remain_times'] = self._collect_remain_times(self.db, item['id'])
+            item['remain_times'] = self._collect_remain_times(self.db, item['id'], user_type)
 
         return data
 
 
-    def _collect_remain_times(self, conn, userid):
-        keep_fields = [
-            'sum(remain_times) as remain_times'
-        ]
-        where = {'userid': userid}
-        ret = conn.select_one(
-            table='consumer', fields=keep_fields, where=where
-        )
-        remain_times = int(ret['remain_times']) if ret['remain_times'] else 0
+    def _collect_remain_times(self, conn, userid, user_type):
+        if user_type in (define.UYU_USER_ROLE_EYESIGHT, define.UYU_USER_ROLE_COMSUMER):
+            keep_fields = [
+                'sum(remain_times) as remain_times'
+            ]
+            where = {'userid': userid}
+            ret = conn.select_one(
+                table='consumer', fields=keep_fields, where=where
+            )
+            remain_times = int(ret['remain_times']) if ret['remain_times'] else 0
+
+        elif user_type in (define.UYU_USER_ROLE_STORE, define.UYU_USER_ROLE_HOSPITAL):
+            where = {'userid': userid}
+            keep_fields = ['remain_times']
+            ret = conn.select_one(table='stores', fields=keep_fields, where=where)
+            remain_times = int(ret['remain_times']) if ret['remain_times'] else 0
+
+        elif user_type == define.UYU_USER_ROLE_CHAN:
+            where = {'userid': userid}
+            keep_fields = ['remain_times']
+            ret = conn.select_one(table='channel', fields=keep_fields, where=where)
+            remain_times = int(ret['remain_times']) if ret['remain_times'] else 0
+
+        else:
+            remain_times = '无'
+
         return remain_times
 
 
