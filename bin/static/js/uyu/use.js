@@ -93,7 +93,8 @@ $(document).ready(function(){
             });
         },
 		'columns': [
-				{ data: 'id' },
+				//{ data: 'id' },
+				{ data: 'consumer_name' },
 				{ data: 'channel_name' },
 				{ data: 'store_name' },
 				{ data: 'device_name' },

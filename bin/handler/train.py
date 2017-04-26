@@ -245,12 +245,16 @@ class TrainUseInfoHandler(core.Handler):
             store_ret = self.db.select_one(table='stores', fields='store_name', where={'id': item['store_id']})
             device_name = self.db.select_one(table='device', fields='device_name', where={'id': item['device_id']})
             eyesight_name = self.db.select_one(table='auth_user', fields='nick_name', where={'id': item['eyesight_id']})
+            consumer = self.db.select_one(table='auth_user', fields=['nick_name', 'login_name'], where={'id': item['consumer_id']})
             item['channel_name'] = channel_ret.get('channel_name') if channel_ret else ''
             item['store_name'] = store_ret.get('store_name') if store_ret else ''
             item['device_name'] = device_name.get('device_name') if device_name else ''
             item['eyesight_name'] = eyesight_name.get('nick_name') if eyesight_name else ''
             item['create_time'] = item['ctime'].strftime('%Y-%m-%d %H:%M:%S')
             item['status'] = UYU_TRAIN_USE_MAP.get(item['status'], '')
+            consumer_nick_name = consumer.get('nick_name') if consumer else ''
+            consumer_login_name = consumer.get('login_name') if consumer else ''
+            item['consumer_name'] = consumer_nick_name if consumer_nick_name else consumer_login_name
 
         return data
 
