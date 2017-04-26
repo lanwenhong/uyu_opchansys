@@ -65,7 +65,8 @@ class UserInfoListHandler(core.Handler):
             'id', 'phone_num', 'username', 'nick_name', 'state', 'user_type', 'ctime'
         ]
 
-        where = {'user_type': ('in', (define.UYU_USER_ROLE_EYESIGHT, define.UYU_USER_ROLE_COMSUMER))}
+        where = {}
+        # where = {'user_type': ('in', (define.UYU_USER_ROLE_EYESIGHT, define.UYU_USER_ROLE_COMSUMER))}
 
         if phone_num:
             where.update({'phone_num': phone_num})
