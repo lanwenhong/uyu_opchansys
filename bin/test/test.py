@@ -37,10 +37,10 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    @unittest.skip("skipping")
+    #@unittest.skip("skipping")
     def test_vcode(self):
         self.url = '/channel_op/v1/api/sms_send'
-        self.send = {"mobile": "13802438716"}
+        self.send = {"mobile": "18215630018"}
         ret = self.client.post(self.url, self.send)
         log.info(ret)
         respcd = json.loads(ret).get('respcd')
@@ -604,7 +604,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    #@unittest.skip("skipping")
+    @unittest.skip("skipping")
     def test_register_eyesight(self):
         self.url = "/channel_op/v1/api/register_eye"
         self.send = {

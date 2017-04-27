@@ -4,14 +4,14 @@ from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR
 
 from uyubase.base.response import success, error, UAURET
-
+from uyubase.uyu import define
 from uyubase.uyu.define import UYU_SYS_ROLE_OP, UYU_USER_ROLE_SUPER,UYU_OP_ERR
 
 from zbase.base.dbpool import with_database
 
 from uyubase.base.usession import uyu_set_cookie, USession
 from uyubase.base.uyu_user import VCode, UUser
-
+from uyubase.base.send_sms import UYUSendSMS
 from runtime import g_rt
 from config import cookie_conf
 
@@ -114,6 +114,17 @@ class SmsHandler(core.Handler):
         log.debug("get vcode: %s", vcode)
         if not vcode:
             return error(UAURET.VCODEERR)
+        sms_op = UYUSendSMS()
+        ret = sms_op.send_sms(mobile, [vcode, 1], define.RONG_YUN_SMS_UYU_TEMPID_VERIFY_CODE)
+        if not ret:
+            log.debug('send_sms mobile=%s, vcode=%s except', mobile, vcode)
+        else:
+            status_code = ret.get('statusCode')
+            if status_code == '000000':
+                log.debug('send_sms mobile=%s, vcode=%s ok', mobile, vcode)
+            else:
+                log.debug('send_sms mobile=%s, vcode=%s fail', mobile, vcode)
+
         return success({})
 
     def POST(self, *args):
