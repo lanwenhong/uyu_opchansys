@@ -42,8 +42,18 @@ class ChangePassHandler(core.Handler):
         vcode = params['vcode']
         password = params["password"]
 
-        u_op = UUser()
-        respcd = u_op.change_password(mobile, vcode, password)
+        uop = UUser()
+        uop.load_user_by_mobile(mobile)
+        if len(uop.udata) == 0:
+            log.debug('change pass handler mobile=%s not exists', mobile)
+            return error(UAURET.USERERR)
+
+        user_type = uop.udata.get('user_type')
+        if user_type != define.UYU_USER_ROLE_SUPER:
+            log.debug('change pass handler mobile=%s user_type=%s not super', mobile, user_type)
+            return error(UAURET.USERROLEERR)
+
+        respcd = uop.change_password(mobile, vcode, password)
         if respcd != UAURET.OK:
             return error(respcd)
         return success({})
@@ -107,6 +117,12 @@ class SmsHandler(core.Handler):
         uop = UUser()
         uop.load_user_by_mobile(mobile)
         if len(uop.udata) == 0:
+            log.debug('sms handler mobile=%s not exists', mobile)
+            return error(UAURET.USERERR)
+
+        user_type = uop.udata.get('user_type')
+        if user_type != define.UYU_USER_ROLE_SUPER:
+            log.debug('sms handler mobile=%s user_type=%s not super', mobile, user_type)
             return error(UAURET.USERROLEERR)
 
         vop = VCode()
