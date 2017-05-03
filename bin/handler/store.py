@@ -81,19 +81,28 @@ class StoreInfoHandler(core.Handler):
             store_name = params.get('store_name')
             is_valid = params.get('is_valid', None)
 
-            start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, is_valid)
+            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+            offset, limit = tools.gen_offset(curr_page, max_page_num)
+            info_data = self._query_handler(offset, limit, channel_name, store_name, is_valid)
 
-            data['info'] = self._trans_record(info_data[start:end])
-            data['num'] = len(info_data)
+            data['info'] = self._trans_record(info_data)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
 
+
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, is_valid=None):
+    def _total_stat(self):
+        sql = 'select count(*) as total from stores where ctime>0'
+        ret = self.db.get(sql)
+        return int(ret['total']) if ret['total'] else 0
+
+
+    @with_database('uyu_core')
+    def _query_handler(self, offset, limit, channel_name=None, store_name=None, is_valid=None):
         where = {}
 
         if channel_name:
@@ -105,7 +114,7 @@ class StoreInfoHandler(core.Handler):
         if is_valid in (0, 1):
             where.update({'stores.is_valid': is_valid})
 
-        other = ' order by ctime desc'
+        other = ' order by ctime desc limit %d offset %d' % (limit, offset)
 
         keep_fields = ['stores.id', 'stores.userid', 'stores.channel_id', 'stores.store_type', 'stores.store_contacter',
                        'stores.store_mobile', 'stores.store_addr', 'stores.training_amt_per', 'stores.divide_percent',

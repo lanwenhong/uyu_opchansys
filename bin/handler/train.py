@@ -65,11 +65,12 @@ class TrainBuyInfoHandler(core.Handler):
             end_time = params.get('end_time', None)
             status = params.get('status', None)
 
-            start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id, start_time, end_time, status)
+            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+            offset, limit = tools.gen_offset(curr_page, max_page_num)
+            info_data = self._query_handler(offset, limit, channel_name, store_name, consumer_id, start_time, end_time, status)
 
-            data['info'] = self._trans_record(info_data[start:end])
-            data['num'] = len(info_data)
+            data['info'] = self._trans_record(info_data)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -77,8 +78,16 @@ class TrainBuyInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
 
+
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None, status=None):
+    def _total_stat(self):
+        sql = 'select count(*) as total from training_operator_record where create_time>0'
+        ret = self.db.get(sql)
+        return int(ret['total']) if ret['total'] else 0
+
+
+    @with_database('uyu_core')
+    def _query_handler(self, offset, limit, channel_name=None, store_name=None, consumer_id=None, start_time=None, end_time=None, status=None):
         where = {}
 
         if channel_name:
@@ -106,7 +115,7 @@ class TrainBuyInfoHandler(core.Handler):
         if status in define.UYU_ORDER_STATUS_MAP.keys():
             where.update({'status': status})
 
-        other = ' order by create_time desc'
+        other = ' order by create_time desc limit %d offset %d' % (limit, offset)
 
         keep_fields = [
             'id', 'channel_id', 'store_id',
@@ -184,19 +193,27 @@ class TrainUseInfoHandler(core.Handler):
             consumer_id = params.get('consumer_id')
             eyesight = params.get('eyesight')
             create_time = params.get('create_time')
-            start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(channel_name, store_name, consumer_id, eyesight, create_time)
+            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+            offset, limit = tools.gen_offset(curr_page, max_page_num)
+            info_data = self._query_handler(offset, limit, channel_name, store_name, consumer_id, eyesight, create_time)
             # data['info'] = info_data[start:end]
-            data['info'] = self._trans_record(info_data[start:end])
-            data['num'] = len(info_data)
+            data['info'] = self._trans_record(info_data)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
 
+
     @with_database('uyu_core')
-    def _query_handler(self, channel_name=None, store_name=None, consumer_id=None, eyesight=None, create_time=None):
+    def _total_stat(self):
+        sql = 'select count(*) as total from training_use_record where ctime>0'
+        ret = self.db.get(sql)
+        return int(ret['total']) if ret['total'] else 0
+
+    @with_database('uyu_core')
+    def _query_handler(self, offset, limit, channel_name=None, store_name=None, consumer_id=None, eyesight=None, create_time=None):
         where = {}
         if channel_name:
             channel_list = tools.channel_name_to_id(channel_name)
@@ -228,7 +245,7 @@ class TrainUseInfoHandler(core.Handler):
             end_time = create_time.replace(hour=23, minute=59, second=59)
             where.update({'ctime': ('between', (start_time, end_time))})
 
-        other = ' order by ctime desc'
+        other = ' order by ctime desc limit %d offset %d'  % (limit, offset)
 
         keep_fields = ['id', 'channel_id', 'store_id', 'device_id', 'consumer_id', 'eyesight_id', 'comsumer_nums', 'status', 'ctime']
 

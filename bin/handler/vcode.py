@@ -43,10 +43,11 @@ class VerifyCodeInfoListHandler(core.Handler):
             phone_num = params.get('phone_num', None)
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(phone_num)
-            data['info'] = self._trans_record(info_data[start:end])
-            data['num'] = len(info_data)
+            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+            offset, limit = tools.gen_offset(curr_page, max_page_num)
+            info_data = self._query_handler(offset, limit, phone_num)
+            data['info'] = self._trans_record(info_data)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -54,9 +55,15 @@ class VerifyCodeInfoListHandler(core.Handler):
             return error(UAURET.DATAERR)
 
 
+    @with_database('uyu_core')
+    def _total_stat(self):
+        sql = 'select count(*) as total from verify_code where stime>0'
+        ret = self.db.get(sql)
+        return int(ret['total']) if ret['total'] else 0
+
 
     @with_database('uyu_core')
-    def _query_handler(self, phone_num=None):
+    def _query_handler(self, offset, limit, phone_num=None):
         keep_fields = [
             'id', 'mobile', 'code', 'stime', 'etime'
         ]
@@ -66,7 +73,7 @@ class VerifyCodeInfoListHandler(core.Handler):
         if phone_num:
             where.update({'mobile': phone_num})
 
-        other = ' order by stime desc'
+        other = ' order by stime desc limit %d offset %d' % (limit, offset)
         log.debug('where: %s', where)
 
         ret = self.db.select(table='verify_code', fields=keep_fields, where=where, other=other)
