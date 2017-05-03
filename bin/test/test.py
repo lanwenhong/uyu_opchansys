@@ -37,7 +37,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    @unittest.skip("skipping")
+    #@unittest.skip("skipping")
     def test_vcode(self):
         self.url = '/channel_op/v1/api/sms_send'
         self.send = {"mobile": "18215630018"}
@@ -47,7 +47,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    #@unittest.skip("skipping")
+    @unittest.skip("skipping")
     def test_vcode_verify(self):
         self.url = '/channel_op/v1/api/passwd_change'
         self.send = {
