@@ -203,7 +203,7 @@ class ChannelInfoHandler(core.Handler):
 
     @with_database('uyu_core')
     def _total_stat(self):
-        sql = 'select count(*) from channel where ctime>0'
+        sql = 'select count(*) as total from channel where ctime>0'
         ret = self.db.get(sql)
         return int(ret['total']) if ret['total'] else 0
 
