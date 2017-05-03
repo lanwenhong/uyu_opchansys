@@ -59,6 +59,7 @@ class ChangePassHandler(core.Handler):
         return success({})
 
     def POST(self, *args):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         ret = self._post_handler(self, args)
         self.write(ret)
 
@@ -90,6 +91,7 @@ class LoginHandler(core.Handler):
         return success({"userid": u_op.udata["id"]})
 
     def POST(self, *args):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         ret = self._post_handler(args)
         return ret
 
@@ -144,6 +146,7 @@ class SmsHandler(core.Handler):
         return success({})
 
     def POST(self, *args):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         ret = self._post_handler(args)
         self.write(ret)
 

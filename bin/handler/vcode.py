@@ -93,6 +93,7 @@ class VerifyCodeInfoListHandler(core.Handler):
 
     def GET(self):
         try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
             data = self._get_handler()
             return data
         except Exception as e:
