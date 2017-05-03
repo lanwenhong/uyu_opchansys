@@ -47,20 +47,27 @@ class UserInfoListHandler(core.Handler):
             phone_num = params.get('phone_num', None)
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            start, end = tools.gen_ret_range(curr_page, max_page_num)
-            info_data = self._query_handler(phone_num)
-            data['info'] = self._trans_record(info_data[start:end])
-            data['num'] = len(info_data)
+            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+            offset, limit = tools.gen_offset(curr_page, max_page_num)
+            info_data = self._query_handler(offset, limit, phone_num)
+            data['info'] = self._trans_record(info_data)
+            # data['num'] = len(info_data)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.DATAERR)
 
+    @with_database('uyu_core')
+    def _total_stat(self):
+        sql = 'select count(id) as total from auth_user'
+        ret = self.db.get(sql)
+        return int(ret['total']) if ret['total'] else 0
 
 
     @with_database('uyu_core')
-    def _query_handler(self, phone_num=None):
+    def _query_handler(self, offset, limit, phone_num=None):
         keep_fields = [
             'id', 'phone_num', 'username', 'nick_name', 'state', 'user_type', 'ctime'
         ]
@@ -71,7 +78,7 @@ class UserInfoListHandler(core.Handler):
         if phone_num:
             where.update({'phone_num': phone_num})
 
-        other = ' order by ctime desc'
+        other = ' order by ctime desc limit %d offset %d' % (limit, offset)
         log.debug('where: %s', where)
 
         ret = self.db.select(table='auth_user', fields=keep_fields, where=where, other=other)
