@@ -145,6 +145,7 @@ class TrainBuyInfoHandler(core.Handler):
 
     def GET(self):
         try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
             data = self._get_handler()
             return data
         except Exception as e:
@@ -261,6 +262,7 @@ class TrainUseInfoHandler(core.Handler):
 
     def GET(self):
         try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
             data = self._get_handler()
             return data
         except Exception as e:
@@ -359,6 +361,7 @@ class OrgAllotToChanOrderHandler(core.Handler):
         return success({})
 
     def POST(self):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         return self._post_handler()
 
 #FIMME
@@ -428,6 +431,7 @@ class OrgAllotToStoreOrderHandler(core.Handler):
         return success({})
 
     def POST(self):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         return self._post_handler()
 
 
@@ -456,6 +460,7 @@ class OrderCancelHandler(core.Handler):
         return error(UAURET.ORDERERR)
 
     def POST(self):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         return self._post_handler()
 
 
@@ -484,4 +489,5 @@ class OrderConfirmHandler(core.Handler):
         return error(UAURET.ORDERERR)
 
     def POST(self):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
         return self._post_handler()
