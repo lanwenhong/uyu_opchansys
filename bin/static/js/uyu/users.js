@@ -101,7 +101,8 @@ $(document).ready(function(){
         'columns': [
             { data: 'id' },
             { data: 'phone_num' },
-            { data: 'username' },
+            //{ data: 'username' },
+            { data: 'login_name' },
             { data: 'nick_name' },
             { data: 'state' },
             { data: 'user_type' },

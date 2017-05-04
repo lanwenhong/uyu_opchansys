@@ -53,12 +53,11 @@ class DeviceInfoHandler(core.Handler):
             serial_number = params.get('serial_number')
             status = params.get('status', None)
 
-            # start, end = tools.gen_ret_range(curr_page, max_page_num)
             offset, limit = tools.gen_offset(curr_page, max_page_num)
             info_data = self._query_handler(offset, limit, channel_name, store_name, serial_number, status)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            data['num'] = self._total_stat(status)
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -66,10 +65,13 @@ class DeviceInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
 
-
     @with_database('uyu_core')
-    def _total_stat(self):
-        sql = 'select count(*) as total from device where ctime>0'
+    def _total_stat(self, status):
+        if status == '' or status == -1:
+            sql = 'select count(*) as total from device where ctime>0'
+        else:
+            sql = 'select count(*) as total from device where ctime>0 and status=%d' % status
+
         ret = self.db.get(sql)
         return int(ret['total']) if ret['total'] else 0
 

@@ -47,11 +47,9 @@ class UserInfoListHandler(core.Handler):
             phone_num = params.get('phone_num', None)
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            # start, end = tools.gen_ret_range(curr_page, max_page_num)
             offset, limit = tools.gen_offset(curr_page, max_page_num)
             info_data = self._query_handler(offset, limit, phone_num)
             data['info'] = self._trans_record(info_data)
-            # data['num'] = len(info_data)
             data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
@@ -69,7 +67,7 @@ class UserInfoListHandler(core.Handler):
     @with_database('uyu_core')
     def _query_handler(self, offset, limit, phone_num=None):
         keep_fields = [
-            'id', 'phone_num', 'username', 'nick_name', 'state', 'user_type', 'ctime'
+            'id', 'phone_num', 'username', 'nick_name', 'state', 'user_type', 'ctime', 'login_name'
         ]
 
         where = {}

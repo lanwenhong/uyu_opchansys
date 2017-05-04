@@ -184,15 +184,14 @@ class ChannelInfoHandler(core.Handler):
             channel_name = params.get('channel_name', None)
             phone_num = params.get('phone_num', None)
             is_prepayment = params.get('is_prepayment', None)
-            is_valid = params.get('is_valid', None)
+            is_valid = params.get('is_valid', -1)
             log.debug('is_prepayment: %s, is_valid:%s', is_prepayment, is_valid)
 
-            # start, end = tools.gen_ret_range(curr_page, max_page_num)
             offset, limit = tools.gen_offset(curr_page, max_page_num)
             info_data = self._query_handler(offset, limit, channel_name, phone_num, is_prepayment, is_valid)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            data['num'] = self._total_stat(is_valid)
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -200,10 +199,13 @@ class ChannelInfoHandler(core.Handler):
             return error(UAURET.DATAERR)
 
 
-
     @with_database('uyu_core')
-    def _total_stat(self):
-        sql = 'select count(*) as total from channel where ctime>0'
+    def _total_stat(self, is_valid):
+        if is_valid == '' or is_valid == -1:
+            sql = 'select count(*) as total from channel where ctime>0'
+        else:
+            sql = 'select count(*) as total from channel where ctime>0 and is_valid=%d' % is_valid
+
         ret = self.db.get(sql)
         return int(ret['total']) if ret['total'] else 0
 
