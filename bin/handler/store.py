@@ -77,6 +77,7 @@ class StoreInfoHandler(core.Handler):
             params = self.validator.data
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
+
             channel_name = params.get('channel_name')
             store_name = params.get('store_name')
             is_valid = params.get('is_valid', None)
@@ -85,7 +86,7 @@ class StoreInfoHandler(core.Handler):
             info_data = self._query_handler(offset, limit, channel_name, store_name, is_valid)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat(is_valid)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -94,12 +95,8 @@ class StoreInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _total_stat(self, is_valid):
-        if is_valid == '' or is_valid == -1:
-            sql = 'select count(*) as total from stores where ctime>0'
-        else:
-            sql = 'select count(*) as total from stores where ctime>0 and is_valid=%d' % is_valid
-
+    def _total_stat(self):
+        sql = 'select count(*) as total from stores where ctime>0'
         ret = self.db.get(sql)
         return int(ret['total']) if ret['total'] else 0
 

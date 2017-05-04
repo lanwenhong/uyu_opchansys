@@ -43,9 +43,10 @@ class VerifyCodeInfoListHandler(core.Handler):
             phone_num = params.get('phone_num', None)
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
-            # start, end = tools.gen_ret_range(curr_page, max_page_num)
+
             offset, limit = tools.gen_offset(curr_page, max_page_num)
             info_data = self._query_handler(offset, limit, phone_num)
+
             data['info'] = self._trans_record(info_data)
             data['num'] = self._total_stat()
             return success(data)
@@ -97,7 +98,6 @@ class VerifyCodeInfoListHandler(core.Handler):
         return data
 
 
-
     def GET(self):
         try:
             self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
@@ -107,3 +107,4 @@ class VerifyCodeInfoListHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+

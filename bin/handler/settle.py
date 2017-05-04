@@ -51,7 +51,6 @@ class SettleInfoHandler(core.Handler):
             store_name = params.get('store_name', None)
             start_time = params.get('start_time', None)
 
-            # start, end = tools.gen_ret_range(curr_page, max_page_num)
             offset, limit = tools.gen_offset(curr_page, max_page_num)
             info_data = self._query_handler(offset, limit, channel_name, store_name, start_time)
 

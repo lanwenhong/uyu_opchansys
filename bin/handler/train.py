@@ -69,7 +69,7 @@ class TrainBuyInfoHandler(core.Handler):
             info_data = self._query_handler(offset, limit, channel_name, store_name, consumer_id, start_time, end_time, status)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat(status)
+            data['num'] = self._total_stat()
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -78,11 +78,8 @@ class TrainBuyInfoHandler(core.Handler):
 
 
     @with_database('uyu_core')
-    def _total_stat(self, status):
-        if status == '' or status == -1:
-            sql = 'select count(*) as total from training_operator_record where create_time>0'
-        else:
-            sql = 'select count(*) as total from training_operator_record where create_time>0 and status=%d' % status
+    def _total_stat(self):
+        sql = 'select count(*) as total from training_operator_record where create_time>0'
         ret = self.db.get(sql)
         return int(ret['total']) if ret['total'] else 0
 
