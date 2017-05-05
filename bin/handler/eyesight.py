@@ -6,7 +6,7 @@ from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR, T_FLOAT
 from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
-from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
+from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page, KickSession
 from uyubase.base.uyu_user import UUser
 from uyubase.base.uyu_user import gen_old_password
 
@@ -100,8 +100,13 @@ class EyeSightInfoHandler(core.Handler):
         try:
             params = self.validator.data
             uop = UUser()
-            uop.unbind_eyesight(params["userid"], params["store_id"], params["channel_id"])
-            return success({})
+            ret = uop.unbind_eyesight(params["userid"], params["store_id"], params["channel_id"])
+            if ret > 0:
+                k = KickSession(g_rt.redis_pool, params['userid'])
+                k.kick()
+                return success({})
+            else:
+                return error(UAURET.UNBINDEYEERR)
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
