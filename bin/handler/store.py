@@ -5,7 +5,7 @@ from zbase.web import template
 from zbase.web.validator import with_validator_self, Field, T_REG, T_INT, T_STR, T_FLOAT
 from zbase.base.dbpool import with_database
 from uyubase.base.response import success, error, UAURET
-from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page
+from uyubase.base.usession import uyu_check_session, uyu_check_session_for_page, KickSession
 from uyubase.base.uyu_user import UUser
 from uyubase.uyu import define
 
@@ -45,6 +45,8 @@ class StoreStateSetHandler(core.Handler):
         if ret == UYU_OP_ERR:
             return error(UAURET.REQERR)
         log.debug("set userid: %d state: %d succ", params["userid"], params["state"])
+        k = KickSession(g_rt.redis_pool, params['userid'])
+        k.kick()
         return success({})
 
     def POST(self, *args):
