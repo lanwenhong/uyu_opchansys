@@ -94,11 +94,11 @@ $(document).ready(function(){
         },
 		'columns': [
 				//{ data: 'id' },
+				{ data: 'consumer_id' },
 				{ data: 'consumer_name' },
 				{ data: 'channel_name' },
 				{ data: 'store_name' },
 				{ data: 'device_name' },
-				{ data: 'consumer_id' },
 				{ data: 'eyesight_name' },
 				// { data: 'comsumer_nums' },
 				{ data: 'create_time' },
