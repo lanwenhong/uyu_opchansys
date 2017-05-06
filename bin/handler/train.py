@@ -243,6 +243,8 @@ class TrainUseInfoHandler(core.Handler):
             end_time = create_time.replace(hour=23, minute=59, second=59)
             where.update({'ctime': ('between', (start_time, end_time))})
 
+        where['comsumer_nums'] = ('<', 0)
+
         other = ' order by ctime desc limit %d offset %d'  % (limit, offset)
 
         keep_fields = ['id', 'channel_id', 'store_id', 'device_id', 'consumer_id', 'eyesight_id', 'comsumer_nums', 'status', 'ctime']
