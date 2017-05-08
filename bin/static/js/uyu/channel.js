@@ -156,6 +156,29 @@ $(document).ready(function(){
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
         $("label.error").remove();
+
+        var create_channel_rules =  $('#create_get_all_rules');
+        create_channel_rules.html('');
+
+        //获取全部的套餐
+        var result = get_all_rules();
+        var msg = result.msg;
+        var flag = result.flag;
+        var data = result.result;
+
+        if(!flag){
+            toastr.warning(msg);
+        }
+        if(data.length > 0){
+            for(var i=0; i<data.length; i++){
+                var rule_id = data[i].id;
+                var rule_name = data[i].name;
+                var rule_description = data[i].description;
+                var option_str = $('<div class="checkbox"><label><input type="checkbox" name="create_rule" value="'+rule_id+'">'+rule_name + ' '+ rule_description+'</label></div>');
+                option_str.appendTo(create_channel_rules);
+            }
+        }
+
 		$("#channelCreateModal").modal();
 	});
 
@@ -686,4 +709,48 @@ function search_source() {
             toastr.warning('请求异常');
         }
     });
+}
+
+function get_all_rules() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+
+    var flag;
+    var result;
+    var msg;
+    $.ajax({
+        url: '/channel_op/v1/api/rules_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+
+                msg = resperr ? resperr : respmsg;
+                flag = false;
+                result = []
+            }
+            else {
+                msg = '';
+                flag = true;
+                result = data.data;
+            }
+        },
+        error: function(data) {
+            msg = '请求异常';
+            flag = false;
+            result = []
+        }
+    });
+
+    return {
+        'msg': msg,
+        'flag': flag,
+        'result': result
+    }
+
 }
