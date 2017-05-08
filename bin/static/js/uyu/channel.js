@@ -717,7 +717,7 @@ function get_all_rules() {
     get_data['se_userid'] = se_userid;
 
     var flag;
-    var result;
+    var result = new Array;
     var msg;
     $.ajax({
         url: '/channel_op/v1/api/rules_list',
@@ -732,7 +732,6 @@ function get_all_rules() {
 
                 msg = resperr ? resperr : respmsg;
                 flag = false;
-                result = []
             }
             else {
                 msg = '';
@@ -743,7 +742,6 @@ function get_all_rules() {
         error: function(data) {
             msg = '请求异常';
             flag = false;
-            result = []
         }
     });
 
