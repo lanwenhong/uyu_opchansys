@@ -244,6 +244,10 @@ $(document).ready(function(){
                 divide_percent: {
                     required: true,
                     isLessOne: '#divide_percent'
+                },
+                create_rule: {
+                    required: true,
+                    minlength: 1
                 }
             },
             messages: {
@@ -283,6 +287,10 @@ $(document).ready(function(){
                 */
                 divide_percent: {
                     required: '请正确填写比例'
+                },
+                create_rule: {
+                    required: '请选择套餐',
+                    minlength: '请至少选择一个'
                 }
             }
         });
@@ -341,6 +349,13 @@ $(document).ready(function(){
             }
             post_data['divide_percent'] = divide_percent;
         }
+
+        var str="你选中的是：\r\n";
+        $('input[type=checkbox][name=create_rule]:checked').each(function(){
+            str+=$(this).val()+"\r\n";
+        });
+        console.log('selected checkbox: '+ str);
+        /*
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -367,6 +382,7 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
 	        }
         });
+        */
     });
 
 
@@ -636,12 +652,16 @@ $(document).ready(function(){
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
         if(is_prepayment==0){
+            //次卡模式
             // $('#divide_percent').rules('remove');
             $('#divide_percent').next('label').remove();
             $('#create_divide_percent_div').hide();
+            $('#create_channel_rules').show();
         }else{
+            //分成模式
             // $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_divide_percent_div').show();
+            $('#create_channel_rules').hide();
         }
     });
 
