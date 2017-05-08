@@ -292,6 +292,13 @@ $(document).ready(function(){
                     required: '请选择套餐',
                     minlength: '请至少选择一个'
                 }
+            },
+            errorPlacement: function(error, element){
+                if(element.is(':checkbox')){
+                    error.appendTo(element.parent().parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
             }
         });
 
