@@ -157,28 +157,9 @@ $(document).ready(function(){
         $("#channelCreateForm").resetForm();
         $("label.error").remove();
 
-        var create_channel_rules =  $('#create_get_all_rules');
-        create_channel_rules.html('');
 
-        //获取全部的套餐
-        var result = get_all_rules();
-        var msg = result.msg;
-        var flag = result.flag;
-        var data = result.result;
 
-        if(!flag){
-            toastr.warning(msg);
-        }
-        if(data.length > 0){
-            for(var i=0; i<data.length; i++){
-                var rule_id = data[i].id;
-                var rule_name = data[i].name;
-                var rule_description = data[i].description;
-                var option_str = $('<div class="checkbox"><label><input type="checkbox" name="create_rule" value="'+rule_id+'">'+rule_name + ' '+ rule_description+'</label></div>');
-                option_str.appendTo(create_channel_rules);
-            }
-        }
-
+        get_all_rules();
 		$("#channelCreateModal").modal();
 	});
 
@@ -716,9 +697,9 @@ function get_all_rules() {
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
 
-    var flag;
-    var result = new Array;
-    var msg;
+    var create_channel_rules =  $('#create_get_all_rules');
+    create_channel_rules.html('');
+    $('#new_rules').html('');
     $.ajax({
         url: '/channel_op/v1/api/rules_list',
         type: 'GET',
@@ -729,26 +710,25 @@ function get_all_rules() {
             if(respcd != '0000'){
                 var resperr = data.resperr;
                 var respmsg = data.respmsg;
-
-                msg = resperr ? resperr : respmsg;
-                flag = false;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
             }
             else {
-                msg = '';
-                flag = true;
-                result = data.data;
+                if(data.data.length == 0){
+                    return false;
+                }
+                for(var i=0; i<data.data.length; i++){
+                    var rule_id = data.data[i].id;
+                    var rule_name = data.data[i].name;
+                    var rule_description = data.data[i].description;
+                    var option_str = $('<div class="checkbox"><label><input type="checkbox" name="create_rule" value="'+rule_id+'">'+rule_name + ' '+ rule_description+'</label></div>');
+                    option_str.prependTo(create_channel_rules);
+                }
             }
         },
         error: function(data) {
             msg = '请求异常';
-            flag = false;
+            toastr.warning(msg);
         }
     });
-
-    return {
-        'msg': msg,
-        'flag': flag,
-        'result': result
-    }
-
 }
