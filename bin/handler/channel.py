@@ -85,6 +85,7 @@ class ChanHandler(core.Handler):
         Field('training_amt_per', T_FLOAT, False),
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, False),
+        Field('rule', T_STR, True),
     ]
 
     def _post_handler_errfunc(self, msg):
@@ -104,6 +105,8 @@ class ChanHandler(core.Handler):
         data = {}
         data["profile"] = uop.pdata
         data["chn_data"] = uop.cdata
+        # 添加渠道和套餐绑定的数据
+        data['crdata'] = uop.crdata
 
         log.debug("get data: %s", uop.udata)
         udata = {}
@@ -113,6 +116,7 @@ class ChanHandler(core.Handler):
             udata[key] = uop.udata[key]
         udata["userid"] =uop.udata["id"]
         data["u_data"] = udata
+
         return success(data)
 
     def GET(self, *args):
@@ -130,6 +134,17 @@ class ChanHandler(core.Handler):
         params = self.validator.data
         params['login_name'] = params['phone_num']
 
+        if params.get('is_prepayment') == define.UYU_CHAN_PREPAY_TYPE and params.get('rule'):
+            rule = params.get('rule')
+            # validator 会自动把带逗号的参数变成列表, 如果只有一个传上来的是一个字符串, 解析后应该也是个字符串
+            if type(rule) == list:
+                crdata = rule
+            else:
+                crdata = [int(rule)]
+
+        else:
+            crdata = []
+
         udata = {}
         for key in ["login_name", "nick_name", "phone_num"]:
             if params.get(key, None):
@@ -144,9 +159,10 @@ class ChanHandler(core.Handler):
         for key in uop.chan_key:
             if params.get(key, None) not in [None, '']:
                 chndata[key] = params[key]
-        log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
+
+        log.debug("udata: %s pdata: %s chandata: %s, crdata: %s", udata, pdata, chndata, crdata)
         uop = UUser()
-        ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata)
+        ret = uop.call("chan_info_change", params["userid"], udata, pdata, chndata, crdata)
         if ret == UYU_OP_ERR:
             return error(UAURET.CHANGECHANERR)
         return success({"userid": params["userid"]})
@@ -286,6 +302,7 @@ class CreateChanHandler(core.Handler):
         Field('divide_percent', T_FLOAT, True),
         Field('is_prepayment', T_INT, True),
         Field('channel_name', T_STR, False),
+        Field('rule', T_STR, True),
     ]
 
     def _post_handler_errfunc(self, msg):
@@ -299,8 +316,20 @@ class CreateChanHandler(core.Handler):
         params = self.validator.data
         params['username'] = params['channel_name']
         log.debug('params: %s', params)
+
         if params.get("is_prepayment") == define.UYU_CHAN_DIV_TYPE and not params.get("divide_percent", None):
             return error(UAURET.REGISTERERR)
+
+        if params.get('is_prepayment') == define.UYU_CHAN_PREPAY_TYPE and params.get('rule'):
+            rule = params.get('rule')
+            # validator 会自动把带逗号的参数变成列表, 如果只有一个传上来的是一个字符串, 解析后应该也是个字符串
+            if type(rule) == list:
+                crdata = rule
+            else:
+                crdata = [int(rule)]
+
+        else:
+            crdata = []
 
         uop = UUser()
         udata = {}
@@ -319,7 +348,7 @@ class CreateChanHandler(core.Handler):
                 chndata[key] = params[key]
 
         log.debug("udata: %s pdata: %s chandata: %s", udata, pdata, chndata)
-        ret = uop.call("create_chan_transaction", udata, pdata, chndata)
+        ret = uop.call("create_chan_transaction", udata, pdata, chndata, crdata)
         if ret == UYU_OP_ERR:
             return error(UAURET.REGISTERERR)
 

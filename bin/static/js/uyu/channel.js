@@ -156,10 +156,8 @@ $(document).ready(function(){
 	$("#channelCreate").click(function(){
         $("#channelCreateForm").resetForm();
         $("label.error").remove();
-
-
-
         get_all_rules();
+        $('#create_divide_percent_div').show();
 		$("#channelCreateModal").modal();
 	});
 
@@ -289,8 +287,7 @@ $(document).ready(function(){
                     required: '请正确填写比例'
                 },
                 create_rule: {
-                    required: '请选择套餐',
-                    minlength: '请至少选择一个'
+                    required: '请至少选择一个套餐',
                 }
             },
             errorPlacement: function(error, element){
@@ -355,14 +352,19 @@ $(document).ready(function(){
 		        return false;
             }
             post_data['divide_percent'] = divide_percent;
+        } else {
+            post_data['rule'] = '';
+            var rule = new Array();
+            $('input[type=checkbox][name=create_rule]:checked').each(function(){
+                console.log('xx val: '+$(this).val());
+                rule.push($(this).val());
+            });
+            console.log(rule);
+            post_data['rule'] = rule.join();
+            console.log('selected checkbox arr: '+ post_data['rule']);
         }
 
-        var str="你选中的是：\r\n";
-        $('input[type=checkbox][name=create_rule]:checked').each(function(){
-            str+=$(this).val()+"\r\n";
-        });
-        console.log('selected checkbox: '+ str);
-        /*
+
         $.ajax({
 	        url: '/channel_op/v1/api/channel_create',
 	        type: 'POST',
@@ -389,7 +391,6 @@ $(document).ready(function(){
                 toastr.warning('请求异常');
 	        }
         });
-        */
     });
 
 
@@ -418,6 +419,8 @@ $(document).ready(function(){
                     var p_data = data.data.profile;
                     var ch_data = data.data.chn_data;
                     var u_data = data.data.u_data;
+                    var crdata = data.data.crdata;
+                    console.log('cr data :'+crdata);
                     $('#uid').text(uid);
                     $('#e_channel_id').val(ch_data.chnid);
                     $('#e_login_name').val(u_data.phone_num);
@@ -440,13 +443,18 @@ $(document).ready(function(){
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100);
                     $('#e_is_prepayment').val(ch_data.is_prepayment);
                     $('#e_divide_percent').val(ch_data.divide_percent);
+                    // 添加套餐数据
+                    edit_all_rules(crdata);
                     var is_prepayment = ch_data.is_prepayment;
                     if(is_prepayment==0){
                         $('#edit_divide_percent_div').hide();
+                        $('#edit_channel_rules').show();
                     }
                     else {
                         $('#edit_divide_percent_div').show();
+                        $('#edit_channel_rules').hide();
                     }
+
                     $("#channelEditModal").modal();
                 }
 	        },
@@ -535,6 +543,10 @@ $(document).ready(function(){
                 divide_percent: {
                     required: true,
                     isLessOne: '#e_divide_percent'
+                },
+                edit_rule: {
+                    required: true,
+                    minlength: 1
                 }
             },
             messages: {
@@ -572,6 +584,16 @@ $(document).ready(function(){
                 },
                 divide_percent: {
                     required: '请输入争取的比例'
+                },
+                edit_rule: {
+                    required: '请至少选择一个套餐'
+                }
+            },
+            errorPlacement: function(error, element){
+                if(element.is(':checkbox')){
+                    error.appendTo(element.parent().parent().parent());
+                } else {
+                    error.insertAfter(element);
                 }
             }
         });
@@ -622,11 +644,23 @@ $(document).ready(function(){
 		post_data['business'] = business;
 		post_data['front_business'] = front_business;
 		if(is_prepayment==1){
+            // 分成模式
 		    if(!divide_percent){
 		        toastr.warning('分成模式分成比例必填');
 		        return false;
             }
             post_data['divide_percent'] = divide_percent;
+        } else {
+            // 次卡模式
+            post_data['rule'] = '';
+            var rule = new Array();
+            $('input[type=checkbox][name=edit_rule]:checked').each(function(){
+                console.log('xx val: '+$(this).val());
+                rule.push($(this).val());
+            });
+            console.log(rule);
+            post_data['rule'] = rule.join();
+            console.log('edit selected checkbox arr: '+ post_data['rule']);
         }
 
         $.ajax({
@@ -675,12 +709,16 @@ $(document).ready(function(){
     $('#e_is_prepayment').change(function(){
 		var is_prepayment= $('#e_is_prepayment').val();
         if(is_prepayment==0){
+            // 次卡模式
             // $('#e_divide_percent').rules('remove');
             $('#e_divide_percent').next('label').remove();
             $('#edit_divide_percent_div').hide();
+            $('#edit_channel_rules').show();
         }else{
+            // 分成模式
             // $('#e_divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#edit_divide_percent_div').show();
+            $('#edit_channel_rules').hide();
         }
     });
 
@@ -726,7 +764,7 @@ function get_all_rules() {
 
     var create_channel_rules =  $('#create_get_all_rules');
     create_channel_rules.html('');
-    $('#new_rules').html('');
+    // $('#new_rules').html('');
     $.ajax({
         url: '/channel_op/v1/api/rules_list',
         type: 'GET',
@@ -751,6 +789,55 @@ function get_all_rules() {
                     var option_str = $('<div class="checkbox"><label><input type="checkbox" name="create_rule" value="'+rule_id+'">'+rule_name + ' '+ rule_description+'</label></div>');
                     option_str.prependTo(create_channel_rules);
                 }
+            }
+        },
+        error: function(data) {
+            msg = '请求异常';
+            toastr.warning(msg);
+        }
+    });
+    $('#create_channel_rules').hide();
+}
+
+
+function edit_all_rules(crdata) {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+
+    var edit_channel_rules =  $('#edit_get_all_rules');
+    edit_channel_rules.html('');
+    $.ajax({
+        url: '/channel_op/v1/api/rules_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                if(data.data.length == 0){
+                    return false;
+                }
+                for(var i=0; i<data.data.length; i++){
+                    var rule_id = data.data[i].id;
+                    var rule_name = data.data[i].name;
+                    var rule_description = data.data[i].description;
+                    var option_str = $('<div class="checkbox"><label><input type="checkbox" name="edit_rule" value="'+rule_id+'">'+rule_name + ' '+ rule_description+'</label></div>');
+                    option_str.prependTo(edit_channel_rules);
+                }
+                if(crdata.length > 0){
+                    for(var i=0; i<crdata.length; i++){
+                        op_str = 'input[type=checkbox][name="edit_rule"][value='+crdata[i]+']'
+                        $(op_str).attr('checked', true);
+                    }
+                }
+
             }
         },
         error: function(data) {
