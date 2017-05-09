@@ -352,6 +352,7 @@ $(document).ready(function(){
         post_data.se_userid = se_userid;
         var busicd = $('.c_busicd').val();
         var channel_id = $('.c_channel_name').val();
+        var is_prepayment = $('.c_channel_name').find("option:selected").data('is_prepayment');
         // var store_id = $('.c_store_name').val();
         var category = $('#c_category').val();
         var op_type = $('#c_op_type').val();
@@ -367,7 +368,9 @@ $(document).ready(function(){
         post_data.training_amt = parseInt(training_amt.toFixed(2));
         post_data.ch_training_amt_per = channel_id.split('|')[1];
         post_data.remark = remark;
-        post_data.rule_id = rule_id;
+        if(is_prepayment == 0){
+            post_data.rule_id = rule_id;
+        }
 
 
         /*
@@ -488,6 +491,9 @@ $(document).ready(function(){
             }
         });
         */
+
+        $('#training_times').val('').attr('readonly', false);
+        $('#training_amt').val('').attr('readonly', false);
         var channel_id = $(this).val().split('|')[0];
         var is_prepayment = $('.c_channel_name').find("option:selected").data('is_prepayment');
         // var is_prepayment = $(this).data('is_prepayment');
@@ -856,7 +862,7 @@ function chan_rule_select(channel_id) {
                     var option_str = $('<option value="0">自定义</option>');
                     option_str.prependTo(c_rules);
                     for(var i=0; i<data.data.length; i++){
-                        var rule_id = data.data[i].id;
+                        var rule_id = data.data[i].rule_id;
                         var rule_name = data.data[i].name;
                         var rule_total_amt = data.data[i].total_amt;
                         var rule_training_times = data.data[i].training_times;
