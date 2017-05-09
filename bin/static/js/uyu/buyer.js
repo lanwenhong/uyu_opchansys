@@ -38,7 +38,7 @@ $(document).ready(function(){
             return false;
         }
         else {
-            var yuan = /^([0-9]{1,6})(.([0-9]{1,2})){0,1}$/;
+            var yuan = /^([0-9]{1,8})(.([0-9]{1,2})){0,1}$/;
             return this.optional(element) || (length && yuan.test(value) && parseFloat(value) > 0);
         }
     }, "请正确填写您的价格");
