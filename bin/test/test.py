@@ -19,7 +19,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.timeout = 2000
         self.server = [{'addr':(self.host, self.port), 'timeout':self.timeout},]
         self.client = HttpClient(self.server, client_class = RequestsClient)
-        self.headers = {'cookie': 'sessionid=92b852a9-04fc-4fb1-8fb4-e3901b52557e'}
+        self.headers = {'cookie': 'sessionid=9fc113b1-e75c-4cf1-bccc-aa520e132a15'}
 
 
     @unittest.skip("skipping")
@@ -37,7 +37,7 @@ class TestUyuChannelOp(unittest.TestCase):
         self.assertEqual(respcd, '0000')
 
 
-    #@unittest.skip("skipping")
+    @unittest.skip("skipping")
     def test_vcode(self):
         self.url = '/channel_op/v1/api/sms_send'
         self.send = {"mobile": "18215630018"}
@@ -619,6 +619,18 @@ class TestUyuChannelOp(unittest.TestCase):
         respcd = json.loads(ret).get('respcd')
         self.assertEqual(respcd, '0000')
 
+
+    #@unittest.skip('skipping')
+    def test_chan_rule_info(self):
+        self.url = "/channel_op/v1/api/chan_rule_info"
+        self.send = {
+            "se_userid": 1262,
+            "channel_id": 108
+        }
+        ret = self.client.get(self.url, self.send, headers=self.headers)
+        log.debug(ret)
+        respcd = json.loads(ret).get('respcd')
+        self.assertEqual(respcd, '0000')
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestUyuChannelOp)

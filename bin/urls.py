@@ -56,6 +56,8 @@ urls = (
     ('^/channel_op/v1/api/chan_name_list$', channel.ChanNameList),
     # 获取渠道和对应门店名称列表接口
     ('^/channel_op/v1/api/chan_store_list$', channel.ChanStoreMap),
+    # 获取渠道对应绑定套餐的数据
+    ('^/channel_op/v1/api/chan_rule_info$', channel.ChanRuleInfoHandler),
 
     # 门店API
     # 设置门店状态接口

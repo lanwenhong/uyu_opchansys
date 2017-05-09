@@ -422,3 +422,68 @@ class ChanStoreMap(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+
+class ChanRuleInfoHandler(core.Handler):
+
+    _get_handler_fields = [
+        Field('channel_id', T_INT, False),
+    ]
+
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            channel_id = params.get('channel_id')
+            info_data  = self._query_handler(channel_id)
+            data = self._trans_record(info_data)
+
+            return success(data)
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.DATAERR)
+
+    @with_database('uyu_core')
+    def _query_handler(self, channel_id):
+        keep_fields = [
+            'channel_rule_bind.rule_id',
+            'rules.name', 'rules.description',
+            'rules.total_amt', 'rules.training_times'
+        ]
+        ret = self.db.select_join(
+            table1='channel_rule_bind',
+            table2='rules',
+            fields=keep_fields,
+            on = {'channel_rule_bind.rule_id': 'rules.id'},
+            where={'channel_rule_bind.channel_id': channel_id, 'channel_rule_bind.is_valid': define.UYU_CHAN_RULE_BIND}
+        )
+        return ret
+
+
+    def _trans_record(self, data):
+        if not data:
+            return []
+
+        for item in data:
+            item['total_amt'] = '%0.2f' % (item['total_amt'] / 100.0)
+
+        return data
+
+
+    def GET(self):
+        try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
+            data = self._get_handler()
+            return data
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
+

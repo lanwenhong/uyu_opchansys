@@ -242,7 +242,6 @@ $(document).ready(function(){
         }
         */
         channel_name_select();
-        rules_select();
         $("#trainBuyerCreateModal").modal();
     });
 
@@ -489,6 +488,21 @@ $(document).ready(function(){
             }
         });
         */
+        var channel_id = $(this).val().split('|')[0];
+        var is_prepayment = $('.c_channel_name').find("option:selected").data('is_prepayment');
+        // var is_prepayment = $(this).data('is_prepayment');
+        console.log('channel_id= '+channel_id+' is_prepayment='+is_prepayment);
+        if(is_prepayment == 0){
+            //次卡模式
+            chan_rule_select(channel_id);
+            $("#bind_rules").show();
+            $("#rule_description").show();
+
+        } else {
+            //分成模式
+            $("#bind_rules").hide();
+            $("#rule_description").hide();
+        }
     });
 
     $(document).on('click', '.buyer-name', function(){
@@ -740,9 +754,18 @@ function channel_name_select() {
                     var channel_id = data.data[i].channel_id;
                     var channel_name = data.data[i].channel_name;
                     var training_amt_per = data.data[i].training_amt_per;
+					var is_prepayment = data.data[i].is_prepayment;
                     channel_id = channel_id+'|'+training_amt_per;
-                    var option_str = $('<option value='+channel_id+'>'+channel_name+'</option>');
+                    var option_str = $('<option value='+channel_id+' data-is_prepayment='+is_prepayment+'>'+channel_name+'</option>');
                     option_str.appendTo(c_channel_name);
+                    if(i==0){
+                        if(is_prepayment == 0){
+                            chan_rule_select(channel_id);
+                        } else {
+                            $("#bind_rules").hide();
+                            $("#rule_description").hide();
+                        }
+                    }
                 }
             }
         },
@@ -802,13 +825,14 @@ function do_first_select(channel_id, store_name_tag_id) {
 }
 
 
-function rules_select() {
+function chan_rule_select(channel_id) {
     var get_data = {};
     var se_userid = window.localStorage.getItem('myid');
     get_data['se_userid'] = se_userid;
-
+	get_data['channel_id'] = channel_id;
+    $(".c_rules").html('');
     $.ajax({
-        url: '/channel_op/v1/api/rules_list',
+        url: '/channel_op/v1/api/chan_rule_info',
         type: 'GET',
         data: get_data,
         dataType: 'json',
@@ -822,7 +846,10 @@ function rules_select() {
             }
             else {
                 if(data.data.length==0){
-                    return false;
+                    //if this channel not binded rules should hava define
+                    var c_rules = $("#c_rules");
+                    var option_str = $('<option value="0">自定义</option>');
+                    option_str.prependTo(c_rules);
                 }  else {
 
                     var c_rules = $("#c_rules");
