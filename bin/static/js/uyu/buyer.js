@@ -766,7 +766,8 @@ function channel_name_select() {
                     option_str.appendTo(c_channel_name);
                     if(i==0){
                         if(is_prepayment == 0){
-                            chan_rule_select(channel_id);
+                            chan_id = channel_id.split('|')[0];
+                            chan_rule_select(chan_id);
                         } else {
                             $("#bind_rules").hide();
                             $("#rule_description").hide();
