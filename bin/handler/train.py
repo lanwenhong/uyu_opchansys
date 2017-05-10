@@ -10,6 +10,7 @@ from uyubase.uyu.define import UYU_USER_ROLE_SUPER, UYU_USER_STATE_OK, UYU_SYS_R
 from uyubase.base.training_op import TrainingOP
 from uyubase.uyu.define import UYU_OP_CATEGORY_MAP, UYU_ORDER_TYPE_MAP, UYU_ORDER_STATUS_MAP, UYU_BUSICD_MAP, UYU_TRAIN_USE_MAP
 from uyubase.uyu import define
+from uyubase.base.training_op import OrgAllocateToUser
 
 from runtime import g_rt
 from config import cookie_conf
@@ -512,6 +513,54 @@ class OrderConfirmHandler(core.Handler):
             return success({})
 
         return error(UAURET.ORDERERR)
+
+    def POST(self):
+        self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
+        return self._post_handler()
+
+
+class OrgAllocateToUserHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field('userid', T_INT, False),
+        Field('training_times', T_INT, False),
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            userid = params.get('userid')
+            training_times = params.get('training_times')
+
+            uop = UUser()
+            ret = uop.call("load_info_by_userid", userid)
+            if ret ==  UYU_OP_ERR:
+                return error(UAURET.USERERR)
+
+            user_type = uop.udata.get('user_type')
+            if user_type not in (define.UYU_USER_ROLE_EYESIGHT, define.UYU_USER_ROLE_COMSUMER):
+                return error(UAURET.ORGALLOCATEROLEERR)
+
+            op = OrgAllocateToUser()
+            ret = op.allocate_times(userid, training_times)
+            log.debug('org allocate times to userid=%d, training_times=%d ret=%s', userid, training_times, ret)
+            if ret != UYU_OP_OK:
+                return error(ret)
+
+            return success({})
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.DATAERR)
+
 
     def POST(self):
         self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})

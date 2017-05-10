@@ -16,6 +16,15 @@ $(document).ready(function(){
         return this.optional(element) || (length == 11 && mobile.test(value));
     }, "请正确填写您的手机号码");
 
+    $.validator.addMethod("PositiveNumber", function(value, element) {
+        if(value <=0){
+            return false;
+        }
+        else {
+            return true;
+        }
+    }, "请正确填写您的次数");
+
 
     $('#userList').DataTable({
         "autoWidth": false,     //通常被禁用作为优化
@@ -169,6 +178,9 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '.allocate-times', function () {
+        $("#AllocateTimesForm").resetForm();
+        $("label.error").remove();
+
         var userid = $(this).data('userid');
         var login_name = $(this).data('login_name');
         console.log('allocate times userid=' + userid +' login_name='+login_name);
@@ -220,6 +232,60 @@ $(document).ready(function(){
             },
             error: function(data) {
                 toastr.warning('请求数据异常');
+            }
+        });
+
+    });
+
+    $('#allocateTrainingTimes').click(function () {
+        var post_url = '/channel_op/v1/api/platform_allocate_user';
+        var allocate_vt = $('#AllocateTimesForm').validate({
+            rules: {
+                training_times: {
+                    required: true,
+                    digits: true,
+                    PositiveNumber: '#training_times'
+                }
+            },
+            messages: {
+                training_times: {
+                    required: "请输入训练次数",
+                    digits: "只能输入整数"
+                }
+            }
+        });
+        var ok = allocate_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var userid = $('#allocate_userid').text();
+        var training_times = $('#training_times').val();
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data.se_userid = se_userid;
+        post_data.userid = userid;
+        post_data.training_times = training_times;
+
+        $.ajax({
+            url: post_url,
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    toastr.success('分配训练点数成功');
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
             }
         });
 

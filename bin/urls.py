@@ -97,6 +97,8 @@ urls = (
     ('^/channel_op/v1/api/order_cancel$', train.OrderCancelHandler),
     # 订单确认接口
     ('^/channel_op/v1/api/order_confirm$', train.OrderConfirmHandler),
+    # 平台分配点数给消费者或者视光师
+    ('^/channel_op/v1/api/platform_allocate_user$', train.OrgAllocateToUserHandler),
 
     # 设备
     # 新建设备接口
@@ -118,5 +120,4 @@ urls = (
     ('^/channel_op/v1/api/verify_codes_list$', vcode.VerifyCodeInfoListHandler),
     # 用户管理页面修改密码
     ('^/channel_op/v1/api/user_change_password$', user.UserChangePasswordHandler),
-
 )
