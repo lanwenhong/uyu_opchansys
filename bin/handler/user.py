@@ -95,6 +95,7 @@ class UserInfoListHandler(core.Handler):
             item['user_type'] = define.UYU_USER_ROLE_MAP.get(user_type)
             item['ctime'] = datetime.datetime.strftime(item['ctime'], '%Y-%m-%d %H:%M:%S')
             item['remain_times'] = self._collect_remain_times(self.db, item['id'], user_type)
+            item['user_role'] = user_type
 
         return data
 

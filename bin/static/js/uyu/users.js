@@ -92,9 +92,16 @@ $(document).ready(function(){
                 data: '操作',
                 render: function(data, type, full) {
                     var userid = full.id;
+                    var user_role = full.user_role;
                     var msg = '修改密码';
                     var op = "<button type='button' class='btn btn-success btn-sm modify-password' data-userid="+userid+">"+msg+"</button>";
-                    return op;
+                    if (user_role == 5 || user_role == 7){
+                        var allocate_msg = "分配点数";
+                        var allocate = "<button type='button' class='btn btn-primary btn-sm allocate-times' data-userid="+userid+">"+allocate_msg+"</button>";
+                        return op + allocate;
+                    } else {
+                        return op;
+                    }
                 }
             }
         ],
@@ -158,6 +165,11 @@ $(document).ready(function(){
         $('#modify_userid').text(userid);
         $('#ModifyPassWordForm').resetForm();
         $('#ModifyPassWord').modal();
+    });
+
+    $(document).on('click', '.allocate-times', function () {
+        var userid = $(this).data('userid');
+        console.log('allocate times userid=' + userid);
     });
 
     $('.saveNewPassword').click(function () {
