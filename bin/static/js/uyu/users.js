@@ -173,7 +173,7 @@ $(document).ready(function(){
         var login_name = $(this).data('login_name');
         console.log('allocate times userid=' + userid +' login_name='+login_name);
 
-        $('#user_login_name').text(login_name);
+        $('#user_login_name').val(login_name);
         $('#allocate_userid').text(userid);
 
         $('#allocate-times').modal();
