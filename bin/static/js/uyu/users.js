@@ -237,7 +237,7 @@ $(document).ready(function(){
 
     });
 
-    $('#allocateTrainingTimes').click(function () {
+    $('.allocateTrainingTimes').click(function () {
         var post_url = '/channel_op/v1/api/platform_allocate_user';
         var allocate_vt = $('#AllocateTimesForm').validate({
             rules: {
@@ -282,6 +282,8 @@ $(document).ready(function(){
                 }
                 else {
                     toastr.success('分配训练点数成功');
+                    $('#allocate-times').modal('hide');
+                    $('#userList').DataTable().draw();
                 }
             },
             error: function(data) {
