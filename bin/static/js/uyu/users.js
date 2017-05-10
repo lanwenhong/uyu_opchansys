@@ -64,6 +64,16 @@ $(document).ready(function(){
                 get_data.phone_num = phone_num;
             }
 
+            var login_name = $("#s_login_name").val();
+            if(login_name){
+                get_data.login_name = login_name;
+            }
+
+            var nick_name = $("#s_nick_name").val();
+            if(nick_name){
+                get_data.nick_name = nick_name;
+            }
+
             $.ajax({
                 url: '/channel_op/v1/api/user_list',
                 type: 'GET',
@@ -148,11 +158,27 @@ $(document).ready(function(){
                 q_phone_num: {
                     required: false,
                     isElevenNum: '#s_phone_num'
+                },
+                s_login_name: {
+                    required: false,
+                    maxlength: 255
+                },
+                s_nick_name: {
+                    required: false,
+                    maxlength: 128
                 }
             },
             messages: {
                 q_phone_num: {
                     required: '请输入手机号'
+                },
+                s_login_name: {
+                    required: '请输入登录名称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
+                },
+                s_nick_name: {
+                    required: '请输入昵称',
+                    maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串")
                 }
             },
             errorPlacement: function(error, element){

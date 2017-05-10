@@ -31,6 +31,8 @@ class UserInfoListHandler(core.Handler):
         Field('page', T_INT, False),
         Field('maxnum', T_INT, False),
         Field('phone_num', T_STR, True),
+        Field('login_name', T_STR, True),
+        Field('nick_name', T_STR, True),
     ]
 
     def _get_handler_errfunc(self, msg):
@@ -45,11 +47,13 @@ class UserInfoListHandler(core.Handler):
             data = {}
             params = self.validator.data
             phone_num = params.get('phone_num', None)
+            login_name = params.get('login_name', None)
+            nick_name = params.get('nick_name', None)
             curr_page = params.get('page')
             max_page_num = params.get('maxnum')
 
             offset, limit = tools.gen_offset(curr_page, max_page_num)
-            info_data = self._query_handler(offset, limit, phone_num)
+            info_data = self._query_handler(offset, limit, phone_num, login_name, nick_name)
 
             data['info'] = self._trans_record(info_data)
             data['num'] = self._total_stat()
@@ -66,7 +70,7 @@ class UserInfoListHandler(core.Handler):
         return int(ret['total']) if ret['total'] else 0
 
     @with_database('uyu_core')
-    def _query_handler(self, offset, limit, phone_num=None):
+    def _query_handler(self, offset, limit, phone_num=None, login_name=None, nick_name=None):
         keep_fields = [
             'id', 'phone_num', 'username', 'nick_name', 'state', 'user_type', 'ctime', 'login_name'
         ]
@@ -76,6 +80,12 @@ class UserInfoListHandler(core.Handler):
 
         if phone_num:
             where.update({'phone_num': phone_num})
+
+        if login_name:
+            where.update({'login_name': login_name})
+
+        if nick_name:
+            where.update({'nick_name': nick_name})
 
         other = ' order by ctime desc limit %d offset %d' % (limit, offset)
         log.debug('where: %s', where)
