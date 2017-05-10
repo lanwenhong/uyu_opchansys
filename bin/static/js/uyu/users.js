@@ -93,11 +93,12 @@ $(document).ready(function(){
                 render: function(data, type, full) {
                     var userid = full.id;
                     var user_role = full.user_role;
+                    var login_name = full.login_name;
                     var msg = '修改密码';
                     var op = "<button type='button' class='btn btn-success btn-sm modify-password' data-userid="+userid+">"+msg+"</button>";
                     if (user_role == 5 || user_role == 7){
                         var allocate_msg = "分配点数";
-                        var allocate = "<button type='button' class='btn btn-primary btn-sm allocate-times' data-userid="+userid+">"+allocate_msg+"</button>";
+                        var allocate = "<button type='button' class='btn btn-primary btn-sm allocate-times' data-userid="+userid+ ' data-login_name='+login_name+">"+allocate_msg+"</button>";
                         return op + allocate;
                     } else {
                         return op;
@@ -169,7 +170,13 @@ $(document).ready(function(){
 
     $(document).on('click', '.allocate-times', function () {
         var userid = $(this).data('userid');
-        console.log('allocate times userid=' + userid);
+        var login_name = $(this).data('login_name');
+        console.log('allocate times userid=' + userid +' login_name='+login_name);
+
+        $('#user_login_name').text(login_name);
+        $('#allocate_userid').text(userid);
+
+        $('#allocate-times').modal();
     });
 
     $('.saveNewPassword').click(function () {
