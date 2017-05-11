@@ -115,6 +115,7 @@ class TrainBuyInfoHandler(core.Handler):
         if status in define.UYU_ORDER_STATUS_MAP.keys():
             where.update({'status': status})
 
+        where.update({'op_type': ('in', (define.UYU_ORDER_TYPE_ALLOT, define.UYU_ORDER_TYPE_BUY))})
         other = ' order by create_time desc limit %d offset %d' % (limit, offset)
 
         keep_fields = [
@@ -538,8 +539,10 @@ class OrgAllocateToUserHandler(core.Handler):
             return error(UAURET.SESSIONERR)
         try:
             params = self.validator.data
-            userid = params.get('userid')
+            params['busicd'] = define.BUSICD_ORG_PRESENTATION
+            userid = params.pop('userid')
             training_times = params.get('training_times')
+            params['consumer_id'] = userid
 
             uop = UUser()
             ret = uop.call("load_info_by_userid", userid)
@@ -550,8 +553,15 @@ class OrgAllocateToUserHandler(core.Handler):
             if user_type not in (define.UYU_USER_ROLE_EYESIGHT, define.UYU_USER_ROLE_COMSUMER):
                 return error(UAURET.ORGALLOCATEROLEERR)
 
-            op = OrgAllocateToUser()
-            ret = op.allocate_times(userid, training_times)
+            state = uop.udata.get('state')
+            if state != define.UYU_USER_STATE_OK:
+                return error(URET.USERERR)
+
+            self.user.load_user()
+            # 平台赠送门店为0
+            params['store_id'] = 0
+            top = TrainingOP(params, self.user.udata)
+            ret = top.org_presentation_to_user_order()
             log.debug('org allocate times to userid=%d, training_times=%d ret=%s', userid, training_times, ret)
             if ret != UYU_OP_OK:
                 return error(ret)
