@@ -186,6 +186,10 @@ $(document).ready(function(){
                     } else {
                         var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
                     }
+                    if(is_valid == 2) {
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+
+                    }
                     if(busicd == 'CHAN_BUY' && is_valid == 1){
                         var confirm = '<input type="button" class="btn btn-primary btn-sm order-confirm" data-busicd='+busicd+' data-orderno='+orderno+' value=' + '确认' + '>';
                     } else {
