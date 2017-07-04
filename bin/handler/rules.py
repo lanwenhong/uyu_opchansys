@@ -60,3 +60,9 @@ class RulesInfoHandler(core.Handler):
         except Exception as e:
             log.warn(e)
             log.warn(traceback.format_exc())
+
+
+class RuleManage(core.Handler):
+    @uyu_check_session_for_page(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    def GET(self):
+        self.write(template.render('role.html'))
