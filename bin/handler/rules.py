@@ -158,6 +158,7 @@ class RuleCreateHandler(core.Handler):
         return error(UAURET.PARAMERR, respmsg=msg)
 
     @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
     def _post_handler(self):
         params = self.validator.data
         ret = tools.create_rule(params)

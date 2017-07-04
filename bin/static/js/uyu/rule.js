@@ -171,7 +171,7 @@ $(document).ready(function () {
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
         name = $("#name").val();
-        total_amt = $("#total_amt").val();
+        total_amt = $("#total_amt").val() * 100;
         training_times = $("#training_times").val();
         description = $("#description").val();
 

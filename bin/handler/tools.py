@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+import datetime
 from zbase.base.dbpool import get_connection_exception
+from uyubase.uyu import define
 log = logging.getLogger()
 
 def gen_ret_range(page, maxnum):
@@ -79,10 +81,14 @@ def create_rule(data):
         total_amt = data.get('total_amt')
         training_times = data.get('training_times')
         description = data.get('description')
+        now = datetime.datetime.now()
         values = {
             'name': name,
             'total_amt': total_amt,
-            'training_times': training_times
+            'training_times': training_times,
+            'ctime': now,
+            'utime': now,
+            'is_valid': define.UYU_RULES_STATUS_OPEN
         }
         if description not in ['', None]:
             values['description'] = description
