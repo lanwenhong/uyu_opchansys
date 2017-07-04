@@ -115,8 +115,8 @@ $(document).ready(function () {
         }
     });
 
-    $("#ruleNameSearch").click(
+    $("#ruleNameSearch").click(function () {
         $('#ruleList').DataTable().draw()
-    )
+    })
 
 });
