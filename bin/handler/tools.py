@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import logging
 from zbase.base.dbpool import get_connection_exception
-
+log = logging.getLogger()
 
 def gen_ret_range(page, maxnum):
     start = maxnum * page - maxnum
@@ -68,3 +69,24 @@ def store_id_to_name(store_id):
     with get_connection_exception('uyu_core') as conn:
         ret = conn.select_one(table='stores', fields='store_name', where={'id': store_id})
         return ret
+
+
+def create_rule(data):
+    f_name ='create_rule'
+    log.debug('func=%s|in=%s', f_name, data)
+    with get_connection_exception('uyu_core') as conn:
+        name = data.get('name')
+        total_amt = data.get('total_amt')
+        training_times = data.get('training_times')
+        description = data.get('description')
+        values = {
+            'name': name,
+            'total_amt': total_amt,
+            'training_times': training_times
+        }
+        if description not in ['', None]:
+            values['description'] = description
+        ret = conn.insert(table='rules', values=values)
+        log.debug('func=%s|insert|ret=%s', f_name, ret)
+        return ret
+

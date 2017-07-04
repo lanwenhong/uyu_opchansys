@@ -3,6 +3,13 @@
  */
 $(document).ready(function () {
 
+    $.validator.addMethod("isYuan", function(value, element) {
+        var length = value.length;
+        // var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
+        var yuan = /^([0-9]{1,8})(.([0-9]{1,2})){0,1}$/;
+        return this.optional(element) || (length && yuan.test(value) && parseFloat(value) > 0);
+    }, "请正确填写您的总金额");
+
     $("#ruleList").DataTable({
         "autoWidth": false,     //通常被禁用作为优化
         "processing": true,
@@ -121,6 +128,83 @@ $(document).ready(function () {
     
     $("#ruleCreate").click(function () {
         $("#ruleCreateModal").modal();
-    })
+    });
 
+    $("#ruleCreateSubmit").click(function () {
+        var rule_create_vt = $("#ruleCreateForm").validate({
+            rules:{
+                name: {
+                    required: true,
+                    maxlength: 128
+                },
+                total_amt: {
+                    required: true,
+                    isYuan: '#total_amt'
+                },
+                training_times: {
+                    required: true,
+                    digits:true,
+                    min:1
+                }
+            },
+            messages: {
+                name: {
+                    required: "请输入套餐名称",
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                total_amt: {
+                    required: "请填写总金额"
+                },
+                training_times: {
+                    required: "请填写训练次数",
+                    digits: "只能输入整数",
+                    min: $.validator.format("请输入一个最小为{0} 的值")
+                }
+            }
+        });
+
+        var ok = rule_create_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        name = $("#name").val();
+        total_amt = $("#total_amt").val();
+        training_times = $("#training_times").val();
+        description = $("#description").val();
+
+        post_data.se_userid = se_userid;
+        post_data.name = name;
+        post_data.total_amt = total_amt;
+        post_data.training_times = training_times;
+        post_data.description = description;
+
+        $.ajax({
+            url: '/channel_op/v1/api/rule_create',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    toastr.success('新建套餐成功');
+                    $("#ruleCreateModal").modal('hide');
+                    $('#ruleList').DataTable().draw();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+
+    });
 });

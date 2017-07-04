@@ -117,6 +117,8 @@ urls = (
     ('^/channel_op/v1/api/rules_list$', rules.RulesInfoHandler),
     # 套餐页面数据
     ('^/channel_op/v1/api/ruleinfo_pagelist$', rules.RulePageHandler),
+    # 新建套餐
+    ('^/channel_op/v1/api/rule_create$', rules.RuleCreateHandler),
 
     # 用户数据
     ('^/channel_op/v1/api/user_list$', user.UserInfoListHandler),
