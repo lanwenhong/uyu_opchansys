@@ -79,25 +79,19 @@ $(document).ready(function () {
                 }
             });
         },
-        /*
+
         'columnDefs': [
             {
-                targets: 9,
+                targets: 7,
                 data: '操作',
                 render: function(data, type, full) {
-                    var status = full.status;
-                    var uid =full.userid;
-                    var channel_id =full.id;
-                    var msg = status ? '打开' : '关闭';
-                    // var op = "<input type='button' class='btn btn-primary btn-sm setStatus' data-channelid="+uid+" value="+msg+ " data-status="+status+">";
-                    var op = "<button type='button' class='btn btn-success btn-sm setStatus' data-channelid="+uid+" data-status="+status+">"+msg+"</button>";
-                    // var view ="<input type='button' class='btn btn-info btn-sm viewEdit' data-uid="+uid+" value="+'查看'+ " data-channelid="+channel_id+">";
-                    var view ="<button type='button' class='btn btn-warning btn-sm viewEdit' data-uid="+uid+" data-channelid="+channel_id+">"+'查看'+"</button>";
-                    return op+view;
+                    var rule_id =full.id;
+                    var view ="<button type='button' class='btn btn-warning btn-sm viewEdit' data-rule_id="+rule_id+">"+'查看'+"</button>";
+                    return view;
                 }
             }
         ],
-        */
+
         'columns': [
             { data: 'id' },
             { data: 'name' },
