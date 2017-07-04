@@ -116,7 +116,11 @@ $(document).ready(function () {
     });
 
     $("#ruleNameSearch").click(function () {
-        $('#ruleList').DataTable().draw()
+        $('#ruleList').DataTable().draw();
+    });
+    
+    $("#ruleCreate").click(function () {
+        $("#ruleCreateModal").modal();
     })
 
 });
