@@ -35,6 +35,8 @@ urls = (
     ('^/channel_op/v1/page/users.html$', user.UserManage),
     # 验证码信息页面
     ('^/channel_op/v1/page/vcode.html$', vcode.VerifyCodeManage),
+    # 套餐管理页面
+    ('^/channel_op/v1/page/rule.html$', rules.RuleManage),
 
     # 登录接口
     ('^/channel_op/v1/api/login$', login.LoginHandler),
@@ -113,6 +115,8 @@ urls = (
 
     # 套餐规则
     ('^/channel_op/v1/api/rules_list$', rules.RulesInfoHandler),
+    # 套餐页面数据
+    ('^/channel_op/v1/api/ruleinfo_pagelist$', rules.RulePageHandler),
 
     # 用户数据
     ('^/channel_op/v1/api/user_list$', user.UserInfoListHandler),
