@@ -175,3 +175,36 @@ class RuleCreateHandler(core.Handler):
             log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+
+class RuleSingleHandler(core.Handler):
+ 
+    _get_handler_fields = [
+        Field('rule_id', T_INT, False)
+    ]
+
+    def _get_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        try:
+            params = self.validator.data
+            rule_id = params.get('rule_id')
+            data = tools.single_rule(rule_id)
+            return success(data)
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+
+    def GET(self):
+        try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
+            data = self._get_handler()
+            return data
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())

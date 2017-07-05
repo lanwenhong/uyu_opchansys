@@ -96,3 +96,16 @@ def create_rule(data):
         log.debug('func=%s|insert|ret=%s', f_name, ret)
         return ret
 
+
+def single_rule(rule_id):
+    f_name = 'single_rule'
+    log.debug('func=%s|rule_id=%s', f_name, rule_id)
+    with get_connection_exception('uyu_core') as conn:
+        where = {'id': rule_id}
+        keep_fields = [
+            'name', 'total_amt', 'training_times',
+            'description', 'is_valid'
+        ]
+        ret = conn.select_one(table='rules', fields=keep_fields, where=where)
+        log.debug('func=%s|ret=%s', f_name, ret)
+        return ret

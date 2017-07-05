@@ -201,4 +201,11 @@ $(document).ready(function () {
         });
 
     });
+
+    $(document).on('click', '.viewEdit', function () {
+        $("label.error").remove();
+        var ruld_id = $(this).data('rule_id');
+        var se_userid = window.localStorage.getItem('myid');
+        $("#ruleEidtModal").modal();
+    });
 });
