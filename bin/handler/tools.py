@@ -138,6 +138,6 @@ def get_rule_name():
     f_name = 'get_rule_name'
     log.debug('func=%s', f_name)
     with get_connection_exception('uyu_core') as conn:
-        ret = conn.select(table='rules', fieles=['name'])
+        ret = conn.select(table='rules', fields=['name'])
         log.debug('func=%s|db ret=%s', f_name, ret)
         return ret
