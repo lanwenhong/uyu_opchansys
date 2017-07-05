@@ -82,7 +82,7 @@ class DeviceInfoHandler(core.Handler):
             'training_nums', 'ctime'
         ]
 
-        other = ' order by ctime desc limit %d offset %d' % (limit, offset)
+        other = ' order by id desc limit %d offset %d' % (limit, offset)
 
         if channel_name:
             channel_list = tools.channel_name_to_id(channel_name)
