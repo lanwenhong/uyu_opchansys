@@ -107,5 +107,28 @@ def single_rule(rule_id):
             'description', 'is_valid'
         ]
         ret = conn.select_one(table='rules', fields=keep_fields, where=where)
+        if ret and ret['total_amt']:
+            ret['total_amt'] = ret['total_amt'] / 100.0
         log.debug('func=%s|ret=%s', f_name, ret)
+        return ret
+
+
+def edit_rule(rule_id, name, total_amt, training_times, description=None):
+    f_name = 'edit_rule'
+    info = {
+        'name': name,
+        'total_amt': total_amt,
+        'training_times': training_times,
+    }
+    if description not in ['', None]:
+        info['description'] = description
+
+    log.debug('func=%s|in=%s|rule_id=%s', f_name, info, rule_id)
+    with get_connection_exception('uyu_core') as conn:
+        where = {'id': rule_id}
+        now = datetime.datetime.now()
+        info['utime'] = now
+        values = info
+        ret = conn.update(table='rules', values=values, where=where)
+        log.debug('func=%s|db ret=%s', f_name, ret)
         return ret

@@ -248,4 +248,83 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#ruleEditSubmit").click(function(){
+        var rule_edit_vt = $("#ruleEditForm").validate({
+            rules:{
+                edit_name: {
+                    required: true,
+                    maxlength: 128
+                },
+                edit_total_amt: {
+                    required: true,
+                    isYuan: '#edit_total_amt'
+                },
+                edit_training_times: {
+                    required: true,
+                    digits:true,
+                    min:1
+                }
+            },
+            messages: {
+                edit_name: {
+                    required: "请输入套餐名称",
+                    maxlength: $.validator.format("请输入一个 长度最多是 {0} 的字符串")
+                },
+                edit_total_amt: {
+                    required: "请填写总金额"
+                },
+                edit_training_times: {
+                    required: "请填写训练次数",
+                    digits: "只能输入整数",
+                    min: $.validator.format("请输入一个最小为{0} 的值")
+                }
+            }
+        });
+
+        var ok = rule_edit_vt.form();
+        if(!ok){
+            return false;
+        }
+
+        var rule_id = $("#rule_id").text();
+        var name = $("#edit_name").val();
+        var total_amt = $("#edit_total_amt").val() * 100;
+        var training_times = $("#edit_training_times").val();
+        var description = $("#edit_description").val();
+
+        var post_data = {};
+        var se_userid = window.localStorage.getItem('myid');
+        post_data['se_userid'] = se_userid;
+        post_data['name'] = name;
+        post_data['total_amt'] = total_amt;
+        post_data['training_times'] = training_times;
+        post_data['description'] = description;
+
+        $.ajax({
+            url: '/channel_op/v1/api/rule_edit',
+            type: 'POST',
+            dataType: 'json',
+            data: post_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                    return false;
+                }
+                else {
+                    toastr.success('修改套餐成功');
+                    $("#ruleEidtModal").modal('hide');
+                    $('#ruleList').DataTable().draw();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
+
+    });
 });

@@ -172,7 +172,6 @@ class RuleCreateHandler(core.Handler):
             data = self._post_handler()
             return data
         except Exception as e:
-            log.warn(e)
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
 
@@ -206,5 +205,45 @@ class RuleSingleHandler(core.Handler):
             data = self._get_handler()
             return data
         except Exception as e:
-            log.warn(e)
             log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
+
+
+class RuleEditHandler(core.Handler):
+
+    _post_handler_fields = [
+        Field('rule_id', T_INT, False),
+        Field('name', T_STR, False),
+        Field('total_amt', T_INT, False),
+        Field('training_times', T_INT, False),
+        Field('description', T_STR, True)
+    ]
+
+    def _post_handler_errfunc(self, msg):
+        return error(UAURET.PARAMERR, respmsg=msg)
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    @with_validator_self
+    def _post_handler(self):
+        params = self.validator.data
+        rule_id = params.get('rule_id')
+        name = params.get('name')
+        total_amt = params.get('total_amt')
+        training_times = params.get('training_times')
+        description = params.get('description')
+        flag = tools.single_rule(rule_id)
+        if not flag:
+            return error(UAURET.DATAERR)
+        ret = tools.eidt_rule(rule_id, name, total_amt, training_times, description)
+        if ret != 1:
+            return error(UAURET.DATAERR)
+        return success({})
+
+    def POST(self):
+        try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
+            data = self._post_handler()
+            return data
+        except Exception as e:
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)
