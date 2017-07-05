@@ -113,7 +113,7 @@ class RulePageHandler(core.Handler):
         if name not in ['', None]:
             where['name'] = name
         
-        other = ' order by id desc limit %d offset %d' % (limit, offset)
+        other = ' order by id limit %d offset %d' % (limit, offset)
         ret = self.db.select(table='rules', fields=keep_fields, where=where, other=other)
         return ret
 
