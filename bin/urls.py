@@ -123,6 +123,8 @@ urls = (
     ('^/channel_op/v1/api/rule$', rules.RuleSingleHandler),
     # 修改套餐
     ('^/channel_op/v1/api/rule_edit$', rules.RuleEditHandler),
+    # 所有套餐名
+    ('^/channel_op/v1/api/rule_name_list$', rules.RuleNameHandler),
 
     # 用户数据
     ('^/channel_op/v1/api/user_list$', user.UserInfoListHandler),

@@ -132,3 +132,12 @@ def edit_rule(rule_id, name, total_amt, training_times, description=None):
         ret = conn.update(table='rules', values=values, where=where)
         log.debug('func=%s|db ret=%s', f_name, ret)
         return ret
+
+
+def get_rule_name():
+    f_name = 'get_rule_name'
+    log.debug('func=%s', f_name)
+    with get_connection_exception('uyu_core') as conn:
+        ret = conn.select(table='rules', fieles=['name'])
+        log.debug('func=%s|db ret=%s', f_name, ret)
+        return ret

@@ -247,3 +247,23 @@ class RuleEditHandler(core.Handler):
         except Exception as e:
             log.warn(traceback.format_exc())
             return error(UAURET.SERVERERR)
+
+
+class RuleNameHandler(core.Handler):
+
+    @uyu_check_session(g_rt.redis_pool, cookie_conf, UYU_SYS_ROLE_OP)
+    def _get_handler(self, *args):
+        if not self.user.sauth:
+            return error(UAURET.SESSIONERR)
+        data = tools.get_rule_name()
+        return success(data)
+
+    def GET(self):
+        try:
+            self.set_headers({'Content-Type': 'application/json; charset=UTF-8'})
+            data = self._get_handler()
+            return data
+        except Exception as e:
+            log.warn(e)
+            log.warn(traceback.format_exc())
+            return error(UAURET.SERVERERR)

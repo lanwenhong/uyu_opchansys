@@ -3,6 +3,8 @@
  */
 $(document).ready(function () {
 
+    search_source();
+
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
         // var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
@@ -193,7 +195,9 @@ $(document).ready(function () {
                 }
                 else {
                     toastr.success('新建套餐成功');
+                    search_source();
                     $("#ruleCreateModal").modal('hide');
+                    location.reload();
                     $('#ruleList').DataTable().draw();
                 }
             },
@@ -329,3 +333,37 @@ $(document).ready(function () {
 
     });
 });
+
+
+function search_source() {
+    var get_data = {};
+    var se_userid = window.localStorage.getItem('myid');
+    get_data['se_userid'] = se_userid;
+    $.ajax({
+        url: '/channel_op/v1/api/rule_name_list',
+        type: 'GET',
+        data: get_data,
+        dataType: 'json',
+        success: function(data) {
+            var respcd = data.respcd;
+            if(respcd != '0000'){
+                var resperr = data.resperr;
+                var respmsg = data.respmsg;
+                var msg = resperr ? resperr : respmsg;
+                toastr.warning(msg);
+            }
+            else {
+                var subjects = new Array();
+                console.log('subjects: ');
+                console.log(data.data);
+                for(var i=0; i<data.data.length; i++){
+                    subjects.push(data.data[i].name)
+                }
+                $('#ruleName').typeahead({source: subjects});
+            }
+        },
+        error: function(data) {
+            toastr.warning('请求异常');
+        }
+    });
+}
