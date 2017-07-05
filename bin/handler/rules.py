@@ -234,7 +234,7 @@ class RuleEditHandler(core.Handler):
         flag = tools.single_rule(rule_id)
         if not flag:
             return error(UAURET.DATAERR)
-        ret = tools.eidt_rule(rule_id, name, total_amt, training_times, description)
+        ret = tools.edit_rule(rule_id, name, total_amt, training_times, description)
         if ret != 1:
             return error(UAURET.DATAERR)
         return success({})
