@@ -121,6 +121,8 @@ $(document).ready(function () {
     });
     
     $("#ruleCreate").click(function () {
+        $("label.error").remove();
+        $("#ruleCreateForm").resetForm();
         $("#ruleCreateModal").modal();
     });
 
@@ -204,8 +206,46 @@ $(document).ready(function () {
 
     $(document).on('click', '.viewEdit', function () {
         $("label.error").remove();
-        var ruld_id = $(this).data('rule_id');
+        $("#ruleEditForm").resetForm();
+        var rule_id = $(this).data('rule_id');
+        $("#rule_id").text(rule_id);
         var se_userid = window.localStorage.getItem('myid');
-        $("#ruleEidtModal").modal();
+        var get_data = {};
+        get_data.rule_id = rule_id;
+        get_data.se_userid = se_userid;
+
+        $.ajax({
+            url: '/channel_op/v1/api/rule',
+            type: 'GET',
+            dataType: 'json',
+            data: get_data,
+            success: function(data) {
+                var respcd = data.respcd;
+                if(respcd != '0000'){
+                    var resperr = data.resperr;
+                    var respmsg = data.respmsg;
+                    var msg = resperr ? resperr : respmsg;
+                    toastr.warning(msg);
+                }
+                else {
+                    var data = data.data;
+                    console.log('rule data :'+ data);
+                    var name = data.name;
+                    var total_amt = data.total_amt;
+                    var training_times = data.training_times;
+                    var description = data.description;
+
+                    $("#edit_name").val(name);
+                    $("#edit_total_amt").val(total_amt);
+                    $("#edit_training_times").val(training_times);
+                    $("#edit_description").val(description);
+
+                    $("#ruleEidtModal").modal();
+                }
+            },
+            error: function(data) {
+                toastr.warning('请求异常');
+            }
+        });
     });
 });
