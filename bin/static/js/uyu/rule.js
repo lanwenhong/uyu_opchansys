@@ -296,6 +296,7 @@ $(document).ready(function () {
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
         post_data['se_userid'] = se_userid;
+        post_data['rule_id'] = rule_id;
         post_data['name'] = name;
         post_data['total_amt'] = total_amt;
         post_data['training_times'] = training_times;
