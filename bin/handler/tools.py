@@ -113,12 +113,13 @@ def single_rule(rule_id):
         return ret
 
 
-def edit_rule(rule_id, name, total_amt, training_times, description=None):
+def edit_rule(rule_id, name, total_amt, training_times, is_valid, description=None):
     f_name = 'edit_rule'
     info = {
         'name': name,
         'total_amt': total_amt,
         'training_times': training_times,
+        'is_valid': int(is_valid),
     }
     if description not in ['', None]:
         info['description'] = description

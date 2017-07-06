@@ -216,6 +216,7 @@ class RuleEditHandler(core.Handler):
         Field('name', T_STR, False),
         Field('total_amt', T_INT, False),
         Field('training_times', T_INT, False),
+        Field('is_valid', T_INT, False),
         Field('description', T_STR, True)
     ]
 
@@ -230,11 +231,14 @@ class RuleEditHandler(core.Handler):
         name = params.get('name')
         total_amt = params.get('total_amt')
         training_times = params.get('training_times')
+        is_valid = params.get('is_valid')
         description = params.get('description')
+        if int(is_valid) not in define.UYU_RULES_STATUS_MAP.keys():
+            return error(UAURET.DATAERR)
         flag = tools.single_rule(rule_id)
         if not flag:
             return error(UAURET.DATAERR)
-        ret = tools.edit_rule(rule_id, name, total_amt, training_times, description)
+        ret = tools.edit_rule(rule_id, name, total_amt, training_times, is_valid, description)
         if ret != 1:
             return error(UAURET.DATAERR)
         return success({})

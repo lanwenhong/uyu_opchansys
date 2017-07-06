@@ -238,11 +238,13 @@ $(document).ready(function () {
                     var total_amt = data.total_amt;
                     var training_times = data.training_times;
                     var description = data.description;
+                    var is_valid = data.is_valid;
 
                     $("#edit_name").val(name);
                     $("#edit_total_amt").val(total_amt);
                     $("#edit_training_times").val(training_times);
                     $("#edit_description").val(description);
+                    $("#edit_is_valid").val(is_valid);
 
                     $("#ruleEidtModal").modal();
                 }
@@ -296,6 +298,7 @@ $(document).ready(function () {
         var total_amt = $("#edit_total_amt").val() * 100;
         var training_times = $("#edit_training_times").val();
         var description = $("#edit_description").val();
+        var is_valid = $("#edit_is_valide").val();
 
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
@@ -305,6 +308,7 @@ $(document).ready(function () {
         post_data['total_amt'] = total_amt;
         post_data['training_times'] = training_times;
         post_data['description'] = description;
+        post_data['is_valid'] = is_valid;
 
         $.ajax({
             url: '/channel_op/v1/api/rule_edit',
