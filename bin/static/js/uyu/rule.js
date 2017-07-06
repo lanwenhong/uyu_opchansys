@@ -298,7 +298,7 @@ $(document).ready(function () {
         var total_amt = $("#edit_total_amt").val() * 100;
         var training_times = $("#edit_training_times").val();
         var description = $("#edit_description").val();
-        var is_valid = $("#edit_is_valide").val();
+        var is_valid = $("#edit_is_valid").val();
 
         var post_data = {};
         var se_userid = window.localStorage.getItem('myid');
