@@ -184,7 +184,8 @@ $(document).ready(function(){
                     if(is_valid==0 && create_time >= compare_time){
                         var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' data-orderno='+orderno+' value=' + '撤销' + '>';
                     } else {
-                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+                        // var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
+                        var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' data-orderno='+orderno+' value=' + '撤销' + '>';
                     }
                     if(is_valid == 2) {
                         var cancel = '<input type="button" class="btn btn-primary btn-sm order-cancel" data-busicd='+busicd+' disabled data-orderno='+orderno+' value=' + '撤销' + '>';
