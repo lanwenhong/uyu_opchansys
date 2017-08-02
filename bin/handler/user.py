@@ -53,10 +53,11 @@ class UserInfoListHandler(core.Handler):
             max_page_num = params.get('maxnum')
 
             offset, limit = tools.gen_offset(curr_page, max_page_num)
-            info_data = self._query_handler(offset, limit, phone_num, login_name, nick_name)
+            info_data, total = self._query_handler(offset, limit, phone_num, login_name, nick_name)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            # data['num'] = self._total_stat()
+            data['num'] = total
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -91,7 +92,11 @@ class UserInfoListHandler(core.Handler):
         log.debug('where: %s', where)
 
         ret = self.db.select(table='auth_user', fields=keep_fields, where=where, other=other)
-        return ret
+
+        where.update({'ctime': ('>', 0)})
+        stat = self.db.select_one(table='auth_user', fields='count(*) as total', where=where)
+        total = int(stat['total']) if stat else 0
+        return ret, total
 
 
     @with_database('uyu_core')

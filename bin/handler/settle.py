@@ -52,10 +52,11 @@ class SettleInfoHandler(core.Handler):
             start_time = params.get('start_time', None)
 
             offset, limit = tools.gen_offset(curr_page, max_page_num)
-            info_data = self._query_handler(offset, limit, channel_name, store_name, start_time)
+            info_data, total = self._query_handler(offset, limit, channel_name, store_name, start_time)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            # data['num'] = self._total_stat()
+            data['num'] = total
             return success(data)
         except Exception as e:
             log.warn(traceback.format_exc())
@@ -79,7 +80,7 @@ class SettleInfoHandler(core.Handler):
             if channel_list:
                 where.update({'channel_id': ('in', channel_list)})
             else:
-                return []
+                return [], 0
 
         if store_name:
             store_list = tools.store_name_to_id(store_name)
@@ -87,7 +88,7 @@ class SettleInfoHandler(core.Handler):
             if store_list:
                 where.update({'store_id': ('in', store_list)})
             else:
-                return []
+                return [], 0
 
         if start_time:
             year_month = start_time.split('-')
@@ -99,7 +100,13 @@ class SettleInfoHandler(core.Handler):
             where.update({'settle_cycle': ('between', [stime, etime])})
 
         ret = self.db.select(table='settlement_record', fields=keep_fields, where=where, other=other)
-        return ret
+
+        where.update({'ctime': ('>', 0)})
+        stat = self.db.select_one(table='settlement_record', fields='count(*) as total', where=where)
+        log.debug('settlement_record stat: %s', stat)
+        total = int(stat['total']) if stat else 0
+        
+        return ret, total
 
     @with_database('uyu_core')
     def _trans_record(self, data):

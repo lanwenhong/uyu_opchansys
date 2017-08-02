@@ -54,10 +54,11 @@ class DeviceInfoHandler(core.Handler):
             status = params.get('status', None)
 
             offset, limit = tools.gen_offset(curr_page, max_page_num)
-            info_data = self._query_handler(offset, limit, channel_name, store_name, serial_number, status)
+            info_data, total = self._query_handler(offset, limit, channel_name, store_name, serial_number, status)
 
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            # data['num'] = self._total_stat()
+            data['num'] = total
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -89,14 +90,14 @@ class DeviceInfoHandler(core.Handler):
             if channel_list:
                 where.update({'channel_id': ('in', channel_list)})
             else:
-                return []
+                return [], 0
 
         if store_name:
             store_list = tools.store_name_to_id(store_name)
             if store_list:
                 where.update({'store_id': ('in', store_list)})
             else:
-                return []
+                return [], 0
 
         if serial_number:
             where.update({'id': serial_number})
@@ -106,7 +107,11 @@ class DeviceInfoHandler(core.Handler):
 
         ret = self.db.select(table='device', fields=keep_fields, where=where, other=other)
 
-        return ret
+        where.update({'ctime': ('>', 0)})
+        stat = self.db.select_one(table='device', fields='count(*) as total', where=where)
+        total = int(stat['total']) if stat else 0
+
+        return ret, total
 
     @with_database('uyu_core')
     def _trans_record(self, data):

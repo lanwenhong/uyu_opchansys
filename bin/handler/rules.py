@@ -94,9 +94,10 @@ class RulePageHandler(core.Handler):
             max_page_num = params.get('maxnum')
             log.debug('class=%s|method=GET|params=%s', cls_name, params)
             offset, limit = tools.gen_offset(curr_page, max_page_num)
-            info_data = self._query_handler(offset, limit, name)
+            info_data, total = self._query_handler(offset, limit, name)
             data['info'] = self._trans_record(info_data)
-            data['num'] = self._total_stat()
+            # data['num'] = self._total_stat()
+            data['num'] = total
             return success(data)
         except Exception as e:
             log.warn(e)
@@ -115,7 +116,13 @@ class RulePageHandler(core.Handler):
         
         other = ' order by id limit %d offset %d' % (limit, offset)
         ret = self.db.select(table='rules', fields=keep_fields, where=where, other=other)
-        return ret
+
+        where.update({'ctime': ('>', 0)})
+        stat = self.db.select_one(table='rules', fields='count(*) as total', where=where)
+        log.debug('rules stat: %s', stat)
+        total = int(stat['total']) if stat else 0
+
+        return ret, total
 
     def _trans_record(self, data):
         if not data:
