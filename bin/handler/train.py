@@ -116,7 +116,7 @@ class TrainBuyInfoHandler(core.Handler):
         if status in define.UYU_ORDER_STATUS_MAP.keys():
             where.update({'status': status})
 
-        where.update({'op_type': ('in', (define.UYU_ORDER_TYPE_ALLOT, define.UYU_ORDER_TYPE_BUY))})
+        where.update({'op_type': ('in', (define.UYU_ORDER_TYPE_ALLOT, define.UYU_ORDER_TYPE_BUY, define.UYU_ORDER_TYPE_PRESENTATION))})
         other = ' order by create_time desc limit %d offset %d' % (limit, offset)
 
         keep_fields = [
