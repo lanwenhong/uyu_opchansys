@@ -497,6 +497,7 @@ $(document).ready(function(){
                     $('#e_contact_email').val(p_data.contact_email);
                     $('#e_address').val(p_data.address);
                     $('#e_training_amt_per').val(ch_data.training_amt_per / 100.0);
+                    $('#e_divide_percent').val(ch_data.divide_percent);
                     var is_prepayment = ch_data.is_prepayment;
                     $('#e_is_prepayment').val(is_prepayment);
                     if(is_prepayment == 0){
@@ -505,7 +506,6 @@ $(document).ready(function(){
                         $('#edit_training_amt_per').hide();
                     } else {
                         // 分成模式
-                        $('#e_divide_percent').val(ch_data.divide_percent);
                         $('#edit_store_divide_percent').show();
                         $('#edit_training_amt_per').show();
                     }
