@@ -500,10 +500,14 @@ $(document).ready(function(){
                     var is_prepayment = ch_data.is_prepayment;
                     $('#e_is_prepayment').val(is_prepayment);
                     if(is_prepayment == 0){
+                        // 次卡模式
                         $('#edit_store_divide_percent').hide();
+                        $('#edit_training_amt_per').hide();
                     } else {
+                        // 分成模式
                         $('#e_divide_percent').val(ch_data.divide_percent);
                         $('#edit_store_divide_percent').show();
+                        $('#edit_training_amt_per').show();
                     }
                     $('#e_store_name').val(ch_data.store_name);
                     //$('#e_store_contacter').val(ch_data.store_contacter);
