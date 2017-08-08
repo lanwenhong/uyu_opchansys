@@ -13,7 +13,6 @@ $(document).ready(function(){
         return this.optional(element) || (tel_pattern.test(value)|| mobile_pattern.test(value));
     }, "请正确填写您的电话号码");
 
-
     $.validator.addMethod("isYuan", function(value, element) {
         var length = value.length;
         //var yuan  = /^([0-9]{1,6})\.([0-9]{1,2})$/;
@@ -945,22 +944,29 @@ $(document).ready(function(){
 
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
-        if(is_prepayment==0){
+        if(is_prepayment === '0'){
+            // 次卡模式
             $('#divide_percent').next('label').remove();
             $('#create_store_divide_percent').hide();
+            $('#create_training_amt_per').hide();
         }else{
+            // 分成模式
             $('#create_store_divide_percent').show();
+            $('#create_training_amt_per').show();
         }
     });
 
-
     $('#e_is_prepayment').change(function(){
         var is_prepayment= $('#e_is_prepayment').val();
-        if(is_prepayment==0){
+        if(is_prepayment === '0'){
+            // 次卡模式
             $('#e_divide_percent').next('label').remove();
             $('#edit_store_divide_percent').hide();
+            $('#edit_training_amt_per').hide();
         }else{
+            // 分成模式
             $('#edit_store_divide_percent').show();
+            $('#edit_training_amt_per').show();
         }
     });
 
@@ -970,7 +976,6 @@ $(document).ready(function(){
         $("#eyesightCreateForm").resetForm();
         $("#registerEyesight").modal();
     });
-
 
     $('#eyesightCreateSubmit').click(function () {
         var eyesight_register_vt = $('#eyesightCreateForm').validate({
