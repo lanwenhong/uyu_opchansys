@@ -692,7 +692,7 @@ $(document).ready(function(){
 
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
-        if(is_prepayment === 0){
+        if(is_prepayment === '0'){
             //次卡模式
             // $('#divide_percent').rules('remove');
             $('#divide_percent').next('label').remove();
@@ -710,7 +710,7 @@ $(document).ready(function(){
 
     $('#e_is_prepayment').change(function(){
 		var is_prepayment = $('#e_is_prepayment').val();
-        if(is_prepayment === 0){
+        if(is_prepayment === '0'){
             // 次卡模式
             // $('#e_divide_percent').rules('remove');
             $('#e_divide_percent').next('label').remove();
