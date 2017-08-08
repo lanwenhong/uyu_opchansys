@@ -448,10 +448,12 @@ $(document).ready(function(){
                     var is_prepayment = ch_data.is_prepayment;
                     if(is_prepayment==0){
                         $('#edit_divide_percent_div').hide();
+                        $('#edit_training_amt_per').hide();
                         $('#edit_channel_rules').show();
                     }
                     else {
                         $('#edit_divide_percent_div').show();
+                        $('#edit_training_amt_per').show();
                         $('#edit_channel_rules').hide();
                     }
 
