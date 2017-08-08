@@ -692,32 +692,36 @@ $(document).ready(function(){
 
     $('.is_prepayment').change(function(){
         var is_prepayment = $('.is_prepayment').val();
-        if(is_prepayment==0){
+        if(is_prepayment === 0){
             //次卡模式
             // $('#divide_percent').rules('remove');
             $('#divide_percent').next('label').remove();
             $('#create_divide_percent_div').hide();
+            $('#create_training_amt_per').hide();
             $('#create_channel_rules').show();
         }else{
             //分成模式
             // $('#divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#create_divide_percent_div').show();
+            $('#create_training_amt_per').show();
             $('#create_channel_rules').hide();
         }
     });
 
     $('#e_is_prepayment').change(function(){
-		var is_prepayment= $('#e_is_prepayment').val();
-        if(is_prepayment==0){
+		var is_prepayment = $('#e_is_prepayment').val();
+        if(is_prepayment === 0){
             // 次卡模式
             // $('#e_divide_percent').rules('remove');
             $('#e_divide_percent').next('label').remove();
             $('#edit_divide_percent_div').hide();
+            $('#edit_training_amt_per').hide();
             $('#edit_channel_rules').show();
         }else{
             // 分成模式
             // $('#e_divide_percent').rules('add', { required: true, isLessOne: true, messages: {required: '请正确填写比例'}});
             $('#edit_divide_percent_div').show();
+            $('#edit_training_amt_per').show();
             $('#edit_channel_rules').hide();
         }
     });

@@ -85,7 +85,6 @@
         </div>
 	</div>
 
-
 	<div class="modal fade" tabindex="-1" role="dialog" id="channelCreateModal">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -139,19 +138,19 @@
 						</div>
 
 						<div class="form-group">
-							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
-							</div>
-						</div>
-
-						<div class="form-group">
 							<label for="is_prepayment" class="col-sm-2 control-label">结算模式</label>
 							<div class="col-sm-10">
 								<select class="form-control is_prepayment" id="is_prepayment" name="is_prepayment">
 									<option value="1" selected>分成</option>
 									<option value="0">次卡</option>
 								</select>
+							</div>
+						</div>
+
+						<div class="form-group" id="create_training_amt_per">
+							<label for="training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
 							</div>
 						</div>
 
@@ -245,7 +244,6 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-
     <div class="modal fade" tabindex="-1" role="dialog" id="channelEditModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -307,19 +305,19 @@
 						</div>
 
 						<div class="form-group">
-							<label for="e_training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="e_training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
-							</div>
-						</div>
-
-						<div class="form-group">
 							<label for="e_is_prepayment" class="col-sm-2 control-label">结算模式</label>
 							<div class="col-sm-10">
 								<select class="form-control e_is_prepayment" id="e_is_prepayment" name="is_prepayment">
 									<option value="1" selected>分成</option>
 									<option value="0">次卡</option>
 								</select>
+							</div>
+						</div>
+
+						<div class="form-group" id="edit_training_amt_per">
+							<label for="e_training_amt_per" class="col-sm-2 control-label">单次训练价格</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="e_training_amt_per" name="training_amt_per"  placeholder="请输入xx.xx元为单位, 必填">
 							</div>
 						</div>
 
@@ -330,14 +328,12 @@
 							</div>
 						</div>
 
-
                         <div class="form-group" id="edit_channel_rules">
                             <label for="edit_get_all_rules" class="col-sm-2 control-label">套餐</label>
                             <div class="col-sm-10" id="edit_get_all_rules">
 
                             </div>
                         </div>
-
 
 						<div class="form-group">
 							<label for="bank_name" class="col-sm-2 control-label">开户银行</label>
@@ -421,7 +417,6 @@
             </div>
         </div>
     </div>
-
 
 </%block>
 
